@@ -1,0 +1,17 @@
+{
+  "name": "@zeplin/cli",
+  "version": "1.0.0",
+  "description": "Zeplin CLI",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zeplin/zeplin-cli.git"
+  },
+  "bugs": {
+    "url": "https://github.com/zeplin/zeplin-cli/issues"
+  },
+  "homepage": "https://github.com/zeplin/zeplin-cli#readme"
+}
