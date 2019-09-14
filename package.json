@@ -2,7 +2,7 @@
   "name": "@zeplin/cli",
   "version": "1.0.0",
   "description": "Zeplin CLI",
-  "main": "app.js",
+  "main": "dist/app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -13,5 +13,9 @@
   "bugs": {
     "url": "https://github.com/zeplin/zeplin-cli/issues"
   },
-  "homepage": "https://github.com/zeplin/zeplin-cli#readme"
+  "homepage": "https://github.com/zeplin/zeplin-cli#readme",
+  "devDependencies": {
+    "ts-node": "^8.3.0",
+    "typescript": "^3.6.2"
+  }
 }
