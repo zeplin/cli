@@ -1,6 +1,7 @@
 module.exports = {
     env: {
         node: true,
+        jest: true
     },
     extends: [
         "@zeplin/eslint-config/node",
