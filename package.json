@@ -4,7 +4,7 @@
   "description": "Zeplin CLI",
   "main": "dist/app.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "jest",
     "lint": "eslint --ext .js,.ts ."
   },
   "husky": {
