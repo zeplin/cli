@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "description": "Zeplin CLI",
   "main": "dist/app.js",
+  "bin": {
+    "zeplin": "dist/app.js"
+  },
   "scripts": {
     "test": "jest",
     "lint": "eslint --ext .js,.ts ."
