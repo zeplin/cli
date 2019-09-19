@@ -33,5 +33,7 @@
     "ts-node": "^8.3.0",
     "typescript": "^3.6.2"
   },
-  "dependencies": {}
+  "dependencies": {
+    "commander": "^3.0.1"
+  }
 }
