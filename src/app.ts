@@ -1,4 +1,11 @@
-import program from "commander";
+import commander from "commander";
+import { bin, version } from "../package.json";
+
+const program = new commander.Command();
+
+program
+    .name(Object.keys(bin)[0])
+    .version(version);
 
 program
     .command("hello <text>")
