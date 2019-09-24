@@ -30,7 +30,11 @@ program
     .action(commandRunner(async options => {
         const { link } = await import("./commands/link");
 
-        const linkOptions: LinkOptions = { file: options.file, devMode: options.devMode };
+        const linkOptions: LinkOptions = {
+            configFile: options.file,
+            devMode: options.devMode,
+            workingDirectory: process.cwd()
+        };
 
         link(linkOptions);
     }));
