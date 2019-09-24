@@ -18,5 +18,8 @@ module.exports = {
     rules: {
         "capitalized-comments": "error",
         "arrow-body-style": ["error", "as-needed"],
+        "no-sync": "off",
+        "no-process-exit": "off",
+        "no-process-env": "off"
     }
 };
