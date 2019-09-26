@@ -1,6 +1,6 @@
 import commander from "commander";
 
-import defaults from "./config/defaults";
+import { defaults } from "./config/defaults";
 import { bin, version } from "../package.json";
 import { link, LinkOptions } from "./commands/link";
 import { commandRunner } from "./util/command";
@@ -16,8 +16,8 @@ program
 program
     .command("link")
     .description("Link components to code")
-    .option("-f, --file <file>", "Full path to components config file", defaults.link.filePath)
-    .option("-d, --dev-mode", "Activate development mode", defaults.link.devMode)
+    .option("-f, --file <file>", "Full path to components config file", defaults.commands.link.filePath)
+    .option("-d, --dev-mode", "Activate development mode", defaults.commands.link.devMode)
     .action(commandRunner(async options => {
         const linkOptions: LinkOptions = {
             configFile: options.file,
