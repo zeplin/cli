@@ -1,36 +1,22 @@
-import { LinkContext, LinkConfig } from "./interfaces";
-import { linkConfigSchema } from "./configSchema";
-import * as fileUtil from "../../util/file";
 
-const getLinkConfig = async (filePath: string): Promise<LinkConfig> => {
-    const file = await fileUtil.readJsonFile(filePath);
-
-    const { error, value } = linkConfigSchema.validate(file, { stripUnknown: true, presence: "required" });
-
-    if (error) {
-        throw error;
-    }
-
-    return value as LinkConfig;
-};
+import { getLinkConfigs } from "./config";
+import { getProcessors, processLinkConfigs } from "./processor";
 
 export interface LinkOptions {
-    configFile: string;
+    configFiles: string[];
     devMode: boolean;
     workingDirectory: string;
+    plugins: string[];
 }
 
 export async function link(options: LinkOptions): Promise<void> {
-    const { configFile } = options;
+    const { configFiles, plugins } = options;
 
-    const linkConfig = await getLinkConfig(configFile);
-    const fileList = await fileUtil.getAllFilesFromFolder(options.workingDirectory);
+    const linkConfigs = await getLinkConfigs(configFiles);
+    const linkProcessors = await getProcessors(plugins);
 
-    const context: LinkContext = {
-        fileList,
-        linkConfig
-    };
+    const processedComponentList = await processLinkConfigs(linkConfigs, linkProcessors);
 
-    console.log(context);
+    // TODO: send data to API
+    console.log(processedComponentList);
 }
-

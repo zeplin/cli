@@ -10,12 +10,17 @@ module.exports = {
         "plugin:import/typescript",
         "plugin:@typescript-eslint/recommended"
     ],
-    parser: '@typescript-eslint/parser',
+    parser: "@typescript-eslint/parser",
     parserOptions: {
         "ecmaVersion": 2018,
         "sourceType": "module"
     },
-    plugins: ['@typescript-eslint'],
+    plugins: ["@typescript-eslint"],
+    settings: {
+        "import/resolver": {
+            typescript: { directory: "./tsconfig.json" },
+        }
+    },
     rules: {
         "capitalized-comments": "error",
         "arrow-body-style": ["error", "as-needed"],
@@ -25,4 +30,4 @@ module.exports = {
         "@typescript-eslint/no-explicit-any": ["error", { "ignoreRestArgs": true }],
         "class-methods-use-this": "off"
     }
-};
+}

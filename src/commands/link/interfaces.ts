@@ -1,43 +1,31 @@
-export type UrlPath = Map<string, string>;
+import { ComponentConfig, UrlPath } from "link";
 
 export interface Url {
     name: string;
     type: string;
     url: string;
 }
-
-export interface ComponentConfig {
-    path: string;
-    zeplinNames: string[];
-    name?: string;
-    urlPaths?: UrlPath;
-}
-
 export interface LinkConfig {
-    barrels: string[];
+    projects: string[];
+    styleguides: string[];
     baseUrls: Url[];
     components: ComponentConfig[];
 }
 
-export interface ComponentMetadata {
-    name: string;
+export interface Content {
+    lang: string;
+    content: string;
+}
+
+export interface ProcessedComponent {
     path: string;
-    description: string;
-    urls: Url[];
     zeplinNames: string[];
+    description?: string;
+    name?: string;
+    urlPaths?: UrlPath;
+    snippets?: Content[];
 }
 
-export interface ComponentsMetadata {
-    barrels: string[];
-    components: ComponentMetadata[];
-}
-
-export interface LinkProcessor {
-    process(context: LinkContext): void;
-    supportsExtension(fileExt: string): boolean;
-}
-
-export interface LinkContext {
-    fileList: string[];
-    linkConfig: LinkConfig | null;
+export interface ProcessedComponentList {
+    components: ProcessedComponent[];
 }

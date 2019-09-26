@@ -9,6 +9,10 @@ console.log(`Zeplin CLI - v${version}\n`);
 
 const program = new commander.Command();
 
+function collectionValue(value: string, previous: string[]): string[] {
+    return previous.concat([value]);
+}
+
 program
     .name(Object.keys(bin)[0])
     .version(version);
@@ -16,13 +20,15 @@ program
 program
     .command("link")
     .description("Link components to code")
-    .option("-f, --file <file>", "Full path to components config file", defaults.commands.link.filePath)
+    .option("-f, --file <file>", "Full path to components config file", collectionValue, [])
     .option("-d, --dev-mode", "Activate development mode", defaults.commands.link.devMode)
+    .option("-p, --plugin <plugin>", "NPM package name of a processor plugin", collectionValue, [])
     .action(commandRunner(async options => {
         const linkOptions: LinkOptions = {
-            configFile: options.file,
+            configFiles: options.file,
             devMode: options.devMode,
-            workingDirectory: process.cwd()
+            workingDirectory: process.cwd(),
+            plugins: options.plugin
         };
 
         await link(linkOptions);
