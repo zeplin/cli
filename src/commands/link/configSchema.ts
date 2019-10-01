@@ -6,14 +6,12 @@ const urlConfigSchema = Joi.object({
     url: Joi.string()
 });
 
-const componentConfigSchema = Joi.array().items(
-    Joi.object({
-        path: Joi.string(),
-        zeplinNames: Joi.array().items(Joi.string()),
-        name: Joi.string().optional(),
-        urlPaths: Joi.object().pattern(Joi.string(), Joi.string()).optional()
-    })
-);
+const componentConfigSchema = Joi.object({
+    path: Joi.string(),
+    zeplinNames: Joi.array().items(Joi.string()),
+    name: Joi.string().optional(),
+    urlPaths: Joi.object().pattern(Joi.string(), Joi.string()).optional()
+});
 
 const linkConfigSchema = Joi.object({
     barrels: Joi.array().items(Joi.string()),
