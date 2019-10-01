@@ -8,10 +8,10 @@ const urlConfigSchema = Joi.object({
 
 const componentConfigSchema = Joi.array().items(
     Joi.object({
-        name: Joi.string(),
         path: Joi.string(),
-        urlPaths: Joi.object().pattern(Joi.string(), Joi.string()),
-        zeplinNames: Joi.array().items(Joi.string())
+        zeplinNames: Joi.array().items(Joi.string()),
+        name: Joi.string().optional(),
+        urlPaths: Joi.object().pattern(Joi.string(), Joi.string()).optional()
     })
 );
 

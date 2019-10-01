@@ -7,10 +7,10 @@ export interface Url {
 }
 
 export interface ComponentConfig {
-    name: string;
     path: string;
-    urlPaths: UrlPath;
     zeplinNames: string[];
+    name?: string;
+    urlPaths?: UrlPath;
 }
 
 export interface LinkConfig {
