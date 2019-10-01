@@ -2,7 +2,7 @@ import commander from "commander";
 
 import defaults from "./config/defaults";
 import { bin, version } from "../package.json";
-import { LinkOptions } from "./commands/link";
+import { link, LinkOptions } from "./commands/link";
 import { commandRunner } from "./util/command";
 
 console.log(`Zeplin CLI - v${version}\n`);
@@ -19,15 +19,13 @@ program
     .option("-f, --file <file>", "Full path to components config file", defaults.link.filePath)
     .option("-d, --dev-mode", "Activate development mode", defaults.link.devMode)
     .action(commandRunner(async options => {
-        const { link } = await import("./commands/link");
-
         const linkOptions: LinkOptions = {
             configFile: options.file,
             devMode: options.devMode,
             workingDirectory: process.cwd()
         };
 
-        link(linkOptions);
+        await link(linkOptions);
     }));
 
 program.on("command:*", () => {

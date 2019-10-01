@@ -1,9 +1,3 @@
-export interface LinkOptions {
-    configFile: string;
-    devMode: boolean;
-    workingDirectory: string;
-}
-
 export type UrlPath = Map<string, string>;
 
 export interface Url {

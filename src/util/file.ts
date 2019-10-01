@@ -1,23 +1,25 @@
-import fs from "fs";
+import fs from "fs-extra";
 import path from "path";
 
-export function readJsonFile(filePath: string): {} {
-    if (!fs.existsSync(filePath)) {
+export async function readJsonFile(filePath: string): Promise<{}> {
+    if (!(await fs.pathExists(filePath))) {
         throw new Error(`Cannot access file: ${filePath}`);
     }
 
-    return JSON.parse(fs.readFileSync(filePath).toString());
+    const fileBuffer = await fs.readFile(filePath);
+    return JSON.parse(fileBuffer.toString());
 }
 
-export function getAllFilesFromFolder(folderPath: string): string[] {
+export async function getAllFilesFromFolder(folderPath: string): Promise<string[]> {
     let results: string[] = [];
 
-    fs.readdirSync(folderPath).forEach(file => {
+    (await fs.readdir(folderPath)).forEach(async file => {
         const filePath = path.join(folderPath, file);
 
-        const stat = fs.statSync(filePath);
+        const stat = await fs.stat(filePath);
         if (stat && stat.isDirectory()) {
-            results = results.concat(getAllFilesFromFolder(filePath));
+            const innerResults = await getAllFilesFromFolder(filePath);
+            results = results.concat(innerResults);
         } else {
             results.push(file);
         }
