@@ -14,15 +14,6 @@ program
     .version(version);
 
 program
-    .command("hello <text>")
-    .description("All your base are belong to us.")
-    .action(commandRunner(async text => {
-        const { Hello } = await import("./commands/hello");
-
-        new Hello(text).hello();
-    }));
-
-program
     .command("link")
     .description("Link components to code")
     .option("-f, --file <file>", "Full path to components config file", defaults.link.filePath)
