@@ -5,7 +5,7 @@ import * as fileUtil from "../../util/file";
 const getLinkConfig = async (filePath: string): Promise<LinkConfig> => {
     const file = await fileUtil.readJsonFile(filePath);
 
-    const { error, value } = linkConfigSchema.validate(file, { stripUnknown: true });
+    const { error, value } = linkConfigSchema.validate(file, { stripUnknown: true, presence: "required" });
 
     if (error) {
         throw error;
