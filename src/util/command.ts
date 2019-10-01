@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable @typescript-eslint/explicit-function-return-type */
 const errorHandler = (error: Error): void => {
     console.error(error.message);
 
@@ -12,6 +10,10 @@ const errorHandler = (error: Error): void => {
     process.exit(1);
 };
 
-const commandRunner = (fn: (...args: any) => Promise<any>): any => (...args: any) => fn(...args).catch(errorHandler);
+type FunctionReturnsPromise = (...args: Array<any>) => Promise<void>;
+
+function commandRunner(fn: FunctionReturnsPromise): FunctionReturnsPromise {
+    return (...args: Array<any>): Promise<void> => fn(...args).catch(errorHandler);
+}
 
 export { commandRunner };
