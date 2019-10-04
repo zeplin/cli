@@ -7,6 +7,7 @@ export interface LinkOptions {
     devMode: boolean;
     workingDirectory: string;
     plugins: string[];
+    authToken: string;
 }
 
 export async function link(options: LinkOptions): Promise<void> {

@@ -3,10 +3,13 @@ import inquirer from "inquirer";
 import { ZeplinApi } from "../api";
 import { JWTError } from "../errors";
 import { LoginRequest } from "../api/interfaces";
+import { saveAuthToken } from "../util/auth-file";
 
 function notEmptyValidator(errorMessage: string) {
     return (input: string): boolean | string => (input && input.length > 0 ? true : errorMessage);
 }
+
+type JWT = { [key: string]: string | number | boolean };
 
 export class AuthenticationService {
     handle?: string;
@@ -36,6 +39,7 @@ export class AuthenticationService {
                 password: this.password
             });
 
+            saveAuthToken(response.token);
             this.token = response.token;
         }
 
@@ -73,14 +77,17 @@ export class AuthenticationService {
     }
 
     private static decodeJwt(token: string): string {
-        const { aud } = jwt.decode(token, { complete: false }) as { aud: string };
-        if (!aud) {
+        const decodedToken = jwt.decode(token, { complete: false }) as JWT;
+        if (!decodedToken) {
             throw new JWTError("Invalid authentication token");
         }
-        const [, userId] = aud.split(":");
+
+        const [, userId] = (decodedToken.aud as string).split(":");
         if (!userId) {
             throw new JWTError("Invalid authentication token");
         }
+
+        // TODO: add required scope validation
 
         return token;
     }

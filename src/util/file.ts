@@ -6,8 +6,13 @@ export async function readJsonFile(filePath: string): Promise<{}> {
         throw new Error(`Cannot access file: ${filePath}`);
     }
 
-    const fileBuffer = await fs.readFile(filePath);
-    return JSON.parse(fileBuffer.toString());
+    const json = await fs.readJson(filePath);
+
+    return json;
+}
+
+export async function writeJsonIntoFile(filePath: string, content: {}): Promise<void> {
+    await fs.writeFile(filePath, JSON.stringify(content));
 }
 
 export async function getAllFilesFromFolder(folderPath: string): Promise<string[]> {
