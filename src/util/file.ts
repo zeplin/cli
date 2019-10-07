@@ -18,7 +18,8 @@ export async function writeJsonIntoFile(filePath: string, content: {}): Promise<
 export async function getAllFilesFromFolder(folderPath: string): Promise<string[]> {
     let results: string[] = [];
 
-    (await fs.readdir(folderPath)).forEach(async file => {
+    const folderContent = await fs.readdir(folderPath);
+    await Promise.all(folderContent.map(async file => {
         const filePath = path.join(folderPath, file);
 
         const stat = await fs.stat(filePath);
@@ -28,7 +29,7 @@ export async function getAllFilesFromFolder(folderPath: string): Promise<string[
         } else {
             results.push(file);
         }
-    });
+    }));
 
     return results;
 }
