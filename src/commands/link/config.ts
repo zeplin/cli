@@ -4,8 +4,8 @@ import { LinkConfig } from "./interfaces";
 import { CLIError } from "../../errors";
 
 const urlConfigSchema = Joi.object({
-    name: Joi.string(),
     type: Joi.string(),
+    name: Joi.string().optional(),
     url: Joi.string()
 });
 
@@ -17,10 +17,11 @@ const componentConfigSchema = Joi.object({
 });
 
 const linkConfigSchema = Joi.object({
-    barrels: Joi.array().items(Joi.string()),
-    baseUrls: Joi.array().items(urlConfigSchema),
+    projects: Joi.array().items(Joi.string()).min(1).optional(),
+    styleguides: Joi.array().items(Joi.string()).min(1).optional(),
+    baseURLs: Joi.array().items(urlConfigSchema),
     components: Joi.array().items(componentConfigSchema)
-});
+}).or("projects", "styleguides");
 
 const getLinkConfig = async (filePath: string): Promise<LinkConfig> => {
     const file = await fileUtil.readJsonFile(filePath);

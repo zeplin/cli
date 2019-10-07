@@ -6,9 +6,9 @@ export interface Url {
     url: string;
 }
 export interface LinkConfig {
-    projects: string[];
-    styleguides: string[];
-    baseUrls: Url[];
+    projects?: string[];
+    styleguides?: string[];
+    baseURLs: Url[];
     components: ComponentConfig[];
 }
 
@@ -27,5 +27,10 @@ export interface ProcessedComponent {
 }
 
 export interface ProcessedComponentList {
+    components: ProcessedComponent[];
+}
+
+export interface ProcessedLinkConfig {
+    barrels: string[];
     components: ProcessedComponent[];
 }
