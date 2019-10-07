@@ -1,7 +1,7 @@
 import { LinkProcessor, ComponentConfig, ComponentCode, UrlPath } from "link";
 import { CLIError } from "../../errors";
 import {
-    ProcessedComponent, Content, LinkConfig, ProcessedComponentList, Url
+    ProcessedComponent, Content, LinkConfig, ProcessedLinkConfig, Url
 } from "./interfaces";
 import urljoin from "url-join";
 
@@ -28,7 +28,7 @@ const getProcessors = async (plugins: string[]): Promise<LinkProcessor[]> => {
 
 const processComponent = async (
     component: ComponentConfig,
-    baseUrls: Url[],
+    baseURLs: Url[],
     processors: LinkProcessor[]
 ): Promise<ProcessedComponent> => {
     const descriptions: Content[] = [];
@@ -59,7 +59,7 @@ const processComponent = async (
     const urlPaths: UrlPath = new Map<string, string>();
     if (component.urlPaths) {
         component.urlPaths.forEach((url, type) => {
-            const baseUrl = baseUrls.find(u => u.type === type);
+            const baseUrl = baseURLs.find(u => u.type === type);
             if (baseUrl) {
                 urlPaths.set(type, urljoin(baseUrl.url, url));
             }
@@ -79,31 +79,37 @@ const processComponent = async (
 const processLinkConfig = async (
     linkConfig: LinkConfig,
     linkProcessors: LinkProcessor[]
-): Promise<ProcessedComponent[]> => {
-    const processedComponents = await Promise.all(
-        linkConfig.components.map(component =>
-            processComponent(component, linkConfig.baseUrls, linkProcessors)
-        )
+): Promise<ProcessedLinkConfig> => {
+    let barrels: string[] = [];
+    if (linkConfig.projects) {
+        barrels = barrels.concat(linkConfig.projects);
+    }
+    if (linkConfig.styleguides) {
+        barrels = barrels.concat(linkConfig.styleguides);
+    }
+
+    const components = await Promise.all(
+        linkConfig.components.map(async component => {
+            const processedComponent = await processComponent(component, linkConfig.baseURLs, linkProcessors);
+            return processedComponent;
+        })
     );
 
-    return processedComponents;
+    return { barrels, components };
 };
 
 const processLinkConfigs = async (
     linkConfigs: LinkConfig[],
     processorModules: LinkProcessor[]
-): Promise<ProcessedComponentList[]> => {
-    const processedComponentsList: ProcessedComponentList[] = [];
-
-    const promises = linkConfigs.map(linkConfig =>
-        processLinkConfig(linkConfig, processorModules)
-    );
-
-    (await Promise.all(promises)).forEach(element => {
-        processedComponentsList.push({ components: element });
+): Promise<ProcessedLinkConfig[]> => {
+    const promises = linkConfigs.map(async linkConfig => {
+        const processedLinkConfig = await processLinkConfig(linkConfig, processorModules);
+        return processedLinkConfig;
     });
 
-    return processedComponentsList;
+    const processedLinkConfigList = await Promise.all(promises);
+
+    return processedLinkConfigList;
 };
 
 export {
