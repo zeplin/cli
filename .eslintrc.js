@@ -12,7 +12,8 @@ module.exports = {
     ],
     parser: '@typescript-eslint/parser',
     parserOptions: {
-        'project': './tsconfig.json'
+        "ecmaVersion": 2018,
+        "sourceType": "module"
     },
     plugins: ['@typescript-eslint'],
     rules: {
@@ -21,6 +22,7 @@ module.exports = {
         "no-sync": "off",
         "no-process-exit": "off",
         "no-process-env": "off",
-        "@typescript-eslint/no-explicit-any": ["error", { "ignoreRestArgs": true }]
+        "@typescript-eslint/no-explicit-any": ["error", { "ignoreRestArgs": true }],
+        "class-methods-use-this": "off"
     }
 };
