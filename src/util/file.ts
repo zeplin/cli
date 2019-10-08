@@ -6,9 +6,7 @@ export async function readJsonFile(filePath: string): Promise<{}> {
         throw new Error(`Cannot access file: ${filePath}`);
     }
 
-    const json = await fs.readJson(filePath);
-
-    return json;
+    return fs.readJson(filePath);
 }
 
 export async function writeJsonIntoFile(filePath: string, content: {}): Promise<void> {
