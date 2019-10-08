@@ -1,26 +1,29 @@
-import { LinkProcessor, ComponentConfig, ComponentCode, UrlPath } from "link";
+import { ComponentConfig, UrlPath } from "link";
 import { CLIError } from "../../errors";
 import {
-    ProcessedComponent, Content, LinkConfig, ProcessedLinkConfig, Url
+    ProcessedComponent, Data, LinkConfig, ProcessedLinkConfig, Url, LinkProcessorModule
 } from "./interfaces";
 import urljoin from "url-join";
 
-const getProcessors = async (plugins: string[]): Promise<LinkProcessor[]> => {
+interface LinkProcessorConstructor {
+    new(): LinkProcessorModule;
+}
+
+// Helper method to initialize plugin classses
+const constructLinkProcessor = (Constructor: LinkProcessorConstructor): LinkProcessorModule => new Constructor();
+
+const getProcessors = async (plugins: string[]): Promise<LinkProcessorModule[]> => {
     try {
-        const linkProcessors: LinkProcessor[] = [];
-        const importPromises: Promise<{}>[] = [];
+        const imports = plugins.map(async moduleName => {
+            const linkProcessorConstructor = (await import(moduleName)).default as LinkProcessorConstructor;
 
-        plugins.forEach(plugin => {
-            const importPromise = import(plugin);
-            importPromises.push(importPromise);
+            const linkProcessorInstance = constructLinkProcessor(linkProcessorConstructor);
+            linkProcessorInstance.name = moduleName;
+            return linkProcessorInstance;
         });
 
-        (await Promise.all(importPromises)).forEach(x => {
-            const linkProcessorInstance = x.constructor() as LinkProcessor;
-            linkProcessors.push(linkProcessorInstance);
-        });
-
-        return linkProcessors;
+        const processors = await Promise.all(imports);
+        return processors;
     } catch (error) {
         throw new CLIError(error.message);
     }
@@ -29,31 +32,25 @@ const getProcessors = async (plugins: string[]): Promise<LinkProcessor[]> => {
 const processComponent = async (
     component: ComponentConfig,
     baseURLs: Url[],
-    processors: LinkProcessor[]
+    processors: LinkProcessorModule[]
 ): Promise<ProcessedComponent> => {
-    const descriptions: Content[] = [];
-    const snippets: Content[] = [];
-
+    const data: Data[] = [];
     if (processors.length > 0) {
-        const componentCodeMap: Map<string, ComponentCode> = new Map();
-
         // Execute all language processors on the component if supports
         const processorPromises = processors.map(async processor => {
             if (processor.supports(component)) {
                 const componentCode = await processor.process(component);
 
-                componentCodeMap.set(processor.getLang(), componentCode);
+                data.push({
+                    proccessor: processor.name,
+                    lang: processor.getLang(),
+                    description: componentCode.description,
+                    snippet: componentCode.snippet
+                });
             }
         });
 
         await Promise.all(processorPromises);
-
-        Object.keys(componentCodeMap).forEach(lang => {
-            const componentCode = componentCodeMap.get(lang) as ComponentCode;
-
-            descriptions.push({ lang, content: componentCode.description });
-            snippets.push({ lang, content: componentCode.snippet });
-        });
     }
 
     const urlPaths: UrlPath = new Map<string, string>();
@@ -71,45 +68,28 @@ const processComponent = async (
         name: component.name,
         zeplinNames: component.zeplinNames,
         urlPaths,
-        description: descriptions.length > 0 ? descriptions[descriptions.length - 1].content : null, // Last description
-        snippets
+        data
     } as ProcessedComponent;
 };
 
 const processLinkConfig = async (
     linkConfig: LinkConfig,
-    linkProcessors: LinkProcessor[]
+    linkProcessors: LinkProcessorModule[]
 ): Promise<ProcessedLinkConfig> => {
-    let barrels: string[] = [];
-    if (linkConfig.projects) {
-        barrels = barrels.concat(linkConfig.projects);
-    }
-    if (linkConfig.styleguides) {
-        barrels = barrels.concat(linkConfig.styleguides);
-    }
-
     const components = await Promise.all(
-        linkConfig.components.map(async component => {
-            const processedComponent = await processComponent(component, linkConfig.baseURLs, linkProcessors);
-            return processedComponent;
-        })
+        linkConfig.components.map(component => processComponent(component, linkConfig.baseURLs, linkProcessors))
     );
 
-    return { barrels, components };
+    return { projects: linkConfig.projects, styleguides: linkConfig.styleguides, components };
 };
 
-const processLinkConfigs = async (
+const processLinkConfigs = (
     linkConfigs: LinkConfig[],
-    processorModules: LinkProcessor[]
+    processorModules: LinkProcessorModule[]
 ): Promise<ProcessedLinkConfig[]> => {
-    const promises = linkConfigs.map(async linkConfig => {
-        const processedLinkConfig = await processLinkConfig(linkConfig, processorModules);
-        return processedLinkConfig;
-    });
+    const processPromises = linkConfigs.map(linkConfig => processLinkConfig(linkConfig, processorModules));
 
-    const processedLinkConfigList = await Promise.all(promises);
-
-    return processedLinkConfigList;
+    return Promise.all(processPromises);
 };
 
 export {

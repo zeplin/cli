@@ -37,17 +37,9 @@ const getLinkConfig = async (filePath: string): Promise<LinkConfig> => {
 
 const getLinkConfigs = async (configFiles: string[]): Promise<LinkConfig[]> => {
     try {
-        const linkConfigs: LinkConfig[] = [];
-        const promises: Promise<LinkConfig>[] = [];
+        const promises = configFiles.map(configFile => getLinkConfig(configFile));
 
-        configFiles.forEach(configFile => {
-            const linkConfigPromise = getLinkConfig(configFile);
-            promises.push(linkConfigPromise);
-        });
-
-        (await Promise.all(promises)).forEach(linkConfig => {
-            linkConfigs.push(linkConfig);
-        });
+        const linkConfigs = await Promise.all(promises);
 
         return linkConfigs;
     } catch (error) {

@@ -7,13 +7,22 @@ import { ProcessedLinkConfig } from "./interfaces";
 const zeplinApi = new ZeplinApi();
 
 const updateProcessedComponents = async (processedLinkConfigList: ProcessedLinkConfig[]): Promise<void> => {
-    if (processedLinkConfigList) {
-        await Promise.all(processedLinkConfigList.map(async processedLinkConfig => {
-            await Promise.all(processedLinkConfig.barrels.map(async barrelId => {
-                await zeplinApi.updateProcessedComponents(barrelId, { components: processedLinkConfig.components });
+    await Promise.all(processedLinkConfigList.map(async processedLinkConfig => {
+        // TODO upload progress on console
+        if (processedLinkConfig.projects) {
+            await Promise.all(processedLinkConfig.projects.map(async pid => {
+                await zeplinApi.uploadProcessedComponents({ barrelId: pid, type: "projects" }, { components: processedLinkConfig.components });
             }));
-        }));
-    }
+        }
+
+        if (processedLinkConfig.styleguides) {
+            await Promise.all(processedLinkConfig.styleguides.map(async stid => {
+                await zeplinApi.uploadProcessedComponents({ barrelId: stid, type: "styleguides" }, { components: processedLinkConfig.components });
+            }));
+        }
+    }));
+
+    // TODO debug level logs for troubleshooting
 };
 
 export interface LinkOptions {
@@ -25,12 +34,18 @@ export interface LinkOptions {
 }
 
 export async function link(options: LinkOptions): Promise<void> {
-    const { configFiles, plugins } = options;
+    const { configFiles, plugins, devMode } = options;
 
     const linkConfigs = await getLinkConfigs(configFiles);
     const linkProcessors = await getProcessors(plugins);
 
     const processedComponentList = await processLinkConfigs(linkConfigs, linkProcessors);
 
-    updateProcessedComponents(processedComponentList);
+    if (devMode) {
+        console.log("Starting development server...");
+        // TODO Development server
+    } else {
+        await updateProcessedComponents(processedComponentList);
+        console.log("Awesome! All components are successfully linked with Zeplin.");
+    }
 }

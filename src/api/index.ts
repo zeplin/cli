@@ -24,9 +24,14 @@ export class ZeplinApi {
         }
     }
 
-    async updateProcessedComponents(barrelId: string, request: ProcessedComponentList): Promise<void> {
+    async uploadProcessedComponents(
+        params: { barrelId: string; type: string },
+        request: ProcessedComponentList
+    ): Promise<void> {
         try {
-            await this.axios.put(`/cli/componentcode/${barrelId}`, request);
+            const { barrelId, type } = params;
+
+            await this.axios.put(`/public/${type}/${barrelId}/componentcode`, request);
         } catch (error) {
             if (error.isAxiosError) {
                 throw new APIError(error.response);
