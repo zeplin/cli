@@ -1,4 +1,4 @@
-import { ComponentConfig, UrlPath, LinkProcessor } from "link";
+import { ComponentConfig, LinkProcessor } from "link";
 
 export interface Url {
     name: string;
@@ -12,10 +12,8 @@ export interface LinkConfig {
     components: ComponentConfig[];
 }
 
-export type UrlPath = Map<string, string>;
-
 export interface Data {
-    proccessor: string;
+    processor: string;
     lang: string;
     description?: string;
     snippet?: string;
@@ -25,7 +23,7 @@ export interface ProcessedComponent {
     path: string;
     zeplinNames: string[];
     name?: string;
-    urlPaths?: UrlPath;
+    urlPaths?: Url[];
     data?: Data[];
 }
 

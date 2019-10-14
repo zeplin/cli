@@ -1,4 +1,4 @@
-import { ComponentConfig, UrlPath } from "link";
+import { ComponentConfig } from "link";
 import { CLIError } from "../../errors";
 import {
     ProcessedComponent, Data, LinkConfig, ProcessedLinkConfig, Url, LinkProcessorModule
@@ -42,7 +42,7 @@ const processComponent = async (
                 const componentCode = await processor.process(component);
 
                 data.push({
-                    proccessor: processor.name,
+                    processor: processor.name,
                     lang: processor.getLang(),
                     description: componentCode.description,
                     snippet: componentCode.snippet
@@ -53,12 +53,12 @@ const processComponent = async (
         await Promise.all(processorPromises);
     }
 
-    const urlPaths: UrlPath = new Map<string, string>();
+    const urlPaths: Url[] = [];
     if (component.urlPaths) {
         component.urlPaths.forEach((url, type) => {
             const baseUrl = baseURLs.find(u => u.type === type);
             if (baseUrl) {
-                urlPaths.set(type, urljoin(baseUrl.url, url));
+                urlPaths.push({ name: baseUrl.name, type, url: urljoin(baseUrl.url, url) });
             }
         });
     }
