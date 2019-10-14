@@ -28,7 +28,6 @@ const updateProcessedComponents = async (processedLinkConfigList: ProcessedLinkC
 export interface LinkOptions {
     configFiles: string[];
     devMode: boolean;
-    workingDirectory: string;
     plugins: string[];
     authToken: string;
 }

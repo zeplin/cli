@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 import commander from "commander";
 
 import { defaults } from "./config/defaults";
@@ -30,7 +31,6 @@ program
         const linkOptions: LinkOptions = {
             configFiles: options.file,
             devMode: options.devMode,
-            workingDirectory: process.cwd(),
             plugins: options.plugin,
             authToken
         };

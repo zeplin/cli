@@ -2,9 +2,10 @@
   "name": "@zeplin/cli",
   "version": "1.0.0",
   "description": "Zeplin CLI",
-  "main": "dist/app.js",
+  "main": "./dist/src/app.js",
+  "types": "./src/types/index.d.ts",
   "bin": {
-    "zeplin": "dist/app.js"
+    "zeplin": "dist/src/app.js"
   },
   "scripts": {
     "test": "jest",
@@ -24,7 +25,6 @@
   },
   "homepage": "https://github.com/zeplin/zeplin-cli#readme",
   "devDependencies": {
-    "@types/axios": "^0.14.0",
     "@types/fs-extra": "^8.0.0",
     "@types/hapi__joi": "^15.0.4",
     "@types/inquirer": "^6.5.0",
