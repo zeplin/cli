@@ -2,8 +2,8 @@
   "name": "@zeplin/cli",
   "version": "1.0.0",
   "description": "Zeplin CLI",
-  "main": "./dist/src/app.js",
-  "types": "./src/types/index.d.ts",
+  "main": "./dist/src/app",
+  "types": "./dist/src/types/index",
   "bin": {
     "zeplin": "dist/src/app.js"
   },
