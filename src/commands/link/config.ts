@@ -1,6 +1,6 @@
 import Joi from "@hapi/joi";
 import * as fileUtil from "../../util/file";
-import { LinkConfig } from "./interfaces";
+import { ComponentConfigFile } from "./interfaces";
 import { CLIError } from "../../errors";
 
 const urlConfigSchema = Joi.object({
@@ -16,38 +16,38 @@ const componentConfigSchema = Joi.object({
     urlPaths: Joi.object().pattern(Joi.string(), Joi.string()).optional()
 });
 
-const linkConfigSchema = Joi.object({
+const componentConfigFileSchema = Joi.object({
     projects: Joi.array().items(Joi.string()).min(1).optional(),
     styleguides: Joi.array().items(Joi.string()).min(1).optional(),
     baseURLs: Joi.array().items(urlConfigSchema),
     components: Joi.array().items(componentConfigSchema)
 }).or("projects", "styleguides");
 
-const getLinkConfig = async (filePath: string): Promise<LinkConfig> => {
+const getComponentConfigFile = async (filePath: string): Promise<ComponentConfigFile> => {
     const file = await fileUtil.readJsonFile(filePath);
 
-    const { error, value } = linkConfigSchema.validate(file, { stripUnknown: true, presence: "required" });
+    const { error, value } = componentConfigFileSchema.validate(file, { stripUnknown: true, presence: "required" });
 
     if (error) {
         throw error;
     }
 
-    return value as LinkConfig;
+    return value as ComponentConfigFile;
 };
 
-const getLinkConfigs = async (configFiles: string[]): Promise<LinkConfig[]> => {
+const getComponentConfigFiles = async (configFilePaths: string[]): Promise<ComponentConfigFile[]> => {
     try {
-        const promises = configFiles.map(configFile => getLinkConfig(configFile));
+        const promises = configFilePaths.map(configFile => getComponentConfigFile(configFile));
 
-        const linkConfigs = await Promise.all(promises);
+        const configFiles = await Promise.all(promises);
 
-        return linkConfigs;
+        return configFiles;
     } catch (error) {
         throw new CLIError(error.message);
     }
 };
 
 export {
-    getLinkConfig,
-    getLinkConfigs
+    getComponentConfigFile,
+    getComponentConfigFiles
 };

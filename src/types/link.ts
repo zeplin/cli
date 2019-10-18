@@ -1,6 +1,6 @@
 export type UrlPath = Map<string, string>;
 
-export interface ComponentCode {
+export interface ComponentData {
     description: string;
     snippet: string;
 }
@@ -12,8 +12,8 @@ export interface ComponentConfig {
     urlPaths?: UrlPath;
 }
 
-export interface LinkProcessor {
-    process(context: ComponentConfig): Promise<ComponentCode>;
+export interface ZeplinLinkPlugin {
+    process(context: ComponentConfig): Promise<ComponentData>;
     supports(x: ComponentConfig): boolean;
     getLang(): string;
 }

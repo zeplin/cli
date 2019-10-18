@@ -1,11 +1,11 @@
-import { ComponentConfig, LinkProcessor } from "link";
+import { ComponentConfig, ZeplinLinkPlugin } from "link";
 
 export interface Url {
     name: string;
     type: string;
     url: string;
 }
-export interface LinkConfig {
+export interface ComponentConfigFile {
     projects?: string[];
     styleguides?: string[];
     baseURLs: Url[];
@@ -13,13 +13,13 @@ export interface LinkConfig {
 }
 
 export interface Data {
-    processor: string;
+    plugin: string;
     lang: string;
     description?: string;
     snippet?: string;
 }
 
-export interface ProcessedComponent {
+export interface LinkedComponent {
     path: string;
     zeplinNames: string[];
     name?: string;
@@ -27,16 +27,16 @@ export interface ProcessedComponent {
     data?: Data[];
 }
 
-export interface ProcessedComponentList {
-    components: ProcessedComponent[];
+export interface LinkedComponentList {
+    linkedComponents: LinkedComponent[];
 }
 
-export interface ProcessedLinkConfig {
+export interface LinkedBarrelComponents {
     projects?: string[];
     styleguides?: string[];
-    components: ProcessedComponent[];
+    linkedComponents: LinkedComponent[];
 }
 
-export interface LinkProcessorModule extends LinkProcessor {
+export interface ZeplinLinkPluginModule extends ZeplinLinkPlugin {
     name: string;
 }

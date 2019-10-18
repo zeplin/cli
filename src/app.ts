@@ -24,7 +24,7 @@ program
     .description("Link components to code")
     .option("-f, --file <file>", "Full path to components config file", collectionValue, [])
     .option("-d, --dev-mode", "Activate development mode", defaults.commands.link.devMode)
-    .option("-p, --plugin <plugin>", "NPM package name of a processor plugin", collectionValue, [])
+    .option("-p, --plugin <plugin>", "NPM package name of a Zeplin CLI link plugin", collectionValue, [])
     .action(commandRunner(async options => {
         const authToken = process.env.ZEPLIN_TOKEN || (await readAuthToken());
 
