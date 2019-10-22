@@ -1,6 +1,7 @@
 export type UrlPath = Map<string, string>;
 
 export interface ComponentData {
+    lang: string;
     description: string;
     snippet: string;
 }
@@ -15,5 +16,4 @@ export interface ComponentConfig {
 export interface ZeplinLinkPlugin {
     process(context: ComponentConfig): Promise<ComponentData>;
     supports(x: ComponentConfig): boolean;
-    getLang(): string;
 }

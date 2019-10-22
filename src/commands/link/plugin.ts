@@ -43,9 +43,7 @@ const linkComponentConfig = async (
 
                 data.push({
                     plugin: plugin.name,
-                    lang: plugin.getLang(),
-                    description: componentData.description,
-                    snippet: componentData.snippet
+                    ...componentData
                 });
             }
         });
