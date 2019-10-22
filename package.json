@@ -9,7 +9,9 @@
   },
   "scripts": {
     "test": "jest",
-    "lint": "eslint --ext .js,.ts ."
+    "build": "tsc",
+    "lint": "eslint --ext .js,.ts .",
+    "prepare": "npm run build"
   },
   "husky": {
     "hooks": {
