@@ -14,6 +14,7 @@
     "esModuleInterop": true,
     "moduleResolution": "node",
     "resolveJsonModule": true,
+    "preserveConstEnums": true,
     "baseUrl": ".",
     "paths": {
       "*": [
