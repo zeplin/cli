@@ -1,7 +1,9 @@
+import { PrismLang } from "prism";
+
 export type UrlPath = Map<string, string>;
 
 export interface ComponentData {
-    lang: string;
+    lang: PrismLang;
     description: string;
     snippet: string;
 }
