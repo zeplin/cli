@@ -1,4 +1,4 @@
-import { PrismLang } from "prism";
+import { PrismLang } from "./prism";
 
 export type UrlPath = Map<string, string>;
 
