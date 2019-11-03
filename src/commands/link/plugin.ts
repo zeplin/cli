@@ -56,8 +56,10 @@ const linkComponentConfig = async (
 
     const urlPaths: Url[] = [];
     if (component.urlPaths) {
-        component.urlPaths.forEach((url, type) => {
+        const configUrlPaths = component.urlPaths;
+        Object.keys(configUrlPaths).forEach(type => {
             const baseUrl = baseURLs.find(u => u.type === type);
+            const url = configUrlPaths[type];
             if (baseUrl) {
                 urlPaths.push({ name: baseUrl.name, type, url: urljoin(baseUrl.url, url) });
             }
