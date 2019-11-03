@@ -32,8 +32,8 @@ export interface LinkedComponentList {
 }
 
 export interface LinkedBarrelComponents {
-    projects?: string[];
-    styleguides?: string[];
+    projects: string[];
+    styleguides: string[];
     linkedComponents: LinkedComponent[];
 }
 
