@@ -1,6 +1,6 @@
 import { PrismLang } from "./prism";
 
-export type UrlPath = Map<string, string>;
+export type UrlPath = { [keys: string]: string };
 
 export interface ComponentData {
     lang: PrismLang;
