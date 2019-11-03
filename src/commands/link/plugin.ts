@@ -39,7 +39,10 @@ const linkComponentConfig = async (
         // Execute all language plugins on the component if supports
         const pluginPromises = plugins.map(async plugin => {
             if (plugin.supports(component)) {
-                const componentData = await plugin.process(component);
+                let componentData = await plugin.process(component);
+
+                // Remove undefined keys
+                componentData = JSON.parse(JSON.stringify(componentData));
 
                 data.push({
                     plugin: plugin.name,
