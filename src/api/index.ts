@@ -26,12 +26,12 @@ export class ZeplinApi {
 
     async uploadLinkedComponents(
         params: { barrelId: string; type: string },
-        request: LinkedComponentList
+        body: LinkedComponentList
     ): Promise<void> {
         try {
             const { barrelId, type } = params;
 
-            await this.axios.put(`/public/${type}/${barrelId}/componentcode`, request);
+            await this.axios.put(`/public/${type}/${barrelId}/componentcode`, body);
         } catch (error) {
             if (error.isAxiosError) {
                 throw new APIError(error.response);
