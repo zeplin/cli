@@ -84,8 +84,8 @@ const linkComponentConfigFile = async (
     );
 
     return {
-        projects: componentConfigFile.projects,
-        styleguides: componentConfigFile.styleguides,
+        projects: componentConfigFile.projects || [],
+        styleguides: componentConfigFile.styleguides || [],
         linkedComponents
     };
 };
