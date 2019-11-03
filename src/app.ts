@@ -7,8 +7,6 @@ import { link, LinkOptions } from "./commands/link";
 import { commandRunner } from "./util/command";
 import { readAuthToken } from "./util/auth-file";
 
-console.log(`Zeplin CLI - v${version}\n`);
-
 const program = new commander.Command();
 
 function collectionValue(value: string, previous: string[]): string[] {
@@ -19,25 +17,31 @@ program
     .name(Object.keys(bin)[0])
     .version(version);
 
-program
-    .command("link")
-    .description("Link components to code")
+const linkCommand = program.command("link");
+
+linkCommand.description("Link components to code")
     .option("-f, --file <file>", "Full path to components config file", collectionValue, [])
     .option("-d, --dev-mode", "Activate development mode", defaults.commands.link.devMode)
     .option("--port <port>", "Optional port number for development mode", defaults.commands.link.port)
     .option("-p, --plugin <plugin>", "NPM package name of a Zeplin CLI link plugin", collectionValue, [])
     .action(commandRunner(async options => {
-        const authToken = process.env.ZEPLIN_TOKEN || (await readAuthToken());
+        if (options.file.length === 0) {
+            console.error("Hey hey! We need a component config file to connect components!");
 
-        const linkOptions: LinkOptions = {
-            configFiles: options.file,
-            devMode: options.devMode,
-            plugins: options.plugin,
-            port: options.port,
-            authToken
-        };
+            linkCommand.outputHelp();
+        } else {
+            const authToken = process.env.ZEPLIN_TOKEN || (await readAuthToken());
 
-        await link(linkOptions);
+            const linkOptions: LinkOptions = {
+                configFiles: options.file,
+                devMode: options.devMode,
+                plugins: options.plugin,
+                port: options.port,
+                authToken
+            };
+
+            await link(linkOptions);
+        }
     }));
 
 program.on("command:*", () => {
