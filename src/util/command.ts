@@ -1,10 +1,8 @@
 const errorHandler = (error: Error): void => {
-    console.error(error.message);
-
     if (process.env.VERBOSE) {
         console.error(error);
     } else {
-        console.log("Use --verbose to print error stack trace.");
+        console.error(error.message);
     }
 
     process.exit(1);
