@@ -11,7 +11,7 @@ const urlConfigSchema = Joi.object({
 
 const componentConfigSchema = Joi.object({
     path: Joi.string(),
-    zeplinNames: Joi.array().items(Joi.string()),
+    zeplinNames: Joi.array().items(Joi.string()).min(1),
     name: Joi.string().optional(),
     urlPaths: Joi.object().pattern(Joi.string(), Joi.string()).optional()
 });
@@ -20,7 +20,7 @@ const componentConfigFileSchema = Joi.object({
     projects: Joi.array().items(Joi.string()).min(1).optional(),
     styleguides: Joi.array().items(Joi.string()).min(1).optional(),
     baseURLs: Joi.array().items(urlConfigSchema),
-    components: Joi.array().items(componentConfigSchema)
+    components: Joi.array().items(componentConfigSchema).min(1)
 }).or("projects", "styleguides");
 
 const getComponentConfigFile = async (filePath: string): Promise<ComponentConfigFile> => {
@@ -29,7 +29,7 @@ const getComponentConfigFile = async (filePath: string): Promise<ComponentConfig
     const { error, value } = componentConfigFileSchema.validate(file, { stripUnknown: true, presence: "required" });
 
     if (error) {
-        throw error;
+        throw new CLIError(`Oops! Looks like ${filePath} has some problems: ${error.message}`);
     }
 
     return value as ComponentConfigFile;
