@@ -37,13 +37,14 @@ export interface LinkOptions {
     devMode: boolean;
     port: number;
     plugins: string[];
-    authToken: string;
+    authToken?: string;
 }
 
 export async function link(options: LinkOptions): Promise<void> {
     const { configFiles, plugins, devMode, port } = options;
 
     const componentConfigFiles = await getComponentConfigFiles(configFiles);
+
     const pluginInstances = await importPlugins(plugins);
 
     const linkedBarrels = await linkComponentConfigFiles(componentConfigFiles, pluginInstances);
@@ -58,7 +59,9 @@ export async function link(options: LinkOptions): Promise<void> {
         console.log(`Development server is started on port ${port}!`);
     } else {
         console.log("Uploading all connected components into Zeplin...");
+
         await updateLinkedBarrels(linkedBarrels);
+
         console.log("Awesome! All components are successfully connected on Zeplin.");
     }
 }

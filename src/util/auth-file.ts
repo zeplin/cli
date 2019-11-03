@@ -14,10 +14,16 @@ export async function saveAuthToken(authToken: string): Promise<void> {
     await writeJsonIntoFile(tokenFilename, { authToken });
 }
 
-export async function readAuthToken(): Promise<string> {
+export async function readAuthToken(): Promise<string | undefined> {
     const tokenFilename = path.join(os.homedir(), TOKEN_FILE_NAME);
 
-    const { authToken } = await readJsonFile(tokenFilename) as AuthToken;
+    let authToken;
+
+    try {
+        ({ authToken } = await readJsonFile(tokenFilename) as AuthToken);
+    } catch (error) {
+        // Ignore
+    }
 
     return authToken;
 }
