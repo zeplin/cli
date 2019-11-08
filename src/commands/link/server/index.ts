@@ -35,7 +35,7 @@ export class DevServer {
             next();
         });
 
-        app.get("/:barrelId", async (req, res) => {
+        app.get("/:type/:barrelId/connectedcomponents", async (req, res) => {
             const { barrelId } = req.params;
 
             try {
