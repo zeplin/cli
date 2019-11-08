@@ -7,7 +7,24 @@ import { LinkedComponentList } from "../commands/link/interfaces";
 const LOGIN_URL = "/users/login";
 
 export class ZeplinApi {
-    axios: AxiosInstance = Axios.create(defaults.api);
+    axios: AxiosInstance = Axios.create({ baseURL: defaults.api.baseURL });
+    authToken: string | undefined;
+
+    constructor(params?: { baseURL?: string; authToken?: string }) {
+        if (params) {
+            if (params.baseURL) {
+                this.axios.defaults.baseURL = params.baseURL;
+            }
+
+            if (params.authToken) {
+                this.authToken = params.authToken;
+            }
+        }
+    }
+
+    setAuthToken(authToken: string): void {
+        this.authToken = authToken;
+    }
 
     async login(request: LoginRequest): Promise<LoginResponse> {
         try {
@@ -31,7 +48,13 @@ export class ZeplinApi {
         try {
             const { barrelId, type } = params;
 
-            await this.axios.put(`/public/${type}/${barrelId}/componentcode`, body);
+            await this.axios.put(
+                `/public/cli/${type}/${barrelId}/connectedcomponents`,
+                body,
+                {
+                    headers: { "Zeplin-Access-Token": this.authToken }
+                }
+            );
         } catch (error) {
             if (error.isAxiosError) {
                 throw new APIError(error.response);

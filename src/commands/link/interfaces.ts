@@ -28,13 +28,13 @@ export interface LinkedComponent {
 }
 
 export interface LinkedComponentList {
-    linkedComponents: LinkedComponent[];
+    connectedComponents: LinkedComponent[];
 }
 
 export interface LinkedBarrelComponents {
     projects: string[];
     styleguides: string[];
-    linkedComponents: LinkedComponent[];
+    connectedComponents: LinkedComponent[];
 }
 
 export interface ZeplinLinkPluginModule extends ZeplinLinkPlugin {

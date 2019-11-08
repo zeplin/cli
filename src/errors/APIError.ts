@@ -5,7 +5,7 @@ export class APIError extends Error {
         let message = `API Error: ${response.status}: ${response.statusText}`;
 
         if (response.data) {
-            message = `${response.data.title}: ${response.data.message}`;
+            message = `${response.status}: ${response.data.title}: ${response.data.message}`;
         }
 
         super(message);

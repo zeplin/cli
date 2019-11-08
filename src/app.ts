@@ -5,7 +5,6 @@ import { defaults } from "./config/defaults";
 import { bin, version } from "../package.json";
 import { link, LinkOptions } from "./commands/link";
 import { commandRunner } from "./util/command";
-import { readAuthToken } from "./util/auth-file";
 
 const program = new commander.Command();
 
@@ -16,6 +15,8 @@ function collectionValue(value: string, previous: string[]): string[] {
 program
     .name(Object.keys(bin)[0])
     .version(version);
+
+console.log(`Zeplin CLI - v${version}\n'`);
 
 const linkCommand = program.command("link");
 
@@ -30,14 +31,11 @@ linkCommand.description("Link components to code")
 
             linkCommand.outputHelp();
         } else {
-            const authToken = process.env.ZEPLIN_TOKEN || (await readAuthToken());
-
             const linkOptions: LinkOptions = {
                 configFiles: options.file,
                 devMode: options.devMode,
                 plugins: options.plugin,
-                port: options.port,
-                authToken
+                devModePort: options.port
             };
 
             await link(linkOptions);

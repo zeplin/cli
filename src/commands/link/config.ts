@@ -17,9 +17,9 @@ const componentConfigSchema = Joi.object({
 });
 
 const componentConfigFileSchema = Joi.object({
-    projects: Joi.array().items(Joi.string()).min(1).optional(),
-    styleguides: Joi.array().items(Joi.string()).min(1).optional(),
-    baseURLs: Joi.array().items(urlConfigSchema),
+    projects: Joi.array().items(Joi.string()).optional(),
+    styleguides: Joi.array().items(Joi.string()).optional(),
+    baseURLs: Joi.array().items(urlConfigSchema).optional(),
     components: Joi.array().items(componentConfigSchema).min(1)
 }).or("projects", "styleguides");
 
