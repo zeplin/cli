@@ -1,4 +1,4 @@
-import { ComponentConfig } from "link";
+import { ComponentConfig, ComponentData } from "link";
 import { CLIError } from "../../errors";
 import {
     LinkedComponent, Data, ComponentConfigFile, LinkedBarrelComponents, Url, ZeplinLinkPluginModule
@@ -11,6 +11,18 @@ interface ZeplinLinkPluginConstructor {
 
 // Helper method to initialize plugin classses
 const constructLinkPlugin = (Constructor: ZeplinLinkPluginConstructor): ZeplinLinkPluginModule => new Constructor();
+
+const removeEmptyFields = (componentData: ComponentData): ComponentData => {
+    if (typeof componentData.description === "undefined" || componentData.description.trim() === "") {
+        delete componentData.description;
+    }
+
+    if (typeof componentData.snippet === "undefined" || componentData.snippet.trim() === "") {
+        delete componentData.snippet;
+    }
+
+    return componentData;
+};
 
 const importPlugins = async (plugins: string[]): Promise<ZeplinLinkPluginModule[]> => {
     try {
@@ -39,14 +51,11 @@ const linkComponentConfig = async (
         // Execute all language plugins on the component if supports
         const pluginPromises = plugins.map(async plugin => {
             if (plugin.supports(component)) {
-                let componentData = await plugin.process(component);
-
-                // Remove undefined keys
-                componentData = JSON.parse(JSON.stringify(componentData));
+                const componentData = await plugin.process(component);
 
                 data.push({
                     plugin: plugin.name,
-                    ...componentData
+                    ...removeEmptyFields(componentData)
                 });
             }
         });
@@ -88,7 +97,7 @@ const linkComponentConfigFile = async (
     return {
         projects: componentConfigFile.projects || [],
         styleguides: componentConfigFile.styleguides || [],
-        linkedComponents
+        connectedComponents: linkedComponents
     };
 };
 

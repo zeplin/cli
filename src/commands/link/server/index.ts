@@ -18,7 +18,7 @@ export class DevServer {
                 linkedBarrel.styleguides.find(stid => stid === barrelId));
 
             if (found) {
-                resolve(found.linkedComponents);
+                resolve(found.connectedComponents);
             } else {
                 reject(new Error("Components could not be found for the requested project or styleguide."));
             }
@@ -39,11 +39,11 @@ export class DevServer {
             const { barrelId } = req.params;
 
             try {
-                const linkedComponents = await this.getLinkedComponents(barrelId);
+                const connectedComponents = await this.getLinkedComponents(barrelId);
 
-                return res.status(HTTP_OK).json({ linkedComponents });
+                return res.status(HTTP_OK).json({ connectedComponents });
             } catch (error) {
-                return res.status(HTTP_OK).json({ linkedComponents: null }); // TODO: should return 404?
+                return res.status(HTTP_OK).json({ connectedComponents: null }); // TODO: should return 404?
             }
         });
 

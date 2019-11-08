@@ -4,8 +4,8 @@ export type UrlPath = { [keys: string]: string };
 
 export interface ComponentData {
     lang: PrismLang;
-    description: string;
-    snippet: string;
+    description?: string;
+    snippet?: string;
 }
 
 export interface ComponentConfig {

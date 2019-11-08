@@ -4,6 +4,7 @@ import { importPlugins, linkComponentConfigFiles } from "./plugin";
 import { ZeplinApi } from "../../api";
 import { LinkedBarrelComponents } from "./interfaces";
 import { DevServer } from "./server";
+import { AuthenticationService } from "../../service";
 
 const zeplinApi = new ZeplinApi();
 
@@ -14,7 +15,7 @@ const updateLinkedBarrels = async (linkedBarrelComponents: LinkedBarrelComponent
             await Promise.all(linkedBarrelComponent.projects.map(async pid => {
                 await zeplinApi.uploadLinkedComponents(
                     { barrelId: pid, type: "projects" },
-                    { linkedComponents: linkedBarrelComponent.linkedComponents }
+                    { connectedComponents: linkedBarrelComponent.connectedComponents }
                 );
             }));
         }
@@ -23,7 +24,7 @@ const updateLinkedBarrels = async (linkedBarrelComponents: LinkedBarrelComponent
             await Promise.all(linkedBarrelComponent.styleguides.map(async stid => {
                 await zeplinApi.uploadLinkedComponents(
                     { barrelId: stid, type: "styleguides" },
-                    { linkedComponents: linkedBarrelComponent.linkedComponents }
+                    { connectedComponents: linkedBarrelComponent.connectedComponents }
                 );
             }));
         }
@@ -35,13 +36,17 @@ const updateLinkedBarrels = async (linkedBarrelComponents: LinkedBarrelComponent
 export interface LinkOptions {
     configFiles: string[];
     devMode: boolean;
-    port: number;
+    devModePort: number;
     plugins: string[];
-    authToken?: string;
 }
 
 export async function link(options: LinkOptions): Promise<void> {
-    const { configFiles, plugins, devMode, port } = options;
+    const {
+        configFiles,
+        plugins,
+        devMode,
+        devModePort
+    } = options;
 
     const componentConfigFiles = await getComponentConfigFiles(configFiles);
 
@@ -54,11 +59,18 @@ export async function link(options: LinkOptions): Promise<void> {
 
         const devServer = new DevServer(linkedBarrels);
 
-        await devServer.start(port);
+        await devServer.start(devModePort);
 
-        console.log(`Development server is started on port ${port}!`);
+        console.log(`Development server is started on port ${devModePort}!`);
     } else {
         console.log("Uploading all connected components into Zeplin...");
+
+        // TODO refactor move to apiService
+        const authService = new AuthenticationService();
+
+        const authToken = await authService.authenticate();
+
+        zeplinApi.setAuthToken(authToken);
 
         await updateLinkedBarrels(linkedBarrels);
 

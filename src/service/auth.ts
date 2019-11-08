@@ -63,7 +63,7 @@ export class AuthenticationService {
                 type: "input",
                 name: "handle",
                 message: "Username/Email",
-                validate: notEmptyValidator("Please enter username or email.")
+                validate: notEmptyValidator("Please enter your username or email.")
             },
             {
                 type: "password",
