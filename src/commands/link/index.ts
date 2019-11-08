@@ -66,7 +66,7 @@ export async function link(options: LinkOptions): Promise<void> {
         console.log("Uploading all connected components into Zeplin...");
 
         // TODO refactor move to apiService
-        const authService = new AuthenticationService();
+        const authService = new AuthenticationService({ token: process.env.AUTH_TOKEN });
 
         const authToken = await authService.authenticate();
 
