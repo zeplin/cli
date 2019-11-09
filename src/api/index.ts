@@ -1,29 +1,21 @@
-import Axios, { AxiosInstance } from "axios";
+import Axios, { AxiosInstance, AxiosRequestConfig } from "axios";
 import { defaults } from "../config/defaults";
 import { LoginRequest, LoginResponse } from "./interfaces";
 import { APIError, CLIError } from "../errors";
 import { LinkedComponentList } from "../commands/link/interfaces";
 
 const LOGIN_URL = "/users/login";
+const AUTHORIZE_URL = "/oauth/authorize";
+
+type BarrelType = "projects" | "styleguides";
 
 export class ZeplinApi {
     axios: AxiosInstance = Axios.create({ baseURL: defaults.api.baseURL });
-    authToken: string | undefined;
 
-    constructor(params?: { baseURL?: string; authToken?: string }) {
-        if (params) {
-            if (params.baseURL) {
-                this.axios.defaults.baseURL = params.baseURL;
-            }
-
-            if (params.authToken) {
-                this.authToken = params.authToken;
-            }
+    constructor(config?: AxiosRequestConfig) {
+        if (config) {
+            Object.assign(this.axios.defaults, config);
         }
-    }
-
-    setAuthToken(authToken: string): void {
-        this.authToken = authToken;
     }
 
     async login(request: LoginRequest): Promise<LoginResponse> {
@@ -41,18 +33,42 @@ export class ZeplinApi {
         }
     }
 
+    async generateToken(zeplinToken: string): Promise<string> {
+        try {
+            const response = await this.axios.get(AUTHORIZE_URL, {
+                params: {
+                    client_id: defaults.api.clientId,
+                    response_type: "token",
+                    scope: "write"
+                },
+                headers: { "Zeplin-Token": zeplinToken },
+                maxRedirects: 0
+            });
+
+            const responseParams = new URLSearchParams(response.data.split("?"));
+
+            return responseParams.get("access_token") as string;
+        } catch (error) {
+            if (error.isAxiosError) {
+                throw new APIError(error.response);
+            }
+            throw new CLIError(error.message);
+        }
+    }
+
     async uploadLinkedComponents(
-        params: { barrelId: string; type: string },
+        authToken: string,
+        params: { barrelId: string; barrelType: BarrelType },
         body: LinkedComponentList
     ): Promise<void> {
         try {
-            const { barrelId, type } = params;
+            const { barrelId, barrelType } = params;
 
             await this.axios.put(
-                `/public/cli/${type}/${barrelId}/connectedcomponents`,
+                `/public/cli/${barrelType}/${barrelId}/connectedcomponents`,
                 body,
                 {
-                    headers: { "Zeplin-Access-Token": this.authToken }
+                    headers: { "Zeplin-Access-Token": authToken }
                 }
             );
         } catch (error) {

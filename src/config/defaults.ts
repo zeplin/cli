@@ -7,6 +7,7 @@ export const defaults = {
         }
     },
     api: {
-        baseURL: process.env.API_BASE_URL || "https://api.zeplin.io"
+        baseURL: process.env.API_BASE_URL || "https://api.zeplin.io",
+        clientId: "5d78a9f01b4e9c0a1e9b505b"
     }
 };
