@@ -22,13 +22,13 @@ Placeholder description here.
 zeplin connect
 ```
 
-| Options               | Description                                  | Default                 |
-|-----------------------|----------------------------------------------|-------------------------|
-| -f, --file <file>     | Full path to components config file          | .zeplin/components.json |
-| -d, --dev-mode        | Activate development mode                    | false                   |
-| --port <port>         | Optional port number for development mode    | 9756                    |
-| -p, --plugin <plugin> | NPM package name of a Zeplin CLI link plugin |                         |
-| -h, --help            | output usage information                     |                         |
+| Options               | Description                                     | Default                 |
+|-----------------------|-------------------------------------------------|-------------------------|
+| -f, --file <file>     | Full path to components config file             | .zeplin/components.json |
+| -d, --dev-mode        | Activate development mode                       | false                   |
+| --port <port>         | Optional port number for development mode       | 9756                    |
+| -p, --plugin <plugin> | NPM package name of a Zeplin CLI connect plugin |                         |
+| -h, --help            | output usage information                        |                         |
 
 #### Examples:
 

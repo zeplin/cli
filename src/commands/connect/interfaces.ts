@@ -1,4 +1,4 @@
-import { ComponentConfig, ZeplinLinkPlugin } from "link";
+import { ComponentConfig, ConnectPlugin } from "connect-plugin";
 
 export interface Url {
     name: string;
@@ -19,7 +19,7 @@ export interface Data {
     snippet?: string;
 }
 
-export interface LinkedComponent {
+export interface ConnectedComponent {
     path: string;
     zeplinNames: string[];
     name?: string;
@@ -27,16 +27,16 @@ export interface LinkedComponent {
     data?: Data[];
 }
 
-export interface LinkedComponentList {
-    connectedComponents: LinkedComponent[];
+export interface ConnectedComponentList {
+    connectedComponents: ConnectedComponent[];
 }
 
-export interface LinkedBarrelComponents {
+export interface ConnectedBarrelComponents {
     projects: string[];
     styleguides: string[];
-    connectedComponents: LinkedComponent[];
+    connectedComponents: ConnectedComponent[];
 }
 
-export interface ZeplinLinkPluginModule extends ZeplinLinkPlugin {
+export interface ConnectPluginModule extends ConnectPlugin {
     name: string;
 }

@@ -2,7 +2,7 @@ import Axios, { AxiosInstance, AxiosRequestConfig } from "axios";
 import { defaults } from "../config/defaults";
 import { LoginRequest, LoginResponse } from "./interfaces";
 import { APIError, CLIError } from "../errors";
-import { LinkedComponentList } from "../commands/link/interfaces";
+import { ConnectedComponentList } from "../commands/connect/interfaces";
 
 const LOGIN_URL = "/users/login";
 const AUTHORIZE_URL = "/oauth/authorize";
@@ -56,10 +56,10 @@ export class ZeplinApi {
         }
     }
 
-    async uploadLinkedComponents(
+    async uploadConnectedComponents(
         authToken: string,
         params: { barrelId: string; barrelType: BarrelType },
-        body: LinkedComponentList
+        body: ConnectedComponentList
     ): Promise<void> {
         try {
             const { barrelId, barrelType } = params;
