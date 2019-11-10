@@ -1,6 +1,6 @@
 export const defaults = {
     commands: {
-        link: {
+        connect: {
             filePath: ".zeplin/components.json",
             devMode: false,
             port: 9756

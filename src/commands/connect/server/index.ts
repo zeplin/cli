@@ -1,19 +1,19 @@
 import express from "express";
-import { LinkedBarrelComponents, LinkedComponent } from "../interfaces";
+import { ConnectedBarrelComponents, ConnectedComponent } from "../interfaces";
 import { CLIError } from "../../../errors";
 import { OK } from "http-status-codes";
 
-export class DevServer {
-    linkedBarrels: LinkedBarrelComponents[] = [];
+export class ConnectDevServer {
+    connectedBarrels: ConnectedBarrelComponents[] = [];
 
-    constructor(linkedBarrels: LinkedBarrelComponents[]) {
-        this.linkedBarrels = linkedBarrels;
+    constructor(connectedBarrels: ConnectedBarrelComponents[]) {
+        this.connectedBarrels = connectedBarrels;
     }
 
-    getLinkedComponents(barrelId: string): LinkedComponent[] | null {
-        const found = this.linkedBarrels.find(linkedBarrel =>
-            linkedBarrel.projects.find(pid => pid === barrelId) ||
-            linkedBarrel.styleguides.find(stid => stid === barrelId));
+    getConnectedComponents(barrelId: string): ConnectedComponent[] | null {
+        const found = this.connectedBarrels.find(connectedBarrel =>
+            connectedBarrel.projects.find(pid => pid === barrelId) ||
+            connectedBarrel.styleguides.find(stid => stid === barrelId));
 
         return found ? found.connectedComponents : null;
     }
@@ -31,7 +31,7 @@ export class DevServer {
         app.get("/public/cli/:type/:barrelId/connectedcomponents", (req, res) => {
             const { barrelId } = req.params;
 
-            const connectedComponents = this.getLinkedComponents(barrelId);
+            const connectedComponents = this.getConnectedComponents(barrelId);
 
             return res.status(OK).json({ connectedComponents });
         });

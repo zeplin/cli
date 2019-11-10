@@ -1,17 +1,17 @@
 
 import { getComponentConfigFiles } from "./config";
-import { importPlugins, linkComponentConfigFiles } from "./plugin";
-import { DevServer } from "./server";
+import { importPlugins, connectComponentConfigFiles } from "./plugin";
+import { ConnectDevServer } from "./server";
 import { ConnectedComponentsService } from "./service";
 
-export interface LinkOptions {
+export interface ConnectOptions {
     configFiles: string[];
     devMode: boolean;
     devModePort: number;
     plugins: string[];
 }
 
-export async function link(options: LinkOptions): Promise<void> {
+export async function connect(options: ConnectOptions): Promise<void> {
     const {
         configFiles,
         plugins,
@@ -23,12 +23,12 @@ export async function link(options: LinkOptions): Promise<void> {
 
     const pluginInstances = await importPlugins(plugins);
 
-    const linkedBarrels = await linkComponentConfigFiles(componentConfigFiles, pluginInstances);
+    const connectedBarrels = await connectComponentConfigFiles(componentConfigFiles, pluginInstances);
 
     if (devMode) {
         console.log("Starting development server...");
 
-        const devServer = new DevServer(linkedBarrels);
+        const devServer = new ConnectDevServer(connectedBarrels);
 
         await devServer.start(devModePort);
 
@@ -38,9 +38,9 @@ export async function link(options: LinkOptions): Promise<void> {
 
         const service = new ConnectedComponentsService();
 
-        await service.uploadLinkedBarrels(linkedBarrels);
+        await service.uploadConnectedBarrels(connectedBarrels);
 
-        // Await updateLinkedBarrels(linkedBarrels);
+        // Await updateConnectedBarrels(connectedBarrels);
 
         console.log("Awesome! All components are successfully connected on Zeplin.");
     }

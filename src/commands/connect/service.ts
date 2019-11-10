@@ -1,6 +1,6 @@
 import { ZeplinApi } from "../../api";
 import { AuthenticationService } from "../../service/auth";
-import { LinkedBarrelComponents } from "./interfaces";
+import { ConnectedBarrelComponents } from "./interfaces";
 import { APIError } from "../../errors";
 import { isCI } from "../../util/env";
 import { UNAUTHORIZED } from "http-status-codes";
@@ -15,18 +15,18 @@ export class ConnectedComponentsService {
         this.authService = new AuthenticationService();
     }
 
-    async uploadLinkedBarrels(linkedBarrelComponents: LinkedBarrelComponents[]): Promise<void> {
+    async uploadConnectedBarrels(connectedBarrelComponents: ConnectedBarrelComponents[]): Promise<void> {
         try {
             const authToken = await this.authService.authenticate();
 
-            await this.upload(authToken, linkedBarrelComponents);
+            await this.upload(authToken, connectedBarrelComponents);
         } catch (error) {
             if (APIError.isAPIError(error)) {
                 if (error.status === UNAUTHORIZED && !isCI()) {
                     console.log("Authentication token is invalid.");
                     const authToken = await this.authService.promptForLogin();
 
-                    await this.upload(authToken, linkedBarrelComponents);
+                    await this.upload(authToken, connectedBarrelComponents);
                 }
             }
             throw error;
@@ -35,26 +35,26 @@ export class ConnectedComponentsService {
 
     private async upload(
         authToken: string,
-        linkedBarrelComponents: LinkedBarrelComponents[]
+        connectedBarrelComponents: ConnectedBarrelComponents[]
     ): Promise<void> {
-        await Promise.all(linkedBarrelComponents.map(async linkedBarrelComponent => {
+        await Promise.all(connectedBarrelComponents.map(async connectedBarrelComponent => {
             // TODO upload progress on console
-            if (linkedBarrelComponent.projects) {
-                await Promise.all(linkedBarrelComponent.projects.map(async pid => {
-                    await this.zeplinApi.uploadLinkedComponents(
+            if (connectedBarrelComponent.projects) {
+                await Promise.all(connectedBarrelComponent.projects.map(async pid => {
+                    await this.zeplinApi.uploadConnectedComponents(
                         authToken,
                         { barrelId: pid, barrelType: "projects" },
-                        { connectedComponents: linkedBarrelComponent.connectedComponents }
+                        { connectedComponents: connectedBarrelComponent.connectedComponents }
                     );
                 }));
             }
 
-            if (linkedBarrelComponent.styleguides) {
-                await Promise.all(linkedBarrelComponent.styleguides.map(async stid => {
-                    await this.zeplinApi.uploadLinkedComponents(
+            if (connectedBarrelComponent.styleguides) {
+                await Promise.all(connectedBarrelComponent.styleguides.map(async stid => {
+                    await this.zeplinApi.uploadConnectedComponents(
                         authToken,
                         { barrelId: stid, barrelType: "styleguides" },
-                        { connectedComponents: linkedBarrelComponent.connectedComponents }
+                        { connectedComponents: connectedBarrelComponent.connectedComponents }
                     );
                 }));
             }

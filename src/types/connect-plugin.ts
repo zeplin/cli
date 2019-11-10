@@ -15,7 +15,7 @@ export interface ComponentConfig {
     urlPaths?: UrlPath;
 }
 
-export interface ZeplinLinkPlugin {
+export interface ConnectPlugin {
     process(context: ComponentConfig): Promise<ComponentData>;
     supports(x: ComponentConfig): boolean;
 }

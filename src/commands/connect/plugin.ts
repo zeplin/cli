@@ -1,16 +1,16 @@
-import { ComponentConfig, ComponentData } from "link";
+import { ComponentConfig, ComponentData } from "connect-plugin";
 import { CLIError } from "../../errors";
 import {
-    LinkedComponent, Data, ComponentConfigFile, LinkedBarrelComponents, Url, ZeplinLinkPluginModule
+    ConnectedComponent, Data, ComponentConfigFile, ConnectedBarrelComponents, Url, ConnectPluginModule
 } from "./interfaces";
 import urljoin from "url-join";
 
-interface ZeplinLinkPluginConstructor {
-    new(): ZeplinLinkPluginModule;
+interface ConnectPluginConstructor {
+    new(): ConnectPluginModule;
 }
 
 // Helper method to initialize plugin classses
-const constructLinkPlugin = (Constructor: ZeplinLinkPluginConstructor): ZeplinLinkPluginModule => new Constructor();
+const constructConnectPlugin = (Constructor: ConnectPluginConstructor): ConnectPluginModule => new Constructor();
 
 const removeEmptyFields = (componentData: ComponentData): ComponentData => {
     if (typeof componentData.description === "undefined" || componentData.description.trim() === "") {
@@ -24,14 +24,14 @@ const removeEmptyFields = (componentData: ComponentData): ComponentData => {
     return componentData;
 };
 
-const importPlugins = async (plugins: string[]): Promise<ZeplinLinkPluginModule[]> => {
+const importPlugins = async (plugins: string[]): Promise<ConnectPluginModule[]> => {
     try {
         const imports = plugins.map(async moduleName => {
-            const linkPluginConstructor = (await import(moduleName)).default as ZeplinLinkPluginConstructor;
+            const connectPluginConstructor = (await import(moduleName)).default as ConnectPluginConstructor;
 
-            const linkPluginInstance = constructLinkPlugin(linkPluginConstructor);
-            linkPluginInstance.name = moduleName;
-            return linkPluginInstance;
+            const connectPluginInstance = constructConnectPlugin(connectPluginConstructor);
+            connectPluginInstance.name = moduleName;
+            return connectPluginInstance;
         });
 
         const pluginInstances = await Promise.all(imports);
@@ -41,11 +41,11 @@ const importPlugins = async (plugins: string[]): Promise<ZeplinLinkPluginModule[
     }
 };
 
-const linkComponentConfig = async (
+const connectComponentConfig = async (
     component: ComponentConfig,
     baseURLs: Url[],
-    plugins: ZeplinLinkPluginModule[]
-): Promise<LinkedComponent> => {
+    plugins: ConnectPluginModule[]
+): Promise<ConnectedComponent> => {
     const data: Data[] = [];
     if (plugins.length > 0) {
         // Execute all language plugins on the component if supports
@@ -81,32 +81,32 @@ const linkComponentConfig = async (
         zeplinNames: component.zeplinNames,
         urlPaths,
         data
-    } as LinkedComponent;
+    } as ConnectedComponent;
 };
 
-const linkComponentConfigFile = async (
+const connectComponentConfigFile = async (
     componentConfigFile: ComponentConfigFile,
-    linkPlugins: ZeplinLinkPluginModule[]
-): Promise<LinkedBarrelComponents> => {
-    const linkedComponents = await Promise.all(
+    connectPlugins: ConnectPluginModule[]
+): Promise<ConnectedBarrelComponents> => {
+    const connectedComponents = await Promise.all(
         componentConfigFile.components.map(component =>
-            linkComponentConfig(component, componentConfigFile.baseURLs, linkPlugins)
+            connectComponentConfig(component, componentConfigFile.baseURLs, connectPlugins)
         )
     );
 
     return {
         projects: componentConfigFile.projects || [],
         styleguides: componentConfigFile.styleguides || [],
-        connectedComponents: linkedComponents
+        connectedComponents
     };
 };
 
-const linkComponentConfigFiles = (
+const connectComponentConfigFiles = (
     componentConfigFiles: ComponentConfigFile[],
-    pluginModules: ZeplinLinkPluginModule[]
-): Promise<LinkedBarrelComponents[]> => {
+    pluginModules: ConnectPluginModule[]
+): Promise<ConnectedBarrelComponents[]> => {
     const promises = componentConfigFiles.map(componentConfigFile =>
-        linkComponentConfigFile(componentConfigFile, pluginModules)
+        connectComponentConfigFile(componentConfigFile, pluginModules)
     );
 
     return Promise.all(promises);
@@ -114,5 +114,5 @@ const linkComponentConfigFiles = (
 
 export {
     importPlugins,
-    linkComponentConfigFiles
+    connectComponentConfigFiles
 };
