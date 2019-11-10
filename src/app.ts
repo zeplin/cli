@@ -16,7 +16,7 @@ program
     .name(Object.keys(bin)[0])
     .version(version);
 
-console.log(`Zeplin CLI - v${version}\n'`);
+console.log(`Zeplin CLI - v${version}\n`);
 
 const linkCommand = program.command("link");
 
