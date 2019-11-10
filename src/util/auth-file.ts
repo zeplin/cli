@@ -11,7 +11,12 @@ interface AuthToken {
 export async function saveAuthToken(authToken: string): Promise<void> {
     const tokenFilename = path.join(os.homedir(), TOKEN_FILE_NAME);
 
-    await writeJsonIntoFile(tokenFilename, { authToken });
+    try {
+        await writeJsonIntoFile(tokenFilename, { authToken });
+    } catch (error) {
+        // Ignore
+        // TODO add logging utility for verbose logs
+    }
 }
 
 export async function readAuthToken(): Promise<string | undefined> {
@@ -23,6 +28,7 @@ export async function readAuthToken(): Promise<string | undefined> {
         ({ authToken } = await readJsonFile(tokenFilename) as AuthToken);
     } catch (error) {
         // Ignore
+        // TODO add logging utility for verbose logs
     }
 
     return authToken;
