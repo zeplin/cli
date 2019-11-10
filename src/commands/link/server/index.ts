@@ -1,8 +1,7 @@
 import express from "express";
 import { LinkedBarrelComponents, LinkedComponent } from "../interfaces";
 import { CLIError } from "../../../errors";
-
-const HTTP_OK = 200;
+import { OK } from "http-status-codes";
 
 export class DevServer {
     linkedBarrels: LinkedBarrelComponents[] = [];
@@ -11,18 +10,12 @@ export class DevServer {
         this.linkedBarrels = linkedBarrels;
     }
 
-    getLinkedComponents(barrelId: string): Promise<LinkedComponent[]> {
-        return new Promise((resolve, reject): void => {
-            const found = this.linkedBarrels.find(linkedBarrel =>
-                linkedBarrel.projects.find(pid => pid === barrelId) ||
-                linkedBarrel.styleguides.find(stid => stid === barrelId));
+    getLinkedComponents(barrelId: string): LinkedComponent[] | null {
+        const found = this.linkedBarrels.find(linkedBarrel =>
+            linkedBarrel.projects.find(pid => pid === barrelId) ||
+            linkedBarrel.styleguides.find(stid => stid === barrelId));
 
-            if (found) {
-                resolve(found.connectedComponents);
-            } else {
-                reject(new Error("Components could not be found for the requested project or styleguide."));
-            }
-        });
+        return found ? found.connectedComponents : null;
     }
 
     start(port: number): Promise<void> {
@@ -35,16 +28,12 @@ export class DevServer {
             next();
         });
 
-        app.get("/:type/:barrelId/connectedcomponents", async (req, res) => {
+        app.get("/public/cli/:type/:barrelId/connectedcomponents", (req, res) => {
             const { barrelId } = req.params;
 
-            try {
-                const connectedComponents = await this.getLinkedComponents(barrelId);
+            const connectedComponents = this.getLinkedComponents(barrelId);
 
-                return res.status(HTTP_OK).json({ connectedComponents });
-            } catch (error) {
-                return res.status(HTTP_OK).json({ connectedComponents: null }); // TODO: should return 404?
-            }
+            return res.status(OK).json({ connectedComponents });
         });
 
         const promise = new Promise<void>((resolve, reject): void => {
