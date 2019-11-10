@@ -1,6 +1,6 @@
 import { CLIError } from ".";
 
-export class JWTError extends CLIError {
+export class AuthError extends CLIError {
     constructor(msg: string) {
         super(msg);
     }
