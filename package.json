@@ -21,12 +21,12 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/zeplin/zeplin-cli.git"
+    "url": "git+https://github.com/zeplin/cli.git"
   },
   "bugs": {
-    "url": "https://github.com/zeplin/zeplin-cli/issues"
+    "url": "https://github.com/zeplin/cli/issues"
   },
-  "homepage": "https://github.com/zeplin/zeplin-cli#readme",
+  "homepage": "https://github.com/zeplin/cli#readme",
   "devDependencies": {
     "@types/express": "^4.17.2",
     "@types/fs-extra": "^8.0.0",
