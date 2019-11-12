@@ -3,6 +3,7 @@ import { defaults } from "../config/defaults";
 import { LoginRequest, LoginResponse } from "./interfaces";
 import { APIError, CLIError } from "../errors";
 import { ConnectedComponentList } from "../commands/connect/interfaces";
+import { MOVED_TEMPORARILY } from "http-status-codes";
 
 const LOGIN_URL = "/users/login";
 const AUTHORIZE_URL = "/oauth/authorize";
@@ -42,10 +43,13 @@ export class ZeplinApi {
                     scope: "write"
                 },
                 headers: { "Zeplin-Token": zeplinToken },
-                maxRedirects: 0
+                maxRedirects: 0,
+                validateStatus: (status: number) => status === MOVED_TEMPORARILY
             });
 
-            const responseParams = new URLSearchParams(response.data.split("?"));
+            const [, responseQueryParams] = response.data.split("?");
+
+            const responseParams = new URLSearchParams(responseQueryParams);
 
             return responseParams.get("access_token") as string;
         } catch (error) {
