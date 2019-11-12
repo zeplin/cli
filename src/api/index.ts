@@ -4,6 +4,7 @@ import { LoginRequest, LoginResponse } from "./interfaces";
 import { APIError, CLIError } from "../errors";
 import { ConnectedComponentList } from "../commands/connect/interfaces";
 import { MOVED_TEMPORARILY } from "http-status-codes";
+import { URLSearchParams } from "url";
 
 const LOGIN_URL = "/users/login";
 const AUTHORIZE_URL = "/oauth/authorize";
