@@ -28,8 +28,9 @@ export class ConnectedComponentsService {
 
                     await this.upload(authToken, connectedBarrelComponents);
                 }
+            } else {
+                throw error;
             }
-            throw error;
         }
     }
 
