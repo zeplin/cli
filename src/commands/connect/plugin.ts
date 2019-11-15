@@ -47,7 +47,7 @@ const connectComponentConfig = async (
     plugins: ConnectPluginModule[]
 ): Promise<ConnectedComponent> => {
     const data: Data[] = [];
-    if (plugins.length > 0) {      9              
+    if (plugins.length > 0) {
         // Execute all language plugins on the component if supports
         const pluginPromises = plugins.map(async plugin => {
             if (plugin.supports(component)) {
