@@ -28,7 +28,7 @@ export class ConnectDevServer {
             next();
         });
 
-        app.get("/public/cli/:type/:barrelId/connectedcomponents", (req, res) => {
+        app.get("/:type/:barrelId/connectedcomponents", (req, res) => {
             const { barrelId } = req.params;
 
             const connectedComponents = this.getConnectedComponents(barrelId);
