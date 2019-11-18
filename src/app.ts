@@ -8,13 +8,23 @@ import { commandRunner } from "./util/command";
 
 const program = new commander.Command();
 
-function collectionValue(value: string, previous: string[]): string[] {
-    // Replace default value
-    if (previous.length === 1 && previous[0] === defaults.commands.connect.filePath[0]) {
-        return [value];
+function createCollector(): (arg1: string, arg2: string[]) => string[] {
+    let cleared = false;
+
+    function collectionValue(value: string, previous: string[]): string[] {
+        // Clear default values on first call
+        if (!cleared) {
+            while (previous.length > 0) {
+                previous.pop();
+            }
+
+            cleared = true;
+        }
+
+        return previous.concat([value]);
     }
 
-    return previous.concat([value]);
+    return collectionValue;
 }
 
 program
@@ -26,10 +36,10 @@ console.log(`Zeplin CLI - v${version}\n`);
 const connectCommand = program.command("connect");
 
 connectCommand.description("Connect components to code")
-    .option("-f, --file <file>", "Full path to components file", collectionValue, defaults.commands.connect.filePath)
+    .option("-f, --file <file>", "Full path to components file", createCollector(), defaults.commands.connect.filePath)
     .option("-d, --dev-mode", "Activate development mode", defaults.commands.connect.devMode)
     .option("--port <port>", "Optional port number for development mode", defaults.commands.connect.port)
-    .option("-p, --plugin <plugin>", "NPM package name of a Zeplin CLI connect plugin", collectionValue, [])
+    .option("-p, --plugin <plugin>", "NPM package name of a Zeplin CLI connect plugin", createCollector(), [])
     .action(commandRunner(async options => {
         const connectOptions: ConnectOptions = {
             configFiles: options.file,
