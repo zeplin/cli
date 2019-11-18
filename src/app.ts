@@ -4,6 +4,7 @@ import commander from "commander";
 import { defaults } from "./config/defaults";
 import { bin, version } from "../package.json";
 import { connect, ConnectOptions } from "./commands/connect";
+import { login } from "./commands/login";
 import { commandRunner } from "./util/command";
 
 const program = new commander.Command();
@@ -50,6 +51,9 @@ connectCommand.description("Connect components to code")
 
         await connect(connectOptions);
     }));
+
+program.command("login")
+    .action(commandRunner(login));
 
 program.on("command:*", () => {
     program.outputHelp();

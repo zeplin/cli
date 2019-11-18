@@ -46,7 +46,9 @@ export class AuthenticationService {
                 this.authToken = tokenFromFile;
             } else {
                 console.log("Looks like no authentication token has been found in the environment.");
-                await this.promptForLogin();
+                this.authToken = await this.promptForLogin();
+
+                authFileUtil.saveAuthToken(this.authToken, { ignoreErrors: true });
             }
         }
 
@@ -82,10 +84,6 @@ export class AuthenticationService {
 
         const authToken = await this.zeplinApi.generateToken(loginResponse.token);
 
-        authFileUtil.saveAuthToken(authToken);
-
-        this.authToken = authToken;
-
-        return validate(this.authToken);
+        return validate(authToken);
     }
 }
