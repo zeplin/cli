@@ -40,8 +40,6 @@ export async function connect(options: ConnectOptions): Promise<void> {
 
         await service.uploadConnectedBarrels(connectedBarrels);
 
-        // Await updateConnectedBarrels(connectedBarrels);
-
         console.log("Awesome! All components are successfully connected on Zeplin.");
     }
 }
