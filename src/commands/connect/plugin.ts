@@ -31,8 +31,11 @@ const prepareStorybookLinks = (baseUrl: string, storybookConfig: StorybookConfig
         stories
     } = storybookConfig;
 
+    const urlEncodedKind = encodeURIComponent(kind);
     if (stories) {
-        return stories.map(story => urljoin(baseUrl, `?selectedKind=${kind}&selectedStory=${story}`));
+        return stories.map(story =>
+            urljoin(baseUrl, `?selectedKind=${urlEncodedKind}&selectedStory=${encodeURIComponent(story)}`)
+        );
     }
 
     return [urljoin(baseUrl, `?selectedKind=${kind}`)];
@@ -92,7 +95,7 @@ const connectComponentConfig = async (
                         urlPaths.push({ name, type, url: preparedUrl });
                     });
                 } else if (type === "styleguidist") {
-                    urlPaths.push({ name, type, url: urljoin(url, `#${config.kind}`) });
+                    urlPaths.push({ name, type, url: urljoin(url, `#${encodeURIComponent(config.kind)}`) });
                 } else {
                     urlPaths.push({ name, type, url: urljoin(url, config.urlPath) });
                 }
