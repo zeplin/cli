@@ -35,13 +35,13 @@ const connectCommand = program.command("connect");
 
 connectCommand.description("Connect components to code")
     .option("-f, --file <file>", "Full path to components file", createCollector(), defaults.commands.connect.filePaths)
-    .option("-d, --dev-mode", "Activate development mode", defaults.commands.connect.devMode)
+    .option("-d, --dev", "Activate development mode", defaults.commands.connect.devMode)
     .option("--port <port>", "Optional port number for development mode", defaults.commands.connect.port)
     .option("-p, --plugin <plugin>", "NPM package name of a Zeplin CLI connect plugin", createCollector(), [])
     .action(commandRunner(async options => {
         const connectOptions: ConnectOptions = {
             configFiles: options.file,
-            devMode: options.devMode,
+            devMode: options.dev,
             plugins: options.plugin,
             devModePort: options.port
         };
