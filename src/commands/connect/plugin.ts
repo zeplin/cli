@@ -1,7 +1,7 @@
 import { ComponentConfig, ComponentData, StorybookConfig } from "connect-plugin";
 import { CLIError } from "../../errors";
 import {
-    ConnectedComponent, Data, ComponentConfigFile, ConnectedBarrelComponents, Url, ConnectPluginModule
+    ConnectedComponent, Data, ComponentConfigFile, ConnectedBarrelComponents, Link, ConnectPluginModule
 } from "./interfaces";
 import urljoin from "url-join";
 import { defaults } from "../../config/defaults";
@@ -81,7 +81,7 @@ const connectComponentConfig = async (
     }
 
     // TODO move urlPath preparation to service layer
-    const urlPaths: Url[] = [];
+    const urlPaths: Link[] = [];
 
     if (componentConfigFile.links) {
         componentConfigFile.links.forEach(link => {
