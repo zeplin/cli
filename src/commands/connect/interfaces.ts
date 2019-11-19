@@ -1,6 +1,6 @@
 import { ComponentConfig, ConnectPlugin } from "connect-plugin";
 
-export interface Url {
+export interface Link {
     name?: string;
     type: string;
     url: string;
@@ -15,7 +15,7 @@ export interface GithubConfig {
 export interface ComponentConfigFile {
     projects?: string[];
     styleguides?: string[];
-    links: Url[];
+    links: Link[];
     components: ComponentConfig[];
     github?: GithubConfig;
 }
@@ -31,7 +31,7 @@ export interface ConnectedComponent {
     path: string;
     zeplinNames: string[];
     name?: string;
-    urlPaths?: Url[];
+    urlPaths?: Link[];
     data?: Data[];
 }
 
