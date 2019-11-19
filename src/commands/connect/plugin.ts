@@ -97,7 +97,7 @@ const connectComponentConfig = async (
                 } else if (type === "styleguidist") {
                     urlPaths.push({ name, type, url: urljoin(url, `#${encodeURIComponent(config.kind)}`) });
                 } else {
-                    urlPaths.push({ name, type, url: urljoin(url, config.urlPath) });
+                    urlPaths.push({ name, type: "custom", url: urljoin(url, config.urlPath) });
                 }
             }
         });
