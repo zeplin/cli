@@ -5,11 +5,19 @@ export interface Url {
     type: string;
     url: string;
 }
+
+export interface GithubConfig {
+    repository: string;
+    branch?: string;
+    url?: string;
+}
+
 export interface ComponentConfigFile {
     projects?: string[];
     styleguides?: string[];
     links: Url[];
     components: ComponentConfig[];
+    github?: GithubConfig;
 }
 
 export interface Data {

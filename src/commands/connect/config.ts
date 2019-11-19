@@ -22,11 +22,18 @@ const componentConfigSchema = Joi.object({
     }).optional()
 });
 
+const githubConfigSchema = Joi.object({
+    repository: Joi.string(),
+    branch: Joi.string().optional(),
+    url: Joi.string().optional()
+});
+
 const componentConfigFileSchema = Joi.object({
     projects: Joi.array().items(Joi.string()).optional(),
     styleguides: Joi.array().items(Joi.string()).optional(),
     links: Joi.array().items(urlConfigSchema).optional(),
-    components: Joi.array().items(componentConfigSchema).min(1)
+    components: Joi.array().items(componentConfigSchema).min(1),
+    github: githubConfigSchema.optional()
 }).custom((value, helpers) => {
     if (value.projects && value.styleguides) {
         if (value.projects.length === 0 && value.styleguides.length === 0) {
@@ -49,13 +56,13 @@ const componentConfigFileSchema = Joi.object({
 const getComponentConfigFile = async (filePath: string): Promise<ComponentConfigFile> => {
     const file = await fileUtil.readJsonFile(filePath);
 
-    const { error, value } = componentConfigFileSchema.validate(file, { stripUnknown: true, presence: "required" });
+    const { error } = componentConfigFileSchema.validate(file, { stripUnknown: true, presence: "required" });
 
     if (error) {
         throw new CLIError(`Oops! Looks like ${filePath} has some problems: ${error.message}`);
     }
 
-    return value as ComponentConfigFile;
+    return file as ComponentConfigFile;
 };
 
 const getComponentConfigFiles = async (configFilePaths: string[]): Promise<ComponentConfigFile[]> => {
