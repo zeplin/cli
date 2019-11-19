@@ -1,4 +1,4 @@
-import Axios, { AxiosInstance, AxiosRequestConfig } from "axios";
+import Axios, { AxiosInstance } from "axios";
 import { defaults } from "../config/defaults";
 import { LoginRequest, LoginResponse } from "./interfaces";
 import { APIError, CLIError } from "../errors";
@@ -13,12 +13,6 @@ type BarrelType = "projects" | "styleguides";
 
 export class ZeplinApi {
     axios: AxiosInstance = Axios.create({ baseURL: defaults.api.baseURL });
-
-    constructor(config?: AxiosRequestConfig) {
-        if (config) {
-            Object.assign(this.axios.defaults, config);
-        }
-    }
 
     async login(request: LoginRequest): Promise<LoginResponse> {
         try {
