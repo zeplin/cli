@@ -21,7 +21,24 @@ const componentConfigFileSchema = Joi.object({
     styleguides: Joi.array().items(Joi.string()).optional(),
     baseURLs: Joi.array().items(urlConfigSchema).optional(),
     components: Joi.array().items(componentConfigSchema).min(1)
-}).or("projects", "styleguides");
+}).custom((value, helpers) => {
+    if (value.projects && value.styleguides) {
+        if (value.projects.length === 0 && value.styleguides.length === 0) {
+            throw new Error("at least one of `projects` or `styleguides` properties must contain 1 item.");
+        }
+    } else if (value.projects) {
+        if (value.projects.length === 0) {
+            throw new Error("`projects` must contain at least 1 item.");
+        }
+    } else if (value.styleguides) {
+        if (value.styleguides.length === 0) {
+            throw new Error("`styleguides` must contain at least 1 item.");
+        }
+    } else {
+        return helpers.error("object.missing", { peersWithLabels: ["projects", "styleguides"] });
+    }
+    return value;
+});
 
 const getComponentConfigFile = async (filePath: string): Promise<ComponentConfigFile> => {
     const file = await fileUtil.readJsonFile(filePath);
