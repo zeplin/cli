@@ -26,7 +26,7 @@ export async function connect(options: ConnectOptions): Promise<void> {
     const connectedBarrels = await connectComponentConfigFiles(componentConfigFiles, pluginInstances);
 
     if (devMode) {
-        console.log("Starting development server...");
+        console.log("Starting development server…");
 
         const devServer = new ConnectDevServer(connectedBarrels);
 
@@ -34,7 +34,7 @@ export async function connect(options: ConnectOptions): Promise<void> {
 
         console.log(`Development server is started on port ${devModePort}!`);
     } else {
-        console.log("Uploading all connected components into Zeplin...");
+        console.log("Uploading all connected components into Zeplin…");
 
         const service = new ConnectedComponentsService();
 

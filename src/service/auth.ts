@@ -64,7 +64,7 @@ export class AuthenticationService {
     }
 
     async promptForLogin(): Promise<string> {
-        console.log("Login into Zeplin...");
+        console.log("Login into Zeplin…");
         const credentials = await inquirer.prompt([
             {
                 type: "input",

@@ -81,7 +81,7 @@ const connectComponentConfig = async (
         zeplinNames: component.zeplinNames,
         urlPaths,
         data
-    } as ConnectedComponent;
+    };
 };
 
 const connectComponentConfigFile = async (
