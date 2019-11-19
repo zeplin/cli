@@ -1,9 +1,10 @@
-import { ComponentConfig, ComponentData } from "connect-plugin";
+import { ComponentConfig, ComponentData, StorybookConfig } from "connect-plugin";
 import { CLIError } from "../../errors";
 import {
     ConnectedComponent, Data, ComponentConfigFile, ConnectedBarrelComponents, Url, ConnectPluginModule
 } from "./interfaces";
 import urljoin from "url-join";
+import { defaults } from "../../config/defaults";
 
 interface ConnectPluginConstructor {
     new(): ConnectPluginModule;
@@ -22,6 +23,19 @@ const removeEmptyFields = (componentData: ComponentData): ComponentData => {
     }
 
     return componentData;
+};
+
+const prepareStorybookLinks = (baseUrl: string, storybookConfig: StorybookConfig): string[] => {
+    const {
+        kind,
+        stories
+    } = storybookConfig;
+
+    if (stories) {
+        return stories.map(story => urljoin(baseUrl, `?selectedKind=${kind}&selectedStory=${story}`));
+    }
+
+    return [urljoin(baseUrl, `?selectedKind=${kind}`)];
 };
 
 const importPlugins = async (plugins: string[]): Promise<ConnectPluginModule[]> => {
@@ -43,7 +57,7 @@ const importPlugins = async (plugins: string[]): Promise<ConnectPluginModule[]> 
 
 const connectComponentConfig = async (
     component: ComponentConfig,
-    links: Url[],
+    componentConfigFile: ComponentConfigFile,
     plugins: ConnectPluginModule[]
 ): Promise<ConnectedComponent> => {
     const data: Data[] = [];
@@ -63,15 +77,36 @@ const connectComponentConfig = async (
         await Promise.all(pluginPromises);
     }
 
+    // TODO move urlPath preparation to service layer
     const urlPaths: Url[] = [];
-    if (component.urlPaths) {
-        const configUrlPaths = component.urlPaths;
-        Object.keys(configUrlPaths).forEach(type => {
-            const link = links.find(u => u.type === type);
-            const url = configUrlPaths[type];
-            if (link) {
-                urlPaths.push({ name: link.name, type, url: urljoin(link.url, url) });
+
+    if (componentConfigFile.links) {
+        componentConfigFile.links.forEach(link => {
+            const { name, type, url } = link;
+            const foundType = Object.keys(component).some(key => key === link.type);
+            if (foundType) {
+                const config = component[type];
+                if (type === "storybook") {
+                    const preparedUrls = prepareStorybookLinks(url, config);
+                    preparedUrls.forEach(preparedUrl => {
+                        urlPaths.push({ name, type, url: preparedUrl });
+                    });
+                } else if (type === "styleguidist") {
+                    urlPaths.push({ name, type, url: urljoin(url, `#${config.kind}`) });
+                } else {
+                    urlPaths.push({ name, type, url: urljoin(url, config.urlPath) });
+                }
             }
+        });
+    }
+
+    if (componentConfigFile.github) {
+        const branch = componentConfigFile.github.branch || defaults.github.branch;
+        const url = componentConfigFile.github.url || defaults.github.url;
+        const { repository } = componentConfigFile.github;
+        urlPaths.push({
+            type: "github",
+            url: `${url}/${repository}/blob/${branch}/${component.path}`
         });
     }
 
@@ -90,7 +125,7 @@ const connectComponentConfigFile = async (
 ): Promise<ConnectedBarrelComponents> => {
     const connectedComponents = await Promise.all(
         componentConfigFile.components.map(component =>
-            connectComponentConfig(component, componentConfigFile.links, connectPlugins)
+            connectComponentConfig(component, componentConfigFile, connectPlugins)
         )
     );
 
