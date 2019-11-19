@@ -1,7 +1,7 @@
 import { ComponentConfig, ConnectPlugin } from "connect-plugin";
 
 export interface Url {
-    name: string;
+    name?: string;
     type: string;
     url: string;
 }
