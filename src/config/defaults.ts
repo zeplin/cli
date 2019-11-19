@@ -8,7 +8,7 @@ export const defaults = {
     },
     api: {
         baseURL: process.env.API_BASE_URL || "https://api.zeplin.io",
-        clientId: "5d78a9f01b4e9c0a1e9b505b"
+        clientId: process.env.API_CLIENT_ID || "5dd27af376f8bf5094f6ebe6"
     },
     github: {
         url: "https://github.com",
