@@ -15,11 +15,8 @@ function createCollector(): (arg1: string, arg2: string[]) => string[] {
     function collectionValue(value: string, previous: string[]): string[] {
         // Clear default values on first call
         if (!cleared) {
-            while (previous.length > 0) {
-                previous.pop();
-            }
-
             cleared = true;
+            return [value];
         }
 
         return previous.concat([value]);
