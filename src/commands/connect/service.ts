@@ -27,10 +27,10 @@ export class ConnectedComponentsService {
                     const authToken = await this.authService.promptForLogin();
 
                     await this.upload(authToken, connectedBarrelComponents);
+                    return;
                 }
-            } else {
-                throw error;
             }
+            throw error;
         }
     }
 
