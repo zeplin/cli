@@ -8,7 +8,7 @@ export interface Url {
 export interface ComponentConfigFile {
     projects?: string[];
     styleguides?: string[];
-    baseURLs: Url[];
+    links: Url[];
     components: ComponentConfig[];
 }
 
