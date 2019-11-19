@@ -43,7 +43,7 @@ const importPlugins = async (plugins: string[]): Promise<ConnectPluginModule[]> 
 
 const connectComponentConfig = async (
     component: ComponentConfig,
-    baseURLs: Url[],
+    links: Url[],
     plugins: ConnectPluginModule[]
 ): Promise<ConnectedComponent> => {
     const data: Data[] = [];
@@ -67,10 +67,10 @@ const connectComponentConfig = async (
     if (component.urlPaths) {
         const configUrlPaths = component.urlPaths;
         Object.keys(configUrlPaths).forEach(type => {
-            const baseUrl = baseURLs.find(u => u.type === type);
+            const link = links.find(u => u.type === type);
             const url = configUrlPaths[type];
-            if (baseUrl) {
-                urlPaths.push({ name: baseUrl.name, type, url: urljoin(baseUrl.url, url) });
+            if (link) {
+                urlPaths.push({ name: link.name, type, url: urljoin(link.url, url) });
             }
         });
     }
@@ -90,7 +90,7 @@ const connectComponentConfigFile = async (
 ): Promise<ConnectedBarrelComponents> => {
     const connectedComponents = await Promise.all(
         componentConfigFile.components.map(component =>
-            connectComponentConfig(component, componentConfigFile.baseURLs, connectPlugins)
+            connectComponentConfig(component, componentConfigFile.links, connectPlugins)
         )
     );
 
