@@ -1,5 +1,8 @@
+import { isVerbose } from "../util/env";
+
 const errorHandler = (error: Error): void => {
-    if (process.env.VERBOSE) {
+    console.log(); // Line break before error output.
+    if (isVerbose()) {
         console.error(error);
     } else {
         console.error(error.message);

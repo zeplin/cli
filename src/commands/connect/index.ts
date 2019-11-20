@@ -1,3 +1,5 @@
+import chalk from "chalk";
+import dedent from "dedent";
 
 import { getComponentConfigFiles } from "./config";
 import { importPlugins, connectComponentConfigFiles } from "./plugin";
@@ -12,34 +14,43 @@ export interface ConnectOptions {
 }
 
 export async function connect(options: ConnectOptions): Promise<void> {
-    const {
-        configFiles,
-        plugins,
-        devMode,
-        devModePort
-    } = options;
+    try {
+        const {
+            configFiles,
+            plugins,
+            devMode,
+            devModePort
+        } = options;
 
-    const componentConfigFiles = await getComponentConfigFiles(configFiles);
+        const componentConfigFiles = await getComponentConfigFiles(configFiles);
 
-    const pluginInstances = await importPlugins(plugins);
+        const pluginInstances = await importPlugins(plugins);
 
-    const connectedBarrels = await connectComponentConfigFiles(componentConfigFiles, pluginInstances);
+        const connectedBarrels = await connectComponentConfigFiles(componentConfigFiles, pluginInstances);
 
-    if (devMode) {
-        console.log("Starting development server…");
+        if (devMode) {
+            console.log("Starting development server…");
 
-        const devServer = new ConnectDevServer(connectedBarrels);
+            const devServer = new ConnectDevServer(connectedBarrels);
 
-        await devServer.start(devModePort);
+            await devServer.start(devModePort);
 
-        console.log(`Development server is started on port ${devModePort}!`);
-    } else {
-        console.log("Uploading all connected components into Zeplin…");
+            console.log(`Development server is started on port ${devModePort}!`);
+        } else {
+            console.log("Connecting all connected components into Zeplin…");
 
-        const service = new ConnectedComponentsService();
+            const service = new ConnectedComponentsService();
 
-        await service.uploadConnectedBarrels(connectedBarrels);
+            await service.uploadConnectedBarrels(connectedBarrels);
 
-        console.log("Awesome! All components are successfully connected on Zeplin.");
+            console.log("🦄 Components successfully connected to components in Zeplin.");
+        }
+    } catch (error) {
+        error.message = dedent`
+            ${chalk.bold`Connecting components to Zeplin components failed.`}
+
+                ${chalk.redBright(error.message)}
+        `;
+        throw error;
     }
 }
