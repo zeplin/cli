@@ -56,13 +56,13 @@ const componentConfigFileSchema = Joi.object({
 const getComponentConfigFile = async (filePath: string): Promise<ComponentConfigFile> => {
     const file = await fileUtil.readJsonFile(filePath);
 
-    const { error } = componentConfigFileSchema.validate(file, { stripUnknown: true, presence: "required" });
+    const { error, value } = componentConfigFileSchema.validate(file, { allowUnknown: true, presence: "required" });
 
     if (error) {
         throw new CLIError(`Oops! Looks like ${filePath} has some problems: ${error.message}`);
     }
 
-    return file as ComponentConfigFile;
+    return value as ComponentConfigFile;
 };
 
 const getComponentConfigFiles = async (configFilePaths: string[]): Promise<ComponentConfigFile[]> => {
