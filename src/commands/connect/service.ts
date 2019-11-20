@@ -1,9 +1,12 @@
+import chalk from "chalk";
+import dedent from "dedent";
 import { ZeplinApi } from "../../api";
 import { AuthenticationService } from "../../service/auth";
 import { ConnectedBarrelComponents } from "./interfaces";
-import { APIError } from "../../errors";
+import { APIError, AuthError } from "../../errors";
 import { isCI } from "../../util/env";
-import { UNAUTHORIZED } from "http-status-codes";
+
+const isAuthenticationError = (err: Error): boolean => (APIError.isUnauthorized(err) || AuthError.isAuthError(err));
 
 export class ConnectedComponentsService {
     zeplinApi: ZeplinApi;
@@ -21,9 +24,13 @@ export class ConnectedComponentsService {
 
             await this.upload(authToken, connectedBarrelComponents);
         } catch (error) {
-            if (APIError.isAPIError(error)) {
-                if (error.status === UNAUTHORIZED && !isCI()) {
-                    console.log("Authentication token is invalid.");
+            if (isAuthenticationError(error)) {
+                if (isCI()) {
+                    error.message = dedent`
+                    ${error.message}
+                    Please update ${chalk.dim`ZEPLIN_ACCESS_TOKEN`} environment variable.`;
+                } else {
+                    console.log(error.message);
                     const authToken = await this.authService.promptForLogin();
 
                     await this.upload(authToken, connectedBarrelComponents);

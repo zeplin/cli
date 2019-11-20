@@ -1,3 +1,4 @@
+import chalk from "chalk";
 import jwt from "jsonwebtoken";
 import inquirer from "inquirer";
 import { ZeplinApi } from "../api";
@@ -45,10 +46,8 @@ export class AuthenticationService {
             if (tokenFromFile) {
                 this.authToken = tokenFromFile;
             } else {
-                console.log("Looks like no authentication token has been found in the environment.");
+                console.log(`Access token not found in ${chalk.dim`ZEPLIN_ACCESS_TOKEN`} environment variable.`);
                 this.authToken = await this.promptForLogin();
-
-                authFileUtil.saveAuthToken(this.authToken, { ignoreErrors: true });
             }
         }
 
@@ -63,7 +62,9 @@ export class AuthenticationService {
         return validate(this.authToken);
     }
 
-    async promptForLogin(): Promise<string> {
+    async promptForLogin(
+        options: { ignoreSaveTokenErrors: boolean } = { ignoreSaveTokenErrors: true }
+    ): Promise<string> {
         console.log("Login into Zeplin…");
         const credentials = await inquirer.prompt([
             {
@@ -84,6 +85,16 @@ export class AuthenticationService {
 
         const authToken = await this.zeplinApi.generateToken(loginResponse.token);
 
-        return validate(authToken);
+        validate(authToken);
+
+        try {
+            await authFileUtil.saveAuthToken(authToken);
+        } catch (err) {
+            if (!options.ignoreSaveTokenErrors) {
+                throw err;
+            }
+        }
+
+        return authToken;
     }
 }
