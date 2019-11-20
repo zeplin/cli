@@ -6,6 +6,7 @@ import { bin, version } from "../package.json";
 import { connect, ConnectOptions } from "./commands/connect";
 import { login } from "./commands/login";
 import { commandRunner } from "./util/command";
+import { activateVerbose } from "./util/env";
 
 const program = new commander.Command();
 
@@ -31,9 +32,8 @@ program
 
 console.log(`Zeplin CLI - v${version}\n`);
 
-const connectCommand = program.command("connect");
-
-connectCommand.description("Connect components to code")
+const connectCommand = program.command("connect")
+    .description("Connect components to code")
     .option("-f, --file <file>", "Full path to components file", createCollector(), defaults.commands.connect.filePaths)
     .option("-d, --dev", "Activate development mode", defaults.commands.connect.devMode)
     .option("--port <port>", "Optional port number for development mode", defaults.commands.connect.port)
@@ -49,8 +49,19 @@ connectCommand.description("Connect components to code")
         await connect(connectOptions);
     }));
 
-program.command("login")
+const loginCommand = program.command("login")
+    .description("Login to Zeplin")
     .action(commandRunner(login));
+
+// Configure common options
+[
+    connectCommand,
+    loginCommand
+].forEach(command => {
+    command.option("--verbose", "Enable verbose logs");
+
+    command.on("option:verbose", () => activateVerbose());
+});
 
 program.on("command:*", () => {
     program.outputHelp();
