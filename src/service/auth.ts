@@ -65,7 +65,7 @@ export class AuthenticationService {
     async promptForLogin(
         options: { ignoreSaveTokenErrors: boolean } = { ignoreSaveTokenErrors: true }
     ): Promise<string> {
-        console.log("Login into Zeplin…");
+        console.log("\nLogin into Zeplin…");
         const credentials = await inquirer.prompt([
             {
                 type: "input",
