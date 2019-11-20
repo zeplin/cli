@@ -86,19 +86,16 @@ const connectComponentConfig = async (
     if (componentConfigFile.links) {
         componentConfigFile.links.forEach(link => {
             const { name, type, url } = link;
-            const foundType = Object.keys(component).some(key => key === link.type);
-            if (foundType) {
-                const config = component[type];
-                if (type === "storybook") {
-                    const preparedUrls = prepareStorybookLinks(url, config);
-                    preparedUrls.forEach(preparedUrl => {
-                        urlPaths.push({ name, type, url: preparedUrl });
-                    });
-                } else if (type === "styleguidist") {
-                    urlPaths.push({ name, type, url: urljoin(url, `#${encodeURIComponent(config.kind)}`) });
-                } else {
-                    urlPaths.push({ name, type: "custom", url: urljoin(url, config.urlPath) });
-                }
+            if (type === "storybook" && component.storybook) {
+                const preparedUrls = prepareStorybookLinks(url, component.storybook);
+                preparedUrls.forEach(preparedUrl => {
+                    urlPaths.push({ name, type, url: preparedUrl });
+                });
+            } else if (type === "styleguidist" && component.styleguidist) {
+                const encodedKind = encodeURIComponent(component.styleguidist.kind);
+                urlPaths.push({ name, type, url: urljoin(url, `#${encodedKind}`) });
+            } else if (component[type]) {
+                urlPaths.push({ name, type: "custom", url: urljoin(url, component[type].urlPath) });
             }
         });
     }
