@@ -1,14 +1,17 @@
 
+import chalk from "chalk";
+import dedent from "dedent";
+import inquirer from "inquirer";
+
 import * as envUtil from "../../util/env";
 import { AuthenticationService } from "../../service/index";
-import inquirer from "inquirer";
 
 export async function login(): Promise<void> {
     const tokenFromEnv = envUtil.getAccessTokenFromEnv();
 
     if (tokenFromEnv) {
-        console.log("ZEPLIN_ACCESS_TOKEN is already set.\n" +
-            "Remove the environment variable to set it using CLI.");
+        console.log(dedent`${chalk.dim`ZEPLIN_ACCESS_TOKEN`} is already set.
+                            Remove the environment variable to set it using CLI.`);
     } else {
         const authService = new AuthenticationService();
 
@@ -25,6 +28,6 @@ export async function login(): Promise<void> {
             }
         }
 
-        await authService.promptForLogin();
+        await authService.promptForLogin({ ignoreSaveTokenErrors: false });
     }
 }
