@@ -107,9 +107,10 @@ const connectComponentConfig = async (
         const branch = componentConfigFile.github.branch || defaults.github.branch;
         const url = componentConfigFile.github.url || defaults.github.url;
         const { repository } = componentConfigFile.github;
+        const encodedPath = encodeURIComponent(component.path);
         urlPaths.push({
             type: "github",
-            url: `${url}/${repository}/blob/${branch}/${component.path}`
+            url: `${url}/${repository}/blob/${branch}/${encodedPath}`
         });
     }
 
