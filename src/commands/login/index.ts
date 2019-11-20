@@ -11,7 +11,7 @@ export async function login(): Promise<void> {
 
     if (tokenFromEnv) {
         console.log(dedent`${chalk.dim`ZEPLIN_ACCESS_TOKEN`} is already set.
-                            Remove the environment variable to set it using CLI.`);
+                            Remove the environment variable to login via CLI.`);
     } else {
         const authService = new AuthenticationService();
 
@@ -29,5 +29,7 @@ export async function login(): Promise<void> {
         }
 
         await authService.promptForLogin({ ignoreSaveTokenErrors: false });
+
+        console.log(chalk.bold("\n🦄 Successfully authenticated."));
     }
 }
