@@ -38,7 +38,7 @@ const prepareStorybookLinks = (baseUrl: string, storybookConfig: StorybookConfig
         );
     }
 
-    return [urljoin(baseUrl, `?selectedKind=${kind}`)];
+    return [urljoin(baseUrl, `?selectedKind=${urlEncodedKind}`)];
 };
 
 const importPlugins = async (plugins: string[]): Promise<ConnectPluginModule[]> => {
