@@ -1,9 +1,9 @@
 import { AxiosResponse } from "axios";
 import { UNAUTHORIZED, BAD_REQUEST } from "http-status-codes";
+import { CLIError } from "./CLIError";
 
-export class APIError extends Error {
+export class APIError extends CLIError {
     status: number;
-    details: { title: string; message: string };
 
     constructor(response: AxiosResponse) {
         let message;

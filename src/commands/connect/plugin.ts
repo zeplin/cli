@@ -5,13 +5,35 @@ import {
 } from "./interfaces";
 import urljoin from "url-join";
 import { defaults } from "../../config/defaults";
+import dedent from "dedent";
+import chalk from "chalk";
 
 interface ConnectPluginConstructor {
     new(): ConnectPluginModule;
 }
 
 // Helper method to initialize plugin classses
-const constructConnectPlugin = (Constructor: ConnectPluginConstructor): ConnectPluginModule => new Constructor();
+const createInstance = (pluginName: string, Plugin: ConnectPluginConstructor): ConnectPluginModule => {
+    try {
+        const plugin = new Plugin();
+
+        // Check that plugin implements the required methods
+        if (!plugin.process || !plugin.supports) {
+            throw new Error();
+        }
+
+        plugin.name = pluginName;
+        return plugin;
+    } catch (e) {
+        const error = new CLIError(dedent`
+            ${chalk.bold(pluginName)} does not conform Connected Components plugin interface.
+            Please make sure that the plugin implements the requirements listed on the documentation.
+            https://github.com/zeplin/cli/blob/develop/PLUGIN.md
+        `); // TODO add documentation link
+        error.stack = e.stack;
+        throw error;
+    }
+};
 
 const removeEmptyFields = (componentData: ComponentData): ComponentData => {
     if (typeof componentData.description === "undefined" || componentData.description.trim() === "") {
@@ -41,14 +63,24 @@ const prepareStorybookLinks = (baseUrl: string, storybookConfig: StorybookConfig
     return [urljoin(baseUrl, `?selectedKind=${urlEncodedKind}`)];
 };
 
+const importPlugin = async (pluginName: string): Promise<ConnectPluginConstructor> => {
+    try {
+        return (await import(pluginName)).default as ConnectPluginConstructor;
+    } catch (e) {
+        const error = new CLIError(dedent`
+            Finding plugin module ${chalk.bold(pluginName)} failed.
+            Please make sure that it's installed and try again.
+        `);
+        error.stack = e.stack;
+        throw error;
+    }
+};
+
 const importPlugins = async (plugins: string[]): Promise<ConnectPluginModule[]> => {
     try {
-        const imports = plugins.map(async moduleName => {
-            const connectPluginConstructor = (await import(moduleName)).default as ConnectPluginConstructor;
-
-            const connectPluginInstance = constructConnectPlugin(connectPluginConstructor);
-            connectPluginInstance.name = moduleName;
-            return connectPluginInstance;
+        const imports = plugins.map(async pluginName => {
+            const pluginConstructor = await importPlugin(pluginName);
+            return createInstance(pluginName, pluginConstructor);
         });
 
         const pluginInstances = await Promise.all(imports);
