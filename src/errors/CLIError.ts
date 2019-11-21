@@ -1,6 +1,9 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 export class CLIError extends Error {
-    constructor(msg?: string) {
-        const message = `${msg || "CLI Error."}`;
+    details: any;
+
+    constructor(message: string, details?: any) {
         super(message);
+        this.details = details;
     }
 }
