@@ -25,7 +25,8 @@ const componentConfigSchema = Joi.object({
 const githubConfigSchema = Joi.object({
     repository: Joi.string(),
     branch: Joi.string().optional(),
-    url: Joi.string().optional()
+    url: Joi.string().optional(),
+    path: Joi.string().optional()
 });
 
 const componentConfigFileSchema = Joi.object({
