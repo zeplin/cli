@@ -133,13 +133,15 @@ const connectComponentConfig = async (
     }
 
     if (componentConfigFile.github) {
-        const branch = componentConfigFile.github.branch || defaults.github.branch;
         const url = componentConfigFile.github.url || defaults.github.url;
         const { repository } = componentConfigFile.github;
-        const encodedPath = encodeURIComponent(component.path);
+        const branch = componentConfigFile.github.branch || defaults.github.branch;
+        const path = encodeURIComponent(componentConfigFile.github.path || "");
+        const componentPath = encodeURIComponent(component.path);
+
         urlPaths.push({
             type: "github",
-            url: `${url}/${repository}/blob/${branch}/${encodedPath}`
+            url: urljoin(url, repository, "/blob/", branch, path, componentPath)
         });
     }
 
