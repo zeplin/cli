@@ -10,6 +10,7 @@ export interface GithubConfig {
     repository: string;
     branch?: string;
     url?: string;
+    path?: string;
 }
 
 export interface ComponentConfigFile {
