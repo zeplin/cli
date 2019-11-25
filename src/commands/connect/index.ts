@@ -5,6 +5,7 @@ import { getComponentConfigFiles } from "./config";
 import { importPlugins, connectComponentConfigFiles } from "./plugin";
 import { ConnectDevServer } from "./server";
 import { ConnectedComponentsService } from "./service";
+import { indent } from "../../util/text";
 
 export interface ConnectOptions {
     configFiles: string[];
@@ -49,7 +50,7 @@ export async function connect(options: ConnectOptions): Promise<void> {
         error.message = dedent`
             ${chalk.bold`Connecting components to Zeplin components failed.`}
 
-                ${chalk.redBright(error.message)}
+            ${chalk.redBright(indent(error.message))}
         `;
         throw error;
     }
