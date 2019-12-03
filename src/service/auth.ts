@@ -1,6 +1,7 @@
 import chalk from "chalk";
 import jwt from "jsonwebtoken";
 import inquirer from "inquirer";
+import { isCI } from "ci-info";
 import { ZeplinApi } from "../api";
 import { AuthError } from "../errors";
 import * as authFileUtil from "../util/auth-file";
@@ -40,7 +41,7 @@ export class AuthenticationService {
 
         if (tokenFromEnv) {
             this.authToken = tokenFromEnv;
-        } else if (!envUtil.isCI()) {
+        } else if (!isCI) {
             const tokenFromFile = await authFileUtil.readAuthToken();
 
             if (tokenFromFile) {

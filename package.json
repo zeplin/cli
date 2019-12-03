@@ -28,6 +28,7 @@
   },
   "homepage": "https://github.com/zeplin/cli#readme",
   "devDependencies": {
+    "@types/ci-info": "^2.0.0",
     "@types/dedent": "^0.7.0",
     "@types/express": "^4.17.2",
     "@types/fs-extra": "^8.0.0",
@@ -52,6 +53,7 @@
     "@hapi/joi": "^16.1.7",
     "axios": "^0.19.0",
     "chalk": "^3.0.0",
+    "ci-info": "^2.0.0",
     "commander": "^3.0.1",
     "dedent": "^0.7.0",
     "express": "^4.17.1",
