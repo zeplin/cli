@@ -1,10 +1,10 @@
 import chalk from "chalk";
 import dedent from "dedent";
+import { isCI } from "ci-info";
 import { ZeplinApi } from "../../api";
 import { AuthenticationService } from "../../service/auth";
 import { ConnectedBarrelComponents } from "./interfaces";
 import { APIError, AuthError } from "../../errors";
-import { isCI } from "../../util/env";
 
 const isAuthenticationError = (err: Error): boolean => (APIError.isUnauthorized(err) || AuthError.isAuthError(err));
 
@@ -25,7 +25,7 @@ export class ConnectedComponentsService {
             await this.upload(authToken, connectedBarrelComponents);
         } catch (error) {
             if (isAuthenticationError(error)) {
-                if (isCI()) {
+                if (isCI) {
                     error.message = dedent`
                     ${error.message}
                     Please update ${chalk.dim`ZEPLIN_ACCESS_TOKEN`} environment variable.`;
