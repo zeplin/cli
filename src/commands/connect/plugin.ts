@@ -77,17 +77,13 @@ const importPlugin = async (pluginName: string): Promise<ConnectPluginConstructo
 };
 
 const importPlugins = async (plugins: string[]): Promise<ConnectPluginModule[]> => {
-    try {
-        const imports = plugins.map(async pluginName => {
-            const pluginConstructor = await importPlugin(pluginName);
-            return createInstance(pluginName, pluginConstructor);
-        });
+    const imports = plugins.map(async pluginName => {
+        const pluginConstructor = await importPlugin(pluginName);
+        return createInstance(pluginName, pluginConstructor);
+    });
 
-        const pluginInstances = await Promise.all(imports);
-        return pluginInstances;
-    } catch (error) {
-        throw new CLIError(error.message);
-    }
+    const pluginInstances = await Promise.all(imports);
+    return pluginInstances;
 };
 
 const connectComponentConfig = async (
