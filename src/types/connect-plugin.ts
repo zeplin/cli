@@ -27,7 +27,10 @@ export type ComponentConfig = {
     name?: string;
     storybook?: StorybookConfig;
     styleguidist?: StyleguidistConfig;
-} & { [key: string]: CustomUrlConfig};
+} & {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    [key: string]: CustomUrlConfig | any;
+};
 
 export interface ConnectPlugin {
     process(context: ComponentConfig): Promise<ComponentData>;
