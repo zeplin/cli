@@ -57,11 +57,11 @@ zeplin connect -p @zeplin/cli-connect-react-plugin
 
 #### Offical Plugins
 
-| NPM package name                  | Description                                         |
-|-----------------------------------|-----------------------------------------------------|
-| @zeplin/cli-connect-react-plugin  | Generates snippet samples using React PropTypes     |
-| @zeplin/cli-connect-swift-plugin  | Generates snippet using Swift components **(*)**    |
-| @zeplin/cli-connect-kotlin-plugin | Generate snippets using Kotlin components **(*)**   |
+| NPM package name                   | Description                                         |
+|----------------------------------- |-----------------------------------------------------|
+| @zeplin/cli-connect-react-plugin   | Generates snippet samples using React PropTypes     |
+| @zeplin/cli-connect-angular-plugin | Generate snippets using Angular components          |
+| @zeplin/cli-connect-swift-plugin   | Generates snippet using Swift components **(*)**    |
 
 (*) - Since the language has no popular convention of component like React components, we have defined a sample component for the language.
 The plugin is only compatible with this component convention. **Feel free to use these plugins as a base for a custom plugin compatible with your own codebase.**
