@@ -29,9 +29,15 @@ const githubConfigSchema = Joi.object({
     path: Joi.string().optional()
 });
 
+const pluginConfigSchema = Joi.object({
+    name: Joi.string(),
+    config: Joi.object().unknown()
+});
+
 const componentConfigFileSchema = Joi.object({
     projects: Joi.array().items(Joi.string()).optional(),
     styleguides: Joi.array().items(Joi.string()).optional(),
+    plugins: Joi.array().items(pluginConfigSchema).optional(),
     links: Joi.array().items(urlConfigSchema).optional(),
     components: Joi.array().items(componentConfigSchema).min(1),
     github: githubConfigSchema.optional()

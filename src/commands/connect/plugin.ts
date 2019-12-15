@@ -1,4 +1,4 @@
-import { ComponentConfig, ComponentData, StorybookConfig } from "connect-plugin";
+import { ComponentConfig, ComponentData, StorybookComponentConfig } from "connect-plugin";
 import { CLIError } from "../../errors";
 import {
     ConnectedComponent, Data, ComponentConfigFile, ConnectedBarrelComponents, Link, ConnectPluginModule
@@ -47,7 +47,7 @@ const removeEmptyFields = (componentData: ComponentData): ComponentData => {
     return componentData;
 };
 
-const prepareStorybookLinks = (baseUrl: string, storybookConfig: StorybookConfig): string[] => {
+const prepareStorybookLinks = (baseUrl: string, storybookConfig: StorybookComponentConfig): string[] => {
     const {
         kind,
         stories
