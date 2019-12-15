@@ -1,4 +1,4 @@
-import { ComponentConfig, ConnectPlugin } from "connect-plugin";
+import { ComponentConfig, ConnectPlugin, PluginConfig } from "../../types/connect-plugin";
 
 export interface Link {
     name?: string;
@@ -13,12 +13,24 @@ export interface GithubConfig {
     path?: string;
 }
 
+export interface StorybookConfig {
+    url?: string;
+    startScript?: string;
+}
+
+export interface Plugin {
+    name: string;
+    config?: PluginConfig;
+}
+
 export interface ComponentConfigFile {
     projects?: string[];
     styleguides?: string[];
-    links: Link[];
+    links?: Link[];
     components: ComponentConfig[];
+    plugins?: Plugin[];
     github?: GithubConfig;
+    storybook?: StorybookConfig;
 }
 
 export interface Data {
