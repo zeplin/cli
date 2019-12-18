@@ -1,5 +1,5 @@
 import express from "express";
-import { ConnectedBarrelComponents, ConnectedComponent } from "../interfaces";
+import { ConnectedBarrelComponents, ConnectedComponent } from "../interfaces/api";
 import { CLIError } from "../../../errors";
 import { OK } from "http-status-codes";
 

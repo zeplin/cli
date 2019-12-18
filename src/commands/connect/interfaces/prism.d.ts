@@ -1,3 +1,4 @@
+/** @public */
 export const enum PrismLang {
     Markup = "markup",
     HTML = "html",
