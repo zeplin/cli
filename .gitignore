@@ -12,3 +12,6 @@ npm-debug.log
 
 # Typescript
 dist
+
+# Api Extractor/Documenter
+temp
