@@ -2,7 +2,7 @@ import Axios, { AxiosInstance } from "axios";
 import { defaults } from "../config/defaults";
 import { LoginRequest, LoginResponse } from "./interfaces";
 import { APIError, CLIError } from "../errors";
-import { ConnectedComponentList } from "../commands/connect/interfaces";
+import { ConnectedComponentList } from "../commands/connect/interfaces/api";
 import { MOVED_TEMPORARILY } from "http-status-codes";
 import { URLSearchParams } from "url";
 

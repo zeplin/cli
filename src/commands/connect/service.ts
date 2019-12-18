@@ -3,7 +3,7 @@ import dedent from "dedent";
 import { isCI } from "ci-info";
 import { ZeplinApi } from "../../api";
 import { AuthenticationService } from "../../service/auth";
-import { ConnectedBarrelComponents } from "./interfaces";
+import { ConnectedBarrelComponents } from "./interfaces/api";
 import { APIError, AuthError } from "../../errors";
 
 const isAuthenticationError = (err: Error): boolean => (APIError.isUnauthorized(err) || AuthError.isAuthError(err));

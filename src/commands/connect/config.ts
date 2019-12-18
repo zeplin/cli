@@ -1,9 +1,9 @@
 import Joi from "@hapi/joi";
 import * as fileUtil from "../../util/file";
-import { ComponentConfigFile } from "./interfaces";
+import { ComponentConfigFile } from "./interfaces/config";
 import { CLIError } from "../../errors";
 
-const urlConfigSchema = Joi.object({
+const linkConfigSchema = Joi.object({
     type: Joi.string(),
     name: Joi.string().optional(),
     url: Joi.string()
@@ -29,16 +29,16 @@ const githubConfigSchema = Joi.object({
     path: Joi.string().optional()
 });
 
-const pluginConfigSchema = Joi.object({
+const pluginSchema = Joi.object({
     name: Joi.string(),
-    config: Joi.object().unknown()
+    config: Joi.object().unknown().optional()
 });
 
 const componentConfigFileSchema = Joi.object({
     projects: Joi.array().items(Joi.string()).optional(),
     styleguides: Joi.array().items(Joi.string()).optional(),
-    plugins: Joi.array().items(pluginConfigSchema).optional(),
-    links: Joi.array().items(urlConfigSchema).optional(),
+    plugins: Joi.array().items(pluginSchema).optional(),
+    links: Joi.array().items(linkConfigSchema).optional(),
     components: Joi.array().items(componentConfigSchema).min(1),
     github: githubConfigSchema.optional()
 }).custom((value, helpers) => {

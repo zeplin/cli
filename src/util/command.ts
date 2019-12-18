@@ -1,6 +1,6 @@
 import { isVerbose } from "../util/env";
 
-const errorHandler = (error: Error): void => {
+const errorHandler = (error: Error): never => {
     console.log(); // Line break before error output.
     if (isVerbose()) {
         console.error(error);
