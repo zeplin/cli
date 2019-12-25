@@ -6,4 +6,8 @@ export class CLIError extends Error {
         super(message);
         this.details = details;
     }
+
+    static isCLIError(err: Error): err is CLIError {
+        return err instanceof CLIError;
+    }
 }
