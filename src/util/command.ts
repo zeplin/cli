@@ -1,3 +1,4 @@
+import dedent from "ts-dedent";
 import { isVerbose } from "../util/env";
 
 const errorHandler = (error: Error): never => {

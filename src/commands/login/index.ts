@@ -1,6 +1,6 @@
 
 import chalk from "chalk";
-import dedent from "dedent";
+import dedent from "ts-dedent";
 import inquirer from "inquirer";
 
 import * as envUtil from "../../util/env";
