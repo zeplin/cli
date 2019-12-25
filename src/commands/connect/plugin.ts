@@ -110,17 +110,25 @@ const connectComponentConfig = async (
 
     // Execute all plugins
     const pluginPromises = plugins.map(async plugin => {
-        if (plugin.supports(component)) {
-            const componentData = await plugin.process(component);
+        try {
+            if (plugin.supports(component)) {
+                const componentData = await plugin.process(component);
 
-            data.push({
-                plugin: plugin.name,
-                ...removeEmptyFields(componentData)
-            });
+                data.push({
+                    plugin: plugin.name,
+                    ...removeEmptyFields(componentData)
+                });
 
-            componentData.links?.forEach(link =>
-                urlPaths.push(processLink(link))
-            );
+                componentData.links?.forEach(link =>
+                    urlPaths.push(processLink(link))
+                );
+            }
+        } catch (err) {
+            throw new CLIError(dedent`
+                Error occurred while processing ${chalk.bold(component.path)} with ${chalk.bold(plugin.name)}:
+
+                ${err.message}
+            `, err.stack);
         }
     });
 

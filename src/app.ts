@@ -30,7 +30,7 @@ program
     .name(Object.keys(bin)[0])
     .version(version);
 
-console.log(`Zeplin CLI - v${version}\n`);
+console.log(`\nZeplin CLI - v${version}\n`);
 
 const connectCommand = program.command("connect")
     .description("Connect components to code")
