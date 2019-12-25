@@ -1,5 +1,5 @@
 import chalk from "chalk";
-import dedent from "dedent";
+import dedent from "ts-dedent";
 import { isCI } from "ci-info";
 import { ZeplinApi } from "../../api";
 import { AuthenticationService } from "../../service/auth";

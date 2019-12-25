@@ -1,5 +1,5 @@
 import chalk from "chalk";
-import dedent from "dedent";
+import dedent from "ts-dedent";
 
 import { getComponentConfigFiles } from "./config";
 import { Plugin } from "./interfaces/config";

@@ -1,5 +1,5 @@
 import chalk from "chalk";
-import dedent from "dedent";
+import dedent from "ts-dedent";
 import urljoin from "url-join";
 import { ComponentConfigFile, ConnectPluginInstance, Plugin } from "./interfaces/config";
 import { ConnectedComponent, ConnectedBarrelComponents, Data } from "./interfaces/api";
