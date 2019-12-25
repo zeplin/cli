@@ -6,7 +6,7 @@ Plugins can process the components to generate descriptions and snippets of them
 
 ## Implementation
 
- - Create a class that implements [ConnectPlugin](https://github.com/zeplin/cli/blob/develop/src/commands/connect/interfaces/plugin.d.ts).
+ - Create a class that implements [ConnectPlugin](./src/commands/connect/interfaces/plugin.d.ts).
  - Export the class as a default export in your package entry point
  - Publish to NPM and start to use it as explained in [README.md](./README.md#plugin-usage)
 
@@ -15,7 +15,7 @@ Plugins can process the components to generate descriptions and snippets of them
 npm install --save-dev @zeplin/cli
 ```
 
-Please refer to the example below and [interface documentation](https://github.com/zeplin/cli/blob/develop/docs/cli.connectplugin.md) for details.
+Please refer to the example below and [interface documentation](./docs/cli.connectplugin.md) for details.
 
 ### Example of `index.ts`
 ```typescript
