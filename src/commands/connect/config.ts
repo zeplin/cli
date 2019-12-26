@@ -72,11 +72,28 @@ const getComponentConfigFile = async (filePath: string): Promise<ComponentConfig
     return value as ComponentConfigFile;
 };
 
-const getComponentConfigFiles = async (configFilePaths: string[]): Promise<ComponentConfigFile[]> => {
+const getComponentConfigFiles = async (
+    configFilePaths: string[], globalPlugins: string[] = []
+): Promise<ComponentConfigFile[]> => {
     try {
-        const promises = configFilePaths.map(configFile => getComponentConfigFile(configFile));
+        const configFiles = await Promise.all(
+            configFilePaths.map(configFile => getComponentConfigFile(configFile))
+        );
 
-        const configFiles = await Promise.all(promises);
+        /**
+         * Global plugins and plugins from the config files may contain the same plugin
+         * Filter global plugin instances to avoid duplicate plugin invocation.
+         *
+         * Favor plugins from config file against plugins from commandline args
+         * since config file may have custom plugin configuration.
+         */
+        configFiles.forEach(configFile => {
+            const pluginsFromConfigFile = configFile.plugins || [];
+
+            globalPlugins.filter(globalPlugin =>
+                !pluginsFromConfigFile.some(configFilePlugin => globalPlugin === configFilePlugin.name)
+            ).forEach(p => pluginsFromConfigFile.push({ name: p }));
+        });
 
         return configFiles;
     } catch (error) {
@@ -85,6 +102,5 @@ const getComponentConfigFiles = async (configFilePaths: string[]): Promise<Compo
 };
 
 export {
-    getComponentConfigFile,
     getComponentConfigFiles
 };
