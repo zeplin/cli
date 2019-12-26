@@ -4,7 +4,7 @@ import urljoin from "url-join";
 import { ComponentConfigFile, ConnectPluginInstance, Plugin } from "./interfaces/config";
 import { ConnectedComponent, ConnectedBarrelComponents, Data } from "./interfaces/api";
 import {
-    ComponentData, StorybookComponentConfig, ComponentConfig, CustomUrlConfig, Link, LinkType
+    ComponentData, ComponentConfig, CustomUrlConfig, Link, LinkType
 } from "./interfaces/plugin";
 import { CLIError } from "../../errors";
 import { defaults } from "../../config/defaults";
@@ -77,22 +77,6 @@ const removeEmptyFields = (componentData: ComponentData): ComponentData => {
     return componentData;
 };
 
-const prepareStorybookLinks = (baseUrl: string, storybookConfig: StorybookComponentConfig): string[] => {
-    const {
-        kind,
-        stories
-    } = storybookConfig;
-
-    const urlEncodedKind = encodeURIComponent(kind);
-    if (stories) {
-        return stories.map(story =>
-            urljoin(baseUrl, `?selectedKind=${urlEncodedKind}&selectedStory=${encodeURIComponent(story)}`)
-        );
-    }
-
-    return [urljoin(baseUrl, `?selectedKind=${urlEncodedKind}`)];
-};
-
 const processLink = (link: Link): Link => {
     if (!ALLOWED_LINK_TYPES.includes(link.type)) {
         link.type = LinkType.custom;
@@ -136,12 +120,9 @@ const connectComponentConfig = async (
 
     componentConfigFile.links?.forEach(link => {
         const { name, type, url } = link;
-        if (type === "storybook" && component.storybook) {
-            const preparedUrls = prepareStorybookLinks(url, component.storybook);
-            preparedUrls.forEach(preparedUrl => {
-                urlPaths.push({ name, type: LinkType.storybook, url: preparedUrl });
-            });
-        } else if (type === "styleguidist" && component.styleguidist) {
+
+        // TODO: remove styleguidist specific configuration from CLI core
+        if (type === "styleguidist" && component.styleguidist) {
             const encodedKind = encodeURIComponent(component.styleguidist.kind);
             urlPaths.push({ name, type: LinkType.styleguidist, url: urljoin(url, `#${encodedKind}`) });
         } else if (component[type]) {

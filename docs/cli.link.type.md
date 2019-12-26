@@ -4,7 +4,7 @@
 
 ## Link.type property
 
-Full URL to the resource
+Type of the link. Required to show a pretty link for certain types of links on Zeplin.
 
 <b>Signature:</b>
 

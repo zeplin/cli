@@ -17,6 +17,6 @@ export interface Link
 |  Property | Type | Description |
 |  --- | --- | --- |
 |  [name](./cli.link.name.md) | <code>string</code> | Name of the link |
-|  [type](./cli.link.type.md) | <code>LinkType</code> | Full URL to the resource |
+|  [type](./cli.link.type.md) | <code>LinkType</code> | Type of the link. Required to show a pretty link for certain types of links on Zeplin. |
 |  [url](./cli.link.url.md) | <code>string</code> | Full URL to the resource |
 
