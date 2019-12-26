@@ -175,27 +175,16 @@ const connectComponentConfig = async (
 };
 
 const connectComponentConfigFile = async (
-    componentConfigFile: ComponentConfigFile,
-    globalPluginInstances: ConnectPluginInstance[]
+    componentConfigFile: ComponentConfigFile
 ): Promise<ConnectedBarrelComponents> => {
-    const pluginsFromConfigFile = await initializePlugins(componentConfigFile.plugins || []);
-
-    /**
-     * Global plugins and plugins from the config file may have the same plugin
-     * Filter global plugin instances to avoid duplicate plugin invocation.
-     *
-     * Favor plugins from config file against plugins from commandline args
-     * since config file may have custom plugin configuration.
-     */
-    const filteredGlobalPlugins = Array.from(globalPluginInstances)
-        .filter(g => !pluginsFromConfigFile.some(p => p.name === g.name));
+    const plugins = await initializePlugins(componentConfigFile.plugins || []);
 
     const connectedComponents = await Promise.all(
         componentConfigFile.components.map(component =>
             connectComponentConfig(
                 component,
                 componentConfigFile,
-                [...filteredGlobalPlugins, ...pluginsFromConfigFile]
+                plugins
             )
         )
     );
@@ -208,17 +197,15 @@ const connectComponentConfigFile = async (
 };
 
 const connectComponentConfigFiles = (
-    componentConfigFiles: ComponentConfigFile[],
-    globalPluginInstances: ConnectPluginInstance[]
+    componentConfigFiles: ComponentConfigFile[]
 ): Promise<ConnectedBarrelComponents[]> => {
     const promises = componentConfigFiles.map(componentConfigFile =>
-        connectComponentConfigFile(componentConfigFile, globalPluginInstances)
+        connectComponentConfigFile(componentConfigFile)
     );
 
     return Promise.all(promises);
 };
 
 export {
-    initializePlugins,
     connectComponentConfigFiles
 };

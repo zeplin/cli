@@ -2,8 +2,7 @@ import chalk from "chalk";
 import dedent from "ts-dedent";
 
 import { getComponentConfigFiles } from "./config";
-import { Plugin } from "./interfaces/config";
-import { initializePlugins, connectComponentConfigFiles } from "./plugin";
+import { connectComponentConfigFiles } from "./plugin";
 import { ConnectDevServer } from "./server";
 import { ConnectedComponentsService } from "./service";
 import { indent } from "../../util/text";
@@ -24,13 +23,9 @@ export async function connect(options: ConnectOptions): Promise<void> {
             devModePort
         } = options;
 
-        const componentConfigFiles = await getComponentConfigFiles(configFiles);
+        const componentConfigFiles = await getComponentConfigFiles(configFiles, plugins);
 
-        const globalPlugins: Plugin[] = plugins.map(p => ({ name: p }));
-
-        const globalPluginInstances = await initializePlugins(globalPlugins);
-
-        const connectedBarrels = await connectComponentConfigFiles(componentConfigFiles, globalPluginInstances);
+        const connectedBarrels = await connectComponentConfigFiles(componentConfigFiles);
 
         if (devMode) {
             console.log("Starting development server…");
