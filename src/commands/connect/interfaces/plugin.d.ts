@@ -20,7 +20,10 @@ export interface Link {
     name?: string;
     /** Full URL to the resource */
     url: string;
-    /** Type of the link */
+    /**
+     * Type of the link.
+     * Required to show a pretty link for certain types of links on Zeplin.
+     */
     type: LinkType;
 }
 
@@ -55,14 +58,6 @@ export interface ComponentData {
 /**
  * @public
  */
-export interface StorybookComponentConfig {
-    kind: string;
-    stories?: string[];
-}
-
-/**
- * @public
- */
 export interface StyleguidistComponentConfig {
     kind: string;
 }
@@ -88,8 +83,6 @@ export interface ComponentConfigBase {
     zeplinNames: string[];
     /** Name for the component */
     name?: string;
-    /** Storybook kind/stories of the component (Optional) */
-    storybook?: StorybookComponentConfig;
     /** Styleguidist name for the component (Optional) */
     styleguidist?: StyleguidistComponentConfig;
 }

@@ -13,10 +13,6 @@ const componentConfigSchema = Joi.object({
     path: Joi.string(),
     zeplinNames: Joi.array().items(Joi.string()).min(1),
     name: Joi.string().optional(),
-    storybook: Joi.object({
-        kind: Joi.string(),
-        stories: Joi.array().items(Joi.string()).optional()
-    }).optional(),
     styleguidist: Joi.object({
         kind: Joi.string()
     }).optional()
