@@ -36,7 +36,7 @@ zeplin connect [options]
 |-----------------------|-------------------------------------------------|-------------------------|
 | -f, --file <file>     | Full path to components configuration file      | .zeplin/components.json |
 | -d, --dev             | Activate development mode                       | false                   |
-| -p, --plugin <plugin> | NPM package name of a Zeplin CLI connect plugin |                         |
+| -p, --plugin <plugin> | npm package name of a Zeplin CLI connect plugin |                         |
 | -h, --help            | Output usage information                        |                         |
 | --verbose             | Enable verbose logs                             |                         |
 
@@ -46,7 +46,7 @@ You can enhance your connected components by using plugins. Plugins can generate
 
 #### Plugins Developed by Zeplin
 
-| NPM package name                                                                           | Description                                         |
+| npm package name                                                                           | Description                                         |
 |------------------------------------------------------------------------------------------- |-----------------------------------------------------|
 | [@zeplin/cli-connect-react-plugin](https://github.com/zeplin/cli-connect-react-plugin)     | Generates snippet samples using React PropTypes     |
 | [@zeplin/cli-connect-angular-plugin](https://github.com/zeplin/cli-connect-angular-plugin) | Generate snippets using Angular components          |
@@ -68,7 +68,7 @@ Execute connect command using the plugin.
 ```
 zeplin connect -p @zeplin/cli-connect-react-plugin
 ```
-You can also fill `plugins` field in [component configuration file](./docs/cli.componentconfigfile.plugins.md) with NPM package names and their custom configuration parameters to execute them without `-p` argument.
+You can also fill `plugins` field in [component configuration file](./docs/cli.componentconfigfile.plugins.md) with npm package names and their custom configuration parameters to execute them without `-p` argument.
 
 #### Advanced usage
 Specify a custom path for `components.json` file.

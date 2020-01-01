@@ -8,7 +8,7 @@
 <b>Signature:</b>
 
 ```typescript
-export interface Plugin 
+export interface Plugin
 ```
 
 ## Properties
@@ -16,5 +16,5 @@ export interface Plugin
 |  Property | Type | Description |
 |  --- | --- | --- |
 |  [config](./cli.plugin.config.md) | <code>PluginConfig</code> | Arbitrary key/values for custom plugin configuration. |
-|  [name](./cli.plugin.name.md) | <code>string</code> | NPM package name of the plugin |
+|  [name](./cli.plugin.name.md) | <code>string</code> | npm package name of the plugin |
 

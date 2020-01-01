@@ -4,7 +4,7 @@
 
 ## Plugin.name property
 
-NPM package name of the plugin
+npm package name of the plugin
 
 <b>Signature:</b>
 

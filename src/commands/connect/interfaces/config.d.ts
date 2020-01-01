@@ -21,7 +21,7 @@ export interface GithubConfig {
 
 /** @public */
 export interface Plugin {
-    /** NPM package name of the plugin */
+    /** npm package name of the plugin */
     name: string;
     /** {@inheritdoc PluginConfig} */
     config?: PluginConfig;
