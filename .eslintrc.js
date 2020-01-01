@@ -22,7 +22,7 @@ module.exports = {
         }
     },
     rules: {
-        "capitalized-comments": "error",
+        "capitalized-comments": "off",
         "arrow-body-style": ["error", "as-needed"],
         "no-sync": "off",
         "no-process-exit": "off",
