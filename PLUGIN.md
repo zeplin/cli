@@ -6,16 +6,26 @@ Plugins can process the components to generate descriptions and snippets of them
 
 ## Implementation
 
- - Create a class that implements [ConnectPlugin](./src/commands/connect/interfaces/plugin.d.ts).
- - Export the class as a default export in your package entry point
- - Publish to NPM and start to use it as explained in [README.md](./README.md#plugin-usage)
+All you need is to create a class that implements [ConnectPlugin](./src/commands/connect/interfaces/plugin.d.ts) interface and export that class as a default export in your [package entry point](https://docs.npmjs.com/files/package.json#main). Use the example below and [interface documentation](./docs/cli.connectplugin.md) for details.
 
- If you want to have type definitions for plugin development install `@zeplin/cli` package as dev dependency.
+To test the plugin with Zeplin CLI:
+- Install `@zeplin/cli` globally.
+```
+    npm install -g @zeplin/cli
+```
+- Install your plugin globally.
+```
+    cd ~/path/to/your/plugin/project
+    npm install -g
+```
+- Execute Zeplin CLI using your plugin as explained in [README.md](./README.md#plugin-usage)
+
+It is not mandatory but publishing your plugin into npm would be the most practical way to use it when you are done with the development. The plugin will work as long as `@zeplin/cli` package can require/import your package in its own node context.
+
+If you want to have type definitions for plugin development install `@zeplin/cli` package as dev dependency.
 ```
 npm install --save-dev @zeplin/cli
 ```
-
-Please refer to the example below and [interface documentation](./docs/cli.connectplugin.md) for details.
 
 ### Example of `index.ts`
 ```typescript
