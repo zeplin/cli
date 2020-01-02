@@ -15,3 +15,6 @@ dist
 
 # Api Extractor/Documenter
 temp
+
+# Test Coverage
+coverage
