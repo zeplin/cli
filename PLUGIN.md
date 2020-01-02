@@ -1,33 +1,36 @@
-# Connected Components - Plugin Development
+# Plugins
 
-You can easily develop a plugin for your custom needs to connect your components into Zeplin.
+Zeplin CLI commands are extensible using plugins.
 
-Plugins can process the components to generate descriptions and snippets of them and also create links to other tools(e.g. wiki page, design system).
+## Connected Components
 
-## Implementation
+To extend the `connect` command, you can build a plugin for your own needs. Plugins process components to generate descriptions, code snippets and links (e.g. internal wiki, design system).
 
-All you need is to create a class that implements [ConnectPlugin](./src/commands/connect/interfaces/plugin.d.ts) interface and export that class as a default export in your [package entry point](https://docs.npmjs.com/files/package.json#main). Use the example below and [interface documentation](./docs/cli.connectplugin.md) for details.
+### Implementation
 
-To test the plugin with Zeplin CLI:
-- Install `@zeplin/cli` globally.
-```
-    npm install -g @zeplin/cli
-```
-- Install your plugin globally.
-```
-    cd ~/path/to/your/plugin/project
-    npm install -g
-```
-- Execute Zeplin CLI using your plugin as explained in [README.md](./README.md#plugin-usage)
+1. Create a class that implements the [ConnectPlugin](./src/commands/connect/interfaces/plugin.d.ts) interface.
+    - See [interface documentation](./docs/cli.connectplugin.md) for details.
+    - To get type definitions for plugin development install `@zeplin/cli` package as a development dependency.
 
-It is not mandatory but publishing your plugin into npm would be the most practical way to use it when you are done with the development. The plugin will work as long as `@zeplin/cli` package can require/import your package in its own node context.
+        ```sh
+        npm install --save-dev @zeplin/cli
+        ```
 
-If you want to have type definitions for plugin development install `@zeplin/cli` package as dev dependency.
-```
-npm install --save-dev @zeplin/cli
-```
+2. Export the class as a default export in your [package entry point](https://docs.npmjs.com/files/package.json#main).
+3. Test the plugin:
+    - Install your plugin globally.
 
-### Example of `index.ts`
+        ```sh
+        cd ~/path/to/your/plugin/project
+        npm install -g
+        ```
+
+    - Execute `connect` command.
+4. *(Optional)* Publish the plugin to npm.
+    - If you prefer not to publish the plugin, it should still work as long as `@zeplin/cli` package can require/import your package in its own node context.
+
+### Example
+
 ```typescript
 import { ConnectPlugin, ComponentConfig, ComponentData, PrismLang } from "@zeplin/cli";
 
@@ -35,29 +38,29 @@ export default class implements ConnectPlugin {
 
     /**
      * CLI invokes this method once the package is loaded.
-     * pluginContext contains arbitrary configuration set for the plugin
-     * on components config file.
+     * pluginContext contains custom parameters set for the plugin
+     * in the configuration file.
      *
-     * This method is optional. Implement it to initialize plugin locals etc.
-     * based on plugin configuration.
+     * This method is optional, implement it to initialize plugin locals and
+     * so on.
     */
     async init(pluginContext: PluginContext): Promise<void> {
-        // implementation
+
     }
 
-
     /**
-     * CLI invokes this method for each component in the configration file.
+     * CLI invokes this method for each component in the configuration file.
     */
     async process(context: ComponentConfig): Promise<ComponentData> {
-        // implementation
+
     }
 
     /**
      * CLI invokes this method for each component in the configuration file
-     * to determine if this plugin should process this component.
+     * to determine if the plugin should process the component.
     */
     supports(context: ComponentConfig): boolean {
-        // implementation
+
     }
 }
+```
