@@ -55,35 +55,11 @@ export const connectedComponent2: ConnectedComponent = {
     }]
 };
 
-export const connectedComponentsProject: ConnectedBarrelComponents[] = [
-    {
-        projects: ["pid1", "pid2"],
-        styleguides: [],
-        connectedComponents: [
-            connectedComponent1,
-            connectedComponent2
-        ]
-    }
-];
-
-export const connectedComponentsStyleguide: ConnectedBarrelComponents[] = [
-    {
-        projects: [],
-        styleguides: ["sid1", "sid2"],
-        connectedComponents: [
-            connectedComponent1,
-            connectedComponent2
-        ]
-    }
-];
-
-export const connectedComponentsProjectAndStyleguide: ConnectedBarrelComponents[] = [
-    {
-        projects: ["pid1", "pid2"],
-        styleguides: ["sid1", "sid2"],
-        connectedComponents: [
-            connectedComponent1,
-            connectedComponent2
-        ]
-    }
-];
+export const connectedComponents: ConnectedBarrelComponents = {
+    projects: ["pid1", "pid2"],
+    styleguides: ["sid1", "sid2"],
+    connectedComponents: [
+        connectedComponent1,
+        connectedComponent2
+    ]
+};
