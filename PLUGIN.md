@@ -38,8 +38,8 @@ export default class implements ConnectPlugin {
 
     /**
      * CLI invokes this method once the package is loaded.
-     * pluginContext contains custom parameters set for the plugin
-     * in the configuration file.
+     * pluginContext contains custom parameters defined in the configuration
+     * file.
      *
      * This method is optional, implement it to initialize plugin locals and
      * so on.
