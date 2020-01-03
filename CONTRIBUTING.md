@@ -14,9 +14,9 @@ We welcome any type of contribution, not only code. You can help by:
 
 We use GitHub issues to track public bugs, feature requests and suggestions. [Open a new issue.](https://github.com/zeplin/cli/issues/new)
 
-☝️ *Please review your bug reports before posting to remove or mask any private/sensitive information.*
+☝️ *Review your bug reports before posting to remove or mask any private/sensitive information.*
 
-For each bug report, try an include the following information:
+For each bug report, please try to include the following information:
 
 - A quick summary and/or background
 - What you expected would happen
