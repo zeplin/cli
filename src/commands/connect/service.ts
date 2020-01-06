@@ -5,6 +5,7 @@ import { ZeplinApi } from "../../api";
 import { AuthenticationService } from "../../service/auth";
 import { ConnectedBarrelComponents } from "./interfaces/api";
 import { APIError, AuthError } from "../../errors";
+import logger from "../../util/logger";
 
 const isAuthenticationError = (err: Error): boolean => (APIError.isUnauthorized(err) || AuthError.isAuthError(err));
 
@@ -30,7 +31,7 @@ export class ConnectedComponentsService {
                     ${error.message}
                     Please update ${chalk.dim`ZEPLIN_ACCESS_TOKEN`} environment variable.`;
                 } else {
-                    console.log(error.message);
+                    logger.info(error.message);
                     const authToken = await this.authService.promptForLogin();
 
                     await this.upload(authToken, connectedBarrelComponents);

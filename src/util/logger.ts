@@ -17,7 +17,10 @@ const logger = winston.createLogger({
                 }),
                 format.errors({ stack: true }),
                 format.splat(),
-                format.printf(m => stripAnsi(`${m.timestamp} - ${m.level} - ${m.message}${m.stack ? `\n${m.stack}` : ""}`))
+                format.printf(m =>
+                    stripAnsi(`${m.timestamp} - ${m.level} - ${m.message}${m.stack ? `\n${m.stack}` : ""}`)
+                        .replace(/\r?\n/g, "")
+                )
             )
         }),
         new winston.transports.Console({

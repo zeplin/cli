@@ -5,6 +5,7 @@ import { ZeplinApi } from "../api";
 import { AuthError } from "../errors";
 import * as authFileUtil from "../util/auth-file";
 import * as envUtil from "../util/env";
+import logger from "../util/logger";
 
 function notEmptyValidator(errorMessage: string) {
     return (input: string): boolean | string => (input && input.length > 0 ? true : errorMessage);
@@ -39,13 +40,15 @@ export class AuthenticationService {
         const tokenFromEnv = envUtil.getAccessTokenFromEnv();
 
         if (tokenFromEnv) {
+            logger.debug(`Found access token from ZEPLIN_ACCESS_TOKEN env var. value: ${tokenFromEnv}`);
             this.authToken = tokenFromEnv;
         } else if (!envUtil.isCI()) {
             const tokenFromFile = await authFileUtil.readAuthToken();
             if (tokenFromFile) {
+                logger.debug(`Found access token from auth file. value: ${tokenFromEnv}`);
                 this.authToken = tokenFromFile;
             } else {
-                console.log(`Access token not found in ${chalk.dim`ZEPLIN_ACCESS_TOKEN`} environment variable.`);
+                logger.info(`Access token not found in ${chalk.dim`ZEPLIN_ACCESS_TOKEN`} environment variable.`);
                 this.authToken = await this.promptForLogin();
             }
         }
@@ -56,7 +59,7 @@ export class AuthenticationService {
     async promptForLogin(
         options: { ignoreSaveTokenErrors: boolean } = { ignoreSaveTokenErrors: true }
     ): Promise<string> {
-        console.log("\nLogin into Zeplin…");
+        logger.info("\nLogin into Zeplin…");
         const credentials = await inquirer.prompt([
             {
                 type: "input",
@@ -81,6 +84,7 @@ export class AuthenticationService {
         try {
             await authFileUtil.saveAuthToken(authToken);
         } catch (err) {
+            logger.debug(`${err.stack}`);
             if (!options.ignoreSaveTokenErrors) {
                 throw err;
             }
