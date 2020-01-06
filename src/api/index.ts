@@ -1,5 +1,6 @@
 import Axios, { AxiosInstance } from "axios";
 import { defaults } from "../config/defaults";
+import { interceptors } from "./interceptors";
 import { LoginRequest, LoginResponse } from "./interfaces";
 import { APIError, CLIError } from "../errors";
 import { ConnectedComponentList } from "../commands/connect/interfaces/api";
@@ -12,7 +13,14 @@ const AUTHORIZE_URL = "/oauth/authorize";
 export type BarrelType = "projects" | "styleguides";
 
 export class ZeplinApi {
-    axios: AxiosInstance = Axios.create({ baseURL: defaults.api.baseURL });
+    axios: AxiosInstance;
+
+    constructor() {
+        this.axios = Axios.create({ baseURL: defaults.api.baseURL });
+
+        interceptors.request.forEach(x => this.axios.interceptors.request.use(x));
+        interceptors.response.forEach(x => this.axios.interceptors.response.use(x));
+    }
 
     async login(request: LoginRequest): Promise<LoginResponse> {
         try {
