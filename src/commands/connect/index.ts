@@ -6,6 +6,7 @@ import { connectComponentConfigFiles } from "./plugin";
 import { ConnectDevServer } from "./server";
 import { ConnectedComponentsService } from "./service";
 import { indent } from "../../util/text";
+import logger from "../../util/logger";
 
 export interface ConnectOptions {
     configFiles: string[];
@@ -16,6 +17,8 @@ export interface ConnectOptions {
 
 export async function connect(options: ConnectOptions): Promise<void> {
     try {
+        logger.debug(`connect options: ${JSON.stringify(options)}`);
+
         const {
             configFiles,
             plugins,
@@ -25,24 +28,28 @@ export async function connect(options: ConnectOptions): Promise<void> {
 
         const componentConfigFiles = await getComponentConfigFiles(configFiles, plugins);
 
+        logger.debug(`component config files: ${JSON.stringify(componentConfigFiles)}`);
+
         const connectedBarrels = await connectComponentConfigFiles(componentConfigFiles);
 
+        logger.debug(`connected barrels output: ${JSON.stringify(connectedBarrels)}`);
+
         if (devMode) {
-            console.log("Starting development server…");
+            logger.info("Starting development server…");
 
             const devServer = new ConnectDevServer(connectedBarrels);
 
             await devServer.start(devModePort);
 
-            console.log(`Development server is started on port ${devModePort}!`);
+            logger.info(`Development server is started on port ${devModePort}!`);
         } else {
-            console.log("Connecting all connected components into Zeplin…");
+            logger.info("Connecting all connected components into Zeplin…");
 
             const service = new ConnectedComponentsService();
 
             await service.uploadConnectedBarrels(connectedBarrels);
 
-            console.log("🦄 Components successfully connected to components in Zeplin.");
+            logger.info("🦄 Components successfully connected to components in Zeplin.");
         }
     } catch (error) {
         error.message = dedent`

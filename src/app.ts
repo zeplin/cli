@@ -7,6 +7,7 @@ import { connect, ConnectOptions } from "./commands/connect";
 import { login } from "./commands/login";
 import { commandRunner } from "./util/command";
 import { activateVerbose } from "./util/env";
+import logger from "./util/logger";
 
 const program = new commander.Command();
 
@@ -30,7 +31,8 @@ program
     .name(Object.keys(bin)[0])
     .version(version);
 
-console.log(`\nZeplin CLI - v${version}\n`);
+logger.console(`\nZeplin CLI - v${version}\n`);
+logger.debug(`Version: ${version}`);
 
 const connectCommand = program.command("connect")
     .description("Connect components to code")

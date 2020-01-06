@@ -2,26 +2,23 @@ import chalk from "chalk";
 import dedent from "ts-dedent";
 import { isVerbose } from "../util/env";
 import { CLIError } from "../errors";
+import logger from "../util/logger";
 
 const errorHandler = (error: Error): never => {
-    console.log(); // Line break before error output.
-    if (isVerbose()) {
-        console.error(chalk.redBright(error.stack));
+    logger.console("");
+    logger.error(`${chalk.redBright(error.stack)}`);
 
+    if (isVerbose()) {
         if (CLIError.isCLIError(error) && error.details) {
-            console.error(chalk.redBright(dedent`
+            logger.error(chalk.redBright(dedent`
                 Details:
                 ${error.details}`));
         }
-    } else {
-        console.error(dedent`
-            ${chalk.redBright(error.message)}
-
-            Use --verbose flag for detailed error output.
-        `);
     }
 
-    console.log();
+    logger.console(`Please check logs ${chalk.dim("~/.zeplin/cli.log")} for error details.`);
+
+    logger.console("");
     process.exit(1);
 };
 

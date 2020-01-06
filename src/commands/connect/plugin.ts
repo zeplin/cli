@@ -8,6 +8,7 @@ import {
 } from "./interfaces/plugin";
 import { CLIError } from "../../errors";
 import { defaults } from "../../config/defaults";
+import logger from "../../util/logger";
 
 const ALLOWED_LINK_TYPES = [
     LinkType.styleguidist,
@@ -38,6 +39,8 @@ const createPluginInstance = async (plugin: Plugin): Promise<ConnectPluginInstan
     const PluginClass = await importPlugin(plugin.name);
     const pluginInstance = new PluginClass();
 
+    logger.debug(`Initializing ${plugin.name}.`);
+
     // Check that plugin implements the required functions
     if (!(typeof pluginInstance.process === "function") ||
         !(typeof pluginInstance.supports === "function")) {
@@ -51,6 +54,7 @@ const createPluginInstance = async (plugin: Plugin): Promise<ConnectPluginInstan
     pluginInstance.name = plugin.name;
 
     if (typeof pluginInstance.init === "function") {
+        logger.debug(`${plugin.name} has init method. Initializing with ${plugin.config}`);
         pluginInstance.init({ config: plugin.config });
     }
 
