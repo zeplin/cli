@@ -2,10 +2,19 @@ import winston, { format } from "winston";
 import os from "os";
 import stripAnsi from "strip-ansi";
 
+const logLevels = {
+    http: 5,
+    debug: 4,
+    info: 3,
+    console: 2,
+    warn: 1,
+    error: 0
+};
+
 const logger = winston.createLogger({
     transports: [
         new winston.transports.File({
-            level: "silly",
+            level: "http",
             filename: "cli.log",
             maxsize: 1048576, // 1 MB
             maxFiles: 2,
@@ -29,6 +38,6 @@ const logger = winston.createLogger({
             )
         })
     ]
-});
+}) as winston.Logger & Record<keyof typeof logLevels, winston.LeveledLogMethod>;
 
 export default logger;
