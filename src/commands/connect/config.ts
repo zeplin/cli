@@ -2,6 +2,7 @@ import Joi from "@hapi/joi";
 import * as fileUtil from "../../util/file";
 import { ComponentConfigFile } from "./interfaces/config";
 import { CLIError } from "../../errors";
+import logger from "../../util/logger";
 
 const linkConfigSchema = Joi.object({
     type: Joi.string(),
@@ -59,6 +60,8 @@ const componentConfigFileSchema = Joi.object({
 const getComponentConfigFile = async (filePath: string): Promise<ComponentConfigFile> => {
     const file = await fileUtil.readJsonFile(filePath);
 
+    logger.debug(`${filePath} content: ${JSON.stringify(file)}`);
+
     const { error, value } = componentConfigFileSchema.validate(file, { allowUnknown: true, presence: "required" });
 
     if (error) {
@@ -83,15 +86,22 @@ const getComponentConfigFiles = async (
          * Favor plugins from config file against plugins from commandline args
          * since config file may have custom plugin configuration.
          */
-        configFiles.forEach(configFile => {
-            const pluginsFromConfigFile = configFile.plugins || [];
+        return configFiles.map(configFile => {
+            const plugins = configFile.plugins || [];
 
-            globalPlugins.filter(globalPlugin =>
-                !pluginsFromConfigFile.some(configFilePlugin => globalPlugin === configFilePlugin.name)
-            ).forEach(p => pluginsFromConfigFile.push({ name: p }));
+            const pluginNamesFromConfigFile = plugins.map(p => p.name);
+
+            globalPlugins.forEach(globalPlugin => {
+                if (pluginNamesFromConfigFile.includes(globalPlugin)) {
+                    logger.debug(`${globalPlugin} is defined using both config file and -p option.`);
+                } else {
+                    plugins.push({ name: globalPlugin });
+                }
+            });
+
+            configFile.plugins = plugins;
+            return configFile;
         });
-
-        return configFiles;
     } catch (error) {
         throw new CLIError(error.message);
     }
