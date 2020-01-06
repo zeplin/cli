@@ -1,6 +1,7 @@
 import os from "os";
 import path from "path";
 import { writeJsonIntoFile, readJsonFile } from "./file";
+import logger from "../util/logger";
 
 const TOKEN_FILE_NAME = ".zeplinrc";
 
@@ -26,8 +27,7 @@ export async function readAuthToken(): Promise<string | undefined> {
     try {
         ({ authToken } = await readJsonFile(tokenFilename) as AuthToken);
     } catch (error) {
-        // Ignore
-        // TODO add logging utility for verbose logs
+        logger.debug(`${error.stack}`);
     }
 
     return authToken;

@@ -2,6 +2,7 @@
 import chalk from "chalk";
 import dedent from "ts-dedent";
 import inquirer from "inquirer";
+import logger from "../../util/logger";
 
 import * as envUtil from "../../util/env";
 import { AuthenticationService } from "../../service/index";
@@ -10,7 +11,7 @@ export async function login(): Promise<void> {
     const tokenFromEnv = envUtil.getAccessTokenFromEnv();
 
     if (tokenFromEnv) {
-        console.log(dedent`${chalk.dim`ZEPLIN_ACCESS_TOKEN`} is already set.
+        logger.info(dedent`${chalk.dim`ZEPLIN_ACCESS_TOKEN`} is already set.
                             Remove the environment variable to login via CLI.`);
     } else {
         const authService = new AuthenticationService();
@@ -30,6 +31,6 @@ export async function login(): Promise<void> {
 
         await authService.promptForLogin({ ignoreSaveTokenErrors: false });
 
-        console.log(chalk.bold("\n🦄 Successfully authenticated."));
+        logger.info(chalk.bold("\n🦄 Successfully authenticated."));
     }
 }
