@@ -42,6 +42,7 @@
     "@types/jsonwebtoken": "^8.3.4",
     "@types/node": "^12.7.5",
     "@types/url-join": "^4.0.0",
+    "@types/winston": "^2.4.4",
     "@typescript-eslint/eslint-plugin": "^2.3.0",
     "@typescript-eslint/parser": "^2.3.0",
     "@zeplin/eslint-config": "^2.2.0",
@@ -64,7 +65,9 @@
     "http-status-codes": "^1.4.0",
     "inquirer": "^7.0.0",
     "jsonwebtoken": "^8.5.1",
+    "strip-ansi": "^6.0.0",
     "ts-dedent": "^1.1.0",
-    "url-join": "^4.0.1"
+    "url-join": "^4.0.1",
+    "winston": "^3.2.1"
   }
 }
