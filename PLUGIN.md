@@ -28,8 +28,12 @@ To extend the `connect` command, you can build a plugin for your own needs. Plug
     - Execute `connect` command.
 4. *(Optional)* Publish the plugin to npm.
     - If you prefer not to publish the plugin, it should still work as long as `@zeplin/cli` package can require/import your package in its own node context.
+5. *(Optional)* Add your plugin to [Available plugins](./README.md#available-plugins).
+    - Create a pull request to add your plugin to the available plugins list.
 
-### Example
+### Examples
+
+Here's a boilerplate for a class that implements the [ConnectPlugin](./src/commands/connect/interfaces/plugin.d.ts) interface.
 
 ```typescript
 import { ConnectPlugin, ComponentConfig, ComponentData, PrismLang } from "@zeplin/cli";
@@ -64,3 +68,12 @@ export default class implements ConnectPlugin {
     }
 }
 ```
+
+You can also check out these open-source Connected Components plugins to see how they work.
+
+| npm package name                                                                              | Description                                       |
+|-----------------------------------------------------------------------------------------------|---------------------------------------------------|
+| [zeplin/cli-connect-react-plugin](https://github.com/zeplin/cli-connect-react-plugin)         | Generates snippets from React components          |
+| [zeplin/cli-connect-angular-plugin](https://github.com/zeplin/cli-connect-angular-plugin)     | Generate snippets from Angular components         |
+| [zeplin/cli-connect-swift-plugin](https://github.com/zeplin/cli-connect-swift-plugin)         | Generates snippets from iOS, macOS views in Swift |
+| [zeplin/cli-connect-storybook-plugin](https://github.com/zeplin/cli-connect-storybook-plugin) | Generates Storybook links of components           |

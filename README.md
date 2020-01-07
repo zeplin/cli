@@ -40,13 +40,14 @@ Zeplin CLI commands are extensible using plugins. See [PLUGIN.md](./PLUGIN.md) t
 
 `connect` command uses plugins to analyze component source code. Plugins generate component descriptions, code snippets and links for each component.
 
-#### Official plugins
+#### Available plugins
 
-| npm package name                                                                           | Description                                          |
-|--------------------------------------------------------------------------------------------|------------------------------------------------------|
-| [@zeplin/cli-connect-react-plugin](https://github.com/zeplin/cli-connect-react-plugin)     | Generates snippets from React components             |
-| [@zeplin/cli-connect-angular-plugin](https://github.com/zeplin/cli-connect-angular-plugin) | Generate snippets from Angular components            |
-| [@zeplin/cli-connect-swift-plugin](https://github.com/zeplin/cli-connect-swift-plugin)     | Generates snippets from iOS, macOS views in Swift    |
+| npm package name                                                                               | Description                                       |
+|------------------------------------------------------------------------------------------------|---------------------------------------------------|
+| [@zeplin/cli-connect-react-plugin](https://github.com/zeplin/cli-connect-react-plugin)         | Generates snippets from React components          |
+| [@zeplin/cli-connect-angular-plugin](https://github.com/zeplin/cli-connect-angular-plugin)     | Generate snippets from Angular components         |
+| [@zeplin/cli-connect-swift-plugin](https://github.com/zeplin/cli-connect-swift-plugin)         | Generates snippets from iOS, macOS views in Swift |
+| [@zeplin/cli-connect-storybook-plugin](https://github.com/zeplin/cli-connect-storybook-plugin) | Generates Storybook links of components           |
 
 #### Usage
 
