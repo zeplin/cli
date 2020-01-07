@@ -1,0 +1,60 @@
+version: 2
+jobs:
+  build_and_test:
+    docker:
+    - image: circleci/node:10.18.0
+    steps:
+    - checkout
+    # Restore node_modules if it is cached and has the exact same package-lock.json
+    - restore_cache:
+        key: dependency-cache-{{ checksum "package-lock.json" }}
+        paths:
+        - ./node_modules
+    # Remove zeplin packages from node_modules because they might be updated with same tag since last caching
+    - run:
+        name: Remove zeplin packages from node_modules
+        command: rm -rf node_modules/@zeplin*
+    - run:
+        name: Install npm packages
+        command: npm install
+    - run:
+        name: Run linter
+        command: npm run lint
+    # Save node_modules to the cache for current package-lock.json
+    - save_cache:
+        key: dependency-cache-{{ checksum "package-lock.json" }}
+        paths:
+        - ./node_modules
+    - run:
+        name: Run tests
+        command: npm test
+  publish:
+    docker:
+    - image: circleci/node:10.18.0
+    steps:
+    - checkout
+    - run:
+        name: Publish to NPM
+        command: |
+          echo "@zeplin:registry=https://registry.npmjs.org/" >> ~/.npmrc
+          echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" >> ~/.npmrc
+          npm publish --access public
+workflows:
+  version: 2
+  npm_publish:
+    jobs:
+    - build_and_test:
+        # Run build_and_test on all branches and tags
+        filters:
+          tags:
+            only: /.*/
+    - publish:
+        requires:
+        - build_and_test
+        filters:
+          # Ignore all branches
+          branches:
+            ignore: /.*/
+          # Run publish only on version tags
+          tags:
+            only: /v[0-9]+(\.[0-9]+)*/
