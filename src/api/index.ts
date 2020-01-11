@@ -9,7 +9,7 @@ import { URLSearchParams } from "url";
 const LOGIN_URL = "/users/login";
 const AUTHORIZE_URL = "/oauth/authorize";
 
-type BarrelType = "projects" | "styleguides";
+export type BarrelType = "projects" | "styleguides";
 
 export class ZeplinApi {
     axios: AxiosInstance = Axios.create({ baseURL: defaults.api.baseURL });
@@ -39,7 +39,7 @@ export class ZeplinApi {
                 },
                 headers: { "Zeplin-Token": zeplinToken },
                 maxRedirects: 0,
-                validateStatus: (status: number) => status === MOVED_TEMPORARILY
+                validateStatus: (status: number): boolean => status === MOVED_TEMPORARILY
             });
 
             const [, responseQueryParams] = response.data.split("?");

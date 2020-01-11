@@ -1,5 +1,7 @@
-import { ConnectedBarrelComponents, ConnectedComponent } from "../src/commands/connect/interfaces/api";
+import { ConnectedBarrelComponents, ConnectedComponent, ConnectedComponentList } from "../src/commands/connect/interfaces/api";
 import { LinkType } from "../src/commands/connect/interfaces/plugin";
+import { defaults } from "../src/config/defaults";
+import { BarrelType } from "../src/api";
 
 export const loginRequest = {
     handle: "handle",
@@ -62,4 +64,43 @@ export const connectedComponents: ConnectedBarrelComponents = {
         connectedComponent1,
         connectedComponent2
     ]
+};
+
+export const connectedComponentList: ConnectedComponentList = {
+    connectedComponents: [
+        connectedComponent1,
+        connectedComponent2
+    ]
+};
+
+export const axiosError = {
+    isAxiosError: true,
+    response: {
+        data: {
+            title: "Error title",
+            message: "Error message"
+        },
+        status: 401,
+        statusText: "Unauthorized",
+        headers: {},
+        config: {}
+    },
+    config: {},
+    name: "AxiosError",
+    message: "Error message"
+};
+
+export const generateTokenAxiosRequest = {
+    params: {
+        client_id: defaults.api.clientId,
+        response_type: "token",
+        scope: "write"
+    },
+    headers: { "Zeplin-Token": loginResponse.token },
+    maxRedirects: 0
+};
+
+export const uploadParams = {
+    barrelId: "pid",
+    barrelType: "projects" as BarrelType
 };
