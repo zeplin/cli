@@ -1,15 +1,24 @@
 #!/usr/bin/env node
 import commander from "commander";
+import updateNotifier from "update-notifier";
 
 import { defaults } from "./config/defaults";
-import { bin, version } from "../package.json";
+import { bin, name, version } from "../package.json";
 import { connect, ConnectOptions } from "./commands/connect";
 import { login } from "./commands/login";
 import { commandRunner } from "./util/command";
 import { activateVerbose } from "./util/env";
 import logger from "./util/logger";
 
-const program = new commander.Command();
+function beforeCommand(): void {
+    const un = updateNotifier({
+        pkg: {
+            name,
+            version
+        }
+    });
+    un.notify();
+}
 
 function createCollector(): (arg1: string, arg2: string[]) => string[] {
     let cleared = false;
@@ -26,6 +35,8 @@ function createCollector(): (arg1: string, arg2: string[]) => string[] {
 
     return collectionValue;
 }
+
+const program = new commander.Command();
 
 program
     .name(Object.keys(bin)[0])
@@ -67,4 +78,5 @@ program.on("command:*", () => {
     program.outputHelp();
 });
 
+beforeCommand();
 program.parseAsync(process.argv);

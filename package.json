@@ -41,6 +41,7 @@
     "@types/jest": "^24.0.18",
     "@types/jsonwebtoken": "^8.3.4",
     "@types/node": "^12.7.5",
+    "@types/update-notifier": "^2.5.0",
     "@types/url-join": "^4.0.0",
     "@types/winston": "^2.4.4",
     "@typescript-eslint/eslint-plugin": "^2.3.0",
@@ -68,6 +69,7 @@
     "mask-json": "^1.0.3",
     "strip-ansi": "^6.0.0",
     "ts-dedent": "^1.1.0",
+    "update-notifier": "^4.0.0",
     "url-join": "^4.0.1",
     "winston": "^3.2.1"
   }
