@@ -65,6 +65,7 @@
     "http-status-codes": "^1.4.0",
     "inquirer": "^7.0.0",
     "jsonwebtoken": "^8.5.1",
+    "mask-json": "^1.0.3",
     "strip-ansi": "^6.0.0",
     "ts-dedent": "^1.1.0",
     "url-join": "^4.0.1",
