@@ -1,15 +1,20 @@
 import { AxiosRequestConfig, AxiosResponse } from "axios";
+import maskJson from "mask-json";
 import logger from "../util/logger";
+
+const blacklist = ["password", "Zeplin-Access-Token", "Zeplin-Token"];
+
+const mask = maskJson(blacklist);
 
 const requestLogger = (request: AxiosRequestConfig): AxiosRequestConfig => {
     const { url, method, data, headers } = request;
     let httpLog = `HTTP Request: ${method} ${url}`;
 
     if (headers) {
-        httpLog = httpLog.concat(`, Headers: ${JSON.stringify(headers)}`);
+        httpLog = httpLog.concat(`, Headers: ${JSON.stringify(mask(headers))}`);
     }
     if (data) {
-        httpLog = httpLog.concat(`, Body: ${JSON.stringify(data)}`);
+        httpLog = httpLog.concat(`, Body: ${JSON.stringify(mask(data))}`);
     }
 
     logger.http(httpLog);
@@ -30,11 +35,10 @@ const responseLogger = (response: AxiosResponse): AxiosResponse => {
         .concat(`, Status: ${status}-${statusText}`);
 
     if (headers) {
-        httpLog = httpLog.concat(`, Headers: ${JSON.stringify(headers)}`);
+        httpLog = httpLog.concat(`, Headers: ${JSON.stringify(mask(headers))}`);
     }
-
     if (data) {
-        httpLog = httpLog.concat(`, Body: ${JSON.stringify(data)}`);
+        httpLog = httpLog.concat(`, Body: ${JSON.stringify(mask(data))}`);
     }
 
     logger.http(httpLog);

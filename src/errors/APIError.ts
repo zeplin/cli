@@ -14,7 +14,7 @@ export class APIError extends CLIError {
                     message = "Looks like your session has expired, please login again.";
                     break;
                 case BAD_REQUEST:
-                    message = "There is a problem with the request payload.";
+                    message = "There is a problem with the API request.";
                     break;
                 default:
                     message = `${response.data.title} - ${response.data.message}`;
