@@ -15,7 +15,7 @@ export async function login(): Promise<void> {
     } else {
         const authService = new AuthenticationService();
 
-        const existingToken = authService.authenticate();
+        const existingToken = await authService.authenticate();
         if (existingToken) {
             const answer = await inquirer.prompt([{
                 type: "input",
