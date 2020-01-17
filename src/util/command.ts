@@ -21,12 +21,13 @@ const errorHandler = (error: Error): void => {
     }
 
     if (CLIError.isCLIError(error) && error.details) {
+        const errorDetails = JSON.stringify(error.details);
         if (isVerbose()) {
             logger.error(chalk.redBright(dedent`
                 Details:
-                ${error.details}`));
+                ${errorDetails}`));
         } else {
-            logger.debug(`${error.details}`);
+            logger.debug(`${errorDetails}`);
         }
     }
     logger.info(`\nPlease check ${chalk.dim("~/.zeplin/cli.log")} for details.\n`);
