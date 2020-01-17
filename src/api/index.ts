@@ -50,7 +50,7 @@ export class ZeplinApi {
                 validateStatus: (status: number): boolean => status === MOVED_TEMPORARILY
             });
 
-            const [, responseQueryParams] = response.data.split("?");
+            const [, responseQueryParams] = response.headers.location.split("?");
 
             const responseParams = new URLSearchParams(responseQueryParams);
 

@@ -56,7 +56,11 @@ describe("ZeplinApi", () => {
         it("returns token response when HTTP request succeeds", async () => {
             const zeplinApi = new ZeplinApi();
 
-            mocked(Axios.get).mockResolvedValueOnce({ data: "url:port?access_token=wowmuchaccesstoken" });
+            mocked(Axios.get).mockResolvedValueOnce({
+                headers: {
+                    location: "url:port?access_token=wowmuchaccesstoken"
+                }
+            });
 
             await expect(zeplinApi.generateToken(samples.loginResponse.token))
                 .resolves
