@@ -1,14 +1,38 @@
 import { AxiosRequestConfig, AxiosResponse } from "axios";
 import maskJson from "mask-json";
 import logger from "../util/logger";
+import { URL } from "url";
+import { MOVED_TEMPORARILY } from "http-status-codes";
 
-const blacklist = ["password", "Zeplin-Access-Token", "Zeplin-Token"];
+const blacklist = ["password", "token", "Zeplin-Access-Token", "Zeplin-Token", "Location"];
 
-const mask = maskJson(blacklist);
+const blacklistedQueryParams = ["access_token"];
+
+const mask = maskJson(blacklist, {
+    ignoreCase: true
+});
+
+const maskUrl = (_url: string | undefined): string | undefined => {
+    let masked = _url;
+    try {
+        if (_url) {
+            const url = new URL(_url);
+
+            blacklistedQueryParams
+                .filter(param => url.searchParams.has(param))
+                .forEach(param => url.searchParams.set(param, "--REDACTED--"));
+
+            masked = url.toString();
+        }
+    } catch {
+        // Ignore
+    }
+    return masked;
+};
 
 const requestLogger = (request: AxiosRequestConfig): AxiosRequestConfig => {
     const { url, method, data, headers } = request;
-    let httpLog = `HTTP Request: ${method} ${url}`;
+    let httpLog = `HTTP Request: ${method} ${maskUrl(url)}`;
 
     if (headers) {
         httpLog = httpLog.concat(`, Headers: ${JSON.stringify(mask(headers))}`);
@@ -31,14 +55,17 @@ const responseLogger = (response: AxiosResponse): AxiosResponse => {
         data
     } = response;
 
-    let httpLog = `HTTP Response: ${method} ${url}`
+    let httpLog = `HTTP Response: ${method} ${maskUrl(url)}`
         .concat(`, Status: ${status}-${statusText}`);
 
     if (headers) {
         httpLog = httpLog.concat(`, Headers: ${JSON.stringify(mask(headers))}`);
     }
     if (data) {
-        httpLog = httpLog.concat(`, Body: ${JSON.stringify(mask(data))}`);
+        // 302 may contain sensitive query params
+        if (status !== MOVED_TEMPORARILY) {
+            httpLog = httpLog.concat(`, Body: ${JSON.stringify(mask(data))}`);
+        }
     }
 
     logger.http(httpLog);
