@@ -12,6 +12,7 @@ export interface ConnectOptions {
     configFiles: string[];
     devMode: boolean;
     devModePort: number;
+    devModeWatch: boolean;
     plugins: string[];
 }
 

@@ -48,12 +48,14 @@ const connectCommand = program.command("connect")
     .description("Connect components to code")
     .option("-f, --file <file>", "Full path to components file", createCollector(), defaults.commands.connect.filePaths)
     .option("-d, --dev", "Activate development mode", defaults.commands.connect.devMode)
+    .option("--no-watch", "Disable watch files on development mode", defaults.commands.connect.devModeWatch)
     .option("-p, --plugin <plugin>", "npm package name of a Zeplin CLI connect plugin", createCollector(), [])
     .action(commandRunner(async options => {
         const connectOptions: ConnectOptions = {
             configFiles: options.file,
             devMode: options.dev,
             devModePort: defaults.commands.connect.port,
+            devModeWatch: options.watch,
             plugins: options.plugin
         };
 
