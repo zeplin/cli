@@ -1,10 +1,16 @@
 import express from "express";
-import { ConnectedBarrelComponents, ConnectedComponent } from "../interfaces/api";
-import { CLIError } from "../../../errors";
+import { Server } from "http";
 import { OK } from "http-status-codes";
+import { Socket } from "net";
+import { CLIError } from "../../../errors";
+import logger from "../../../util/logger";
+import { ConnectedBarrelComponents, ConnectedComponent } from "../interfaces/api";
 
 export class ConnectDevServer {
     connectedBarrels: ConnectedBarrelComponents[] = [];
+    stopped = false;
+    server: Server | undefined;
+    connections: Socket[] = [];
 
     constructor(connectedBarrels: ConnectedBarrelComponents[]) {
         this.connectedBarrels = connectedBarrels;
@@ -18,7 +24,11 @@ export class ConnectDevServer {
         return found ? found.connectedComponents : null;
     }
 
-    start(port: number): Promise<void> {
+    start(port: number): Promise<Server> {
+        if (this.server && this.server.listening) {
+            return Promise.resolve(this.server);
+        }
+
         const app = express();
 
         // CORS
@@ -37,16 +47,37 @@ export class ConnectDevServer {
             return res.status(OK).json({ connectedComponents });
         });
 
-        const promise = new Promise<void>((resolve, reject): void => {
-            app.listen(port, resolve)
+        return new Promise<Server>((resolve, reject): void => {
+            this.server = app.listen(port)
+                .on("listening", () => {
+                    logger.debug(`Started dev server on port ${port}`);
+                    resolve(this.server);
+                })
                 .on("error", (err: NodeJS.ErrnoException) => {
                     if (err.code === "EADDRINUSE") {
                         reject(new CLIError(`Port ${port} is already in use.`));
                     }
+                })
+                .on("connection", connection => {
+                    this.connections.push(connection);
+                    connection.on("close", () =>
+                        (this.connections = this.connections.filter(curr => curr !== connection))
+                    );
                 });
         });
+    }
 
-        return promise;
+    stop(): Promise<void> {
+        logger.debug("Stopping dev server.");
+
+        this.stopped = true;
+        this.connections.forEach(conn => conn.end());
+
+        return new Promise((resolve): void => {
+            this.server?.close(() => {
+                logger.debug("Stopped dev server.");
+                resolve();
+            });
+        });
     }
 }
-
