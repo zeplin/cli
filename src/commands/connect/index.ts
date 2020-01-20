@@ -2,12 +2,18 @@ import chalk from "chalk";
 import chokidar from "chokidar";
 import dedent from "ts-dedent";
 import logger from "../../util/logger";
+import path from "path";
 import { indent } from "../../util/text";
 import { getComponentConfigFiles } from "./config";
 import { ConnectedBarrelComponents } from "./interfaces/api";
 import { connectComponentConfigFiles } from "./plugin";
 import { ConnectDevServer } from "./server";
 import { ConnectedComponentsService } from "./service";
+
+const getComponentFilePaths = (connectedBarrels: ConnectedBarrelComponents[]): string[] =>
+    connectedBarrels.map(f =>
+        f.connectedComponents.map(c => path.resolve(c.path))
+    ).reduce((a, b) => [...a, ...b], []);
 
 const connectComponents = async (options: ConnectOptions): Promise<ConnectedBarrelComponents[]> => {
     const {
@@ -45,9 +51,7 @@ const startDevServer = async (
     logger.info(chalk.green(`Development server is started on port ${devModePort}.`));
 
     if (devModeWatch) {
-        const componentFiles = connectedBarrels?.map(f =>
-            f.connectedComponents.map(c => c.path)
-        ).reduce((a, b) => [...a, ...b], []);
+        const componentFiles = getComponentFilePaths(connectedBarrels);
 
         const watcher = chokidar.watch(
             [...configFiles, ...componentFiles],
@@ -58,8 +62,8 @@ const startDevServer = async (
             }
         );
 
-        watcher.on("change", async path => {
-            logger.info((chalk.yellow(`\nFile change detected ${path}.\n`)));
+        watcher.on("change", async filePath => {
+            logger.info((chalk.yellow(`\nFile change detected ${filePath}.\n`)));
 
             try {
                 const updatedConnectedBarrels = await connectComponents(options);
