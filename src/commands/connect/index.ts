@@ -15,7 +15,7 @@ const getComponentFilePaths = (connectedBarrels: ConnectedBarrelComponents[]): s
         f.connectedComponents.map(c => path.resolve(c.path))
     ).reduce((a, b) => [...a, ...b], []);
 
-const connectComponents = async (options: ConnectOptions): Promise<ConnectedBarrelComponents[]> => {
+const connectComponents = async (options: Pick<ConnectOptions, "configFiles" | "plugins">): Promise<ConnectedBarrelComponents[]> => {
     const {
         configFiles,
         plugins
@@ -33,7 +33,7 @@ const connectComponents = async (options: ConnectOptions): Promise<ConnectedBarr
 };
 
 const startDevServer = async (
-    options: ConnectOptions,
+    options: Pick<ConnectOptions, "configFiles" | "devModePort" | "devModeWatch">,
     connectedBarrels: ConnectedBarrelComponents[]
 ): Promise<void> => {
     const {
