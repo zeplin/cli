@@ -48,7 +48,7 @@ const startDevServer = async (
 
     await devServer.start(devModePort);
 
-    logger.info(chalk.green(`Development server is started on port ${devModePort}.`));
+    logger.info(chalk.green(`Development server is started.`));
 
     if (devModeWatch) {
         const componentFiles = getComponentFilePaths(connectedBarrels);
