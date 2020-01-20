@@ -33,7 +33,7 @@ const connectComponents = async (options: Pick<ConnectOptions, "configFiles" | "
 };
 
 const startDevServer = async (
-    options: Pick<ConnectOptions, "configFiles" | "devModePort" | "devModeWatch">,
+    options: Omit<ConnectOptions, "devMode">,
     connectedBarrels: ConnectedBarrelComponents[]
 ): Promise<void> => {
     const {
@@ -51,7 +51,7 @@ const startDevServer = async (
     logger.info(chalk.green(`Development server is started.`));
 
     if (devModeWatch) {
-        const componentFiles = getComponentFilePaths(connectedBarrels);
+        let componentFiles = getComponentFilePaths(connectedBarrels);
 
         const watcher = chokidar.watch(
             [...configFiles, ...componentFiles],
@@ -68,12 +68,16 @@ const startDevServer = async (
             try {
                 const updatedConnectedBarrels = await connectComponents(options);
 
-                await devServer.stop();
+                watcher.unwatch(componentFiles);
 
-                watcher.close().then(() => startDevServer(options, updatedConnectedBarrels));
+                devServer.updateConnectedBarrels(updatedConnectedBarrels);
+
+                componentFiles = getComponentFilePaths(updatedConnectedBarrels);
+
+                watcher.add(componentFiles);
             } catch (error) {
                 logger.error(chalk.red(dedent`
-                    Could not restart development server.
+                    Could not update components.
                     ${error}
                 `));
             }

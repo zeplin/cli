@@ -24,6 +24,10 @@ export class ConnectDevServer {
         return found ? found.connectedComponents : null;
     }
 
+    updateConnectedBarrels(connectedBarrels: ConnectedBarrelComponents[]): void {
+        this.connectedBarrels = connectedBarrels;
+    }
+
     start(port: number): Promise<Server> {
         if (this.server && this.server.listening) {
             return Promise.resolve(this.server);
