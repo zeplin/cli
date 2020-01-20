@@ -28,6 +28,7 @@ zeplin connect [options]
 |--------------|---------------------------------------------------|-------------------------|
 | -f, --file   | Path to components configuration file             | .zeplin/components.json |
 | -d, --dev    | Activate development mode                         | false                   |
+| --no-watch   | Disable watching file changes on development mode | false                   |
 | -p, --plugin | npm package name of a Zeplin CLI `connect` plugin |                         |
 | -h, --help   | Output usage information                          |                         |
 | --verbose    | Enable verbose logs                               |                         |

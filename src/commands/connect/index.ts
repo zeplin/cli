@@ -1,4 +1,5 @@
 import chalk from "chalk";
+import chokidar from "chokidar";
 import dedent from "ts-dedent";
 import logger from "../../util/logger";
 import { indent } from "../../util/text";
@@ -30,7 +31,9 @@ const startDevServer = async (
     connectedBarrels: ConnectedBarrelComponents[]
 ): Promise<void> => {
     const {
-        devModePort
+        configFiles,
+        devModePort,
+        devModeWatch
     } = options;
 
     logger.info("Starting development server…");
@@ -40,6 +43,38 @@ const startDevServer = async (
     await devServer.start(devModePort);
 
     logger.info(chalk.green(`Development server is started on port ${devModePort}.`));
+
+    if (devModeWatch) {
+        const componentFiles = connectedBarrels?.map(f =>
+            f.connectedComponents.map(c => c.path)
+        ).reduce((a, b) => [...a, ...b], []);
+
+        const watcher = chokidar.watch(
+            [...configFiles, ...componentFiles],
+            {
+                cwd: process.cwd(),
+                persistent: true,
+                awaitWriteFinish: true
+            }
+        );
+
+        watcher.on("change", async path => {
+            logger.info((chalk.yellow(`\nFile change detected ${path}.\n`)));
+
+            try {
+                const updatedConnectedBarrels = await connectComponents(options);
+
+                await devServer.stop();
+
+                watcher.close().then(() => startDevServer(options, updatedConnectedBarrels));
+            } catch (error) {
+                logger.error(chalk.red(dedent`
+                    Could not restart development server.
+                    ${error}
+                `));
+            }
+        });
+    }
 };
 
 const upload = async (connectedBarrels: ConnectedBarrelComponents[]): Promise<void> => {
