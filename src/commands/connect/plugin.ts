@@ -100,6 +100,7 @@ const connectComponentConfig = async (
     const pluginPromises = plugins.map(async plugin => {
         try {
             if (plugin.supports(component)) {
+                logger.debug(`${plugin.name} supports ${component.path}. Processing…`);
                 const componentData = await plugin.process(component);
 
                 data.push({
@@ -110,6 +111,10 @@ const connectComponentConfig = async (
                 componentData.links?.forEach(link =>
                     urlPaths.push(processLink(link))
                 );
+
+                logger.debug(`${plugin.name} processed ${component.path}: ${componentData}`);
+            } else {
+                logger.debug(`${plugin.name} does not support ${component.path}.`);
             }
         } catch (err) {
             throw new CLIError(dedent`
