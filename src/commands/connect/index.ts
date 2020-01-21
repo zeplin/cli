@@ -33,13 +33,14 @@ const connectComponents = async (options: Pick<ConnectOptions, "configFiles" | "
 };
 
 const startDevServer = async (
-    options: Omit<ConnectOptions, "devMode">,
+    options: Pick<ConnectOptions, "configFiles" | "devModePort" | "devModeWatch" | "plugins">,
     connectedBarrels: ConnectedBarrelComponents[]
 ): Promise<void> => {
     const {
         configFiles,
         devModePort,
-        devModeWatch
+        devModeWatch,
+        plugins
     } = options;
 
     logger.info("Starting development server…");
@@ -66,7 +67,7 @@ const startDevServer = async (
             logger.info((chalk.yellow(`\nFile change detected ${filePath}.\n`)));
 
             try {
-                const updatedConnectedBarrels = await connectComponents(options);
+                const updatedConnectedBarrels = await connectComponents({ configFiles, plugins });
 
                 watcher.unwatch(componentFiles);
 
