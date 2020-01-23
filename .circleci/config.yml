@@ -1,8 +1,13 @@
 version: 2
+
+defaults: &defaults
+  working_directory: ~/repo
+  docker:
+    - image: circleci/node:10.18.0
+
 jobs:
   build_and_test:
-    docker:
-    - image: circleci/node:10.18.0
+    <<: *defaults
     steps:
     - checkout
     # Restore node_modules if it is cached and has the exact same package-lock.json
@@ -10,10 +15,6 @@ jobs:
         key: dependency-cache-{{ checksum "package-lock.json" }}
         paths:
         - ./node_modules
-    # Remove zeplin packages from node_modules because they might be updated with same tag since last caching
-    - run:
-        name: Remove zeplin packages from node_modules
-        command: rm -rf node_modules/@zeplin*
     - run:
         name: Install npm packages
         command: npm install
@@ -28,11 +29,14 @@ jobs:
     - run:
         name: Run tests
         command: npm test
+    - persist_to_workspace:
+        root: ~/repo
+        paths: .
   publish:
-    docker:
-    - image: circleci/node:10.18.0
+    <<: *defaults
     steps:
-    - checkout
+    - attach_workspace:
+        at: ~/repo
     - run:
         name: Publish to NPM
         command: |
