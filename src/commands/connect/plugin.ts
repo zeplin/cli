@@ -55,7 +55,7 @@ const createPluginInstance = async (plugin: Plugin): Promise<ConnectPluginInstan
 
     if (typeof pluginInstance.init === "function") {
         logger.debug(`${plugin.name} has init method. Initializing with ${plugin.config}`);
-        pluginInstance.init({ config: plugin.config });
+        await pluginInstance.init({ config: plugin.config });
     }
 
     return pluginInstance;
