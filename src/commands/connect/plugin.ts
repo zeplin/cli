@@ -68,17 +68,24 @@ const initializePlugins = async (plugins: Plugin[]): Promise<ConnectPluginInstan
     return pluginInstances;
 };
 
-const removeEmptyFields = (componentData: ComponentData): ComponentData => {
-    if (typeof componentData.description === "undefined" || componentData.description.trim() === "") {
-        delete componentData.description;
+const convertToData = (plugin: string, componentData: ComponentData): Data => {
+    const copyComponentData = { ...componentData };
+
+    if (typeof copyComponentData.description === "undefined" || copyComponentData.description.trim() === "") {
+        delete copyComponentData.description;
     }
 
-    if (typeof componentData.snippet === "undefined" || componentData.snippet.trim() === "") {
-        delete componentData.snippet;
-        delete componentData.lang;
+    if (typeof copyComponentData.snippet === "undefined" || copyComponentData.snippet.trim() === "") {
+        delete copyComponentData.snippet;
+        delete copyComponentData.lang;
     }
 
-    return componentData;
+    delete copyComponentData.links;
+
+    return {
+        plugin,
+        ...copyComponentData
+    };
 };
 
 const processLink = (link: Link): Link => {
@@ -103,10 +110,7 @@ const connectComponentConfig = async (
                 logger.debug(`${plugin.name} supports ${component.path}. Processing…`);
                 const componentData = await plugin.process(component);
 
-                data.push({
-                    plugin: plugin.name,
-                    ...removeEmptyFields(componentData)
-                });
+                data.push(convertToData(plugin.name, componentData));
 
                 componentData.links?.forEach(link =>
                     urlPaths.push(processLink(link))
