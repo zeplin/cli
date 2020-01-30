@@ -5,6 +5,7 @@ import inquirer from "inquirer";
 import logger from "../../util/logger";
 
 import * as envUtil from "../../util/env";
+import * as authFileUtil from "../../util/auth-file";
 import { AuthenticationService } from "../../service/index";
 
 export async function login(): Promise<void> {
@@ -14,9 +15,7 @@ export async function login(): Promise<void> {
         logger.info(dedent`${chalk.dim`ZEPLIN_ACCESS_TOKEN`} is already set.
                             Remove the environment variable to login via CLI.`);
     } else {
-        const authService = new AuthenticationService();
-
-        const existingToken = await authService.authenticate();
+        const existingToken = await authFileUtil.readAuthToken();
         if (existingToken) {
             const answer = await inquirer.prompt([{
                 type: "input",
@@ -29,6 +28,7 @@ export async function login(): Promise<void> {
             }
         }
 
+        const authService = new AuthenticationService();
         await authService.promptForLogin({ ignoreSaveTokenErrors: false });
 
         logger.info(chalk.bold("\n🦄 Successfully authenticated."));
