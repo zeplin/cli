@@ -45,7 +45,7 @@ export class AuthenticationService {
         } else if (!envUtil.isCI()) {
             const tokenFromFile = await authFileUtil.readAuthToken();
             if (tokenFromFile) {
-                logger.debug(`Found access token from auth file. value: ${tokenFromEnv}`);
+                logger.debug(`Found access token from auth file. value: ${tokenFromFile}`);
                 this.authToken = tokenFromFile;
             } else {
                 logger.info(`Access token not found in ${chalk.dim`ZEPLIN_ACCESS_TOKEN`} environment variable.`);
