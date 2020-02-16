@@ -1,16 +1,15 @@
 import { ConnectPlugin, ComponentConfig, PluginConfig } from "./plugin";
 /** @public */
-export interface GithubConfig {
+export interface GitConfig {
     /** Repository name */
     repository: string;
     /**
-     * The branch name which the Github links will open
+     * Branch name
      * @defaultValue master
      */
     branch?: string;
     /**
-     * Custom url for self-hosted Github Enterprise
-     * @defaultValue https://github.com
+     * Custom hostname for self-hosted Git repository
      */
     url?: string;
     /**
@@ -62,8 +61,10 @@ export interface ComponentConfigFile {
     /** {@link Plugin | Plugin} names and their configurations */
     plugins?: Plugin[];
 
-    /** {@link GithubConfig} */
-    github?: GithubConfig;
+    /** {@link GitConfig} */
+    github?: GitConfig;
+    bitbucket?: GitConfig;
+    gitlab?: GitConfig;
 }
 
 /** @internal */

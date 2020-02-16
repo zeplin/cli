@@ -1,7 +1,7 @@
 import chalk from "chalk";
 import dedent from "ts-dedent";
 import urljoin from "url-join";
-import { ComponentConfigFile, ConnectPluginInstance, Plugin } from "./interfaces/config";
+import { ComponentConfigFile, ConnectPluginInstance, Plugin, GitConfig } from "./interfaces/config";
 import { ConnectedComponent, ConnectedBarrelComponents, Data } from "./interfaces/api";
 import {
     ComponentData, ComponentConfig, CustomUrlConfig, Link, LinkType
@@ -95,6 +95,42 @@ const processLink = (link: Link): Link => {
     return link;
 };
 
+const createRepoLink = (
+    componentPath: string,
+    gitConfig: GitConfig,
+    repoDefaults: { url: string; branch: string; prefix?: string; type: LinkType }
+): Link => {
+    const url = gitConfig.url || repoDefaults.url;
+    const { repository } = gitConfig;
+    const branch = gitConfig.branch || repoDefaults.branch;
+    const path = encodeURIComponent(gitConfig.path || "");
+    const encodedPath = encodeURIComponent(componentPath);
+    const prefix = repoDefaults.prefix || "";
+
+    return {
+        type: repoDefaults.type,
+        url: urljoin(url, repository, prefix, branch, path, encodedPath)
+    };
+};
+
+const createRepoLinks = (componentPath: string, componentConfigFile: ComponentConfigFile): Link[] => {
+    const repoLinks: Link[] = [];
+
+    if (componentConfigFile.github) {
+        repoLinks.push(createRepoLink(componentPath, componentConfigFile.github, defaults.github));
+    }
+
+    if (componentConfigFile.gitlab) {
+        repoLinks.push(createRepoLink(componentPath, componentConfigFile.gitlab, defaults.gitlab));
+    }
+
+    if (componentConfigFile.bitbucket) {
+        repoLinks.push(createRepoLink(componentPath, componentConfigFile.bitbucket, defaults.bitbucket));
+    }
+
+    return repoLinks;
+};
+
 const connectComponentConfig = async (
     component: ComponentConfig,
     componentConfigFile: ComponentConfigFile,
@@ -146,18 +182,7 @@ const connectComponentConfig = async (
         }
     });
 
-    if (componentConfigFile.github) {
-        const url = componentConfigFile.github.url || defaults.github.url;
-        const { repository } = componentConfigFile.github;
-        const branch = componentConfigFile.github.branch || defaults.github.branch;
-        const path = encodeURIComponent(componentConfigFile.github.path || "");
-        const componentPath = encodeURIComponent(component.path);
-
-        urlPaths.push({
-            type: LinkType.github,
-            url: urljoin(url, repository, "/blob/", branch, path, componentPath)
-        });
-    }
+    urlPaths.concat(createRepoLinks(component.path, componentConfigFile));
 
     return {
         path: component.path,
