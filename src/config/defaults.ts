@@ -1,3 +1,5 @@
+import { LinkType } from "../commands/connect/interfaces/plugin";
+
 export const defaults = {
     commands: {
         connect: {
@@ -13,6 +15,19 @@ export const defaults = {
     },
     github: {
         url: "https://github.com",
-        branch: "master"
+        branch: "master",
+        prefix: "/blob/",
+        type: LinkType.github
+    },
+    gitlab: {
+        url: "https://gitlab.com",
+        branch: "master",
+        prefix: "/blob/",
+        type: LinkType.gitlab
+    },
+    bitbucket: {
+        url: "https://bitbucket.org",
+        branch: "master",
+        type: LinkType.bitbucket
     }
 };

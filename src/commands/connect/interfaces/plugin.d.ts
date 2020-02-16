@@ -36,6 +36,8 @@ export const enum LinkType {
     styleguidist = "styleguidist",
     storybook = "storybook",
     github = "github",
+    gitlab = "gitlab",
+    bitbucket = "bitbucket",
     custom = "custom"
 }
 
