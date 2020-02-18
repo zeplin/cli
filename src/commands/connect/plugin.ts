@@ -182,7 +182,7 @@ const connectComponentConfig = async (
         }
     });
 
-    urlPaths.concat(createRepoLinks(component.path, componentConfigFile));
+    urlPaths.push(...createRepoLinks(component.path, componentConfigFile));
 
     return {
         path: component.path,
