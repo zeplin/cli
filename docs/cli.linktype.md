@@ -16,8 +16,10 @@ export const enum LinkType
 
 |  Member | Value | Description |
 |  --- | --- | --- |
+|  bitbucket | <code>&quot;bitbucket&quot;</code> |  |
 |  custom | <code>&quot;custom&quot;</code> |  |
 |  github | <code>&quot;github&quot;</code> |  |
+|  gitlab | <code>&quot;gitlab&quot;</code> |  |
 |  storybook | <code>&quot;storybook&quot;</code> |  |
 |  styleguidist | <code>&quot;styleguidist&quot;</code> |  |
 

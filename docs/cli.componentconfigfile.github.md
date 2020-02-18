@@ -4,10 +4,10 @@
 
 ## ComponentConfigFile.github property
 
-[GithubConfig](./cli.githubconfig.md)
+[GitConfig](./cli.gitconfig.md)
 
 <b>Signature:</b>
 
 ```typescript
-github?: GithubConfig;
+github?: GitConfig;
 ```

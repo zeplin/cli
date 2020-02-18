@@ -8,7 +8,7 @@
 <b>Signature:</b>
 
 ```typescript
-export interface Plugin
+export interface Plugin 
 ```
 
 ## Properties

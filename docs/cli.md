@@ -21,7 +21,7 @@
 |  [ComponentData](./cli.componentdata.md) | Contains processed component data |
 |  [ConnectPlugin](./cli.connectplugin.md) | Interface for Zeplin CLI Connected Components plugins |
 |  [CustomUrlConfig](./cli.customurlconfig.md) | Use it as a value of [ComponentConfigCustom](./cli.componentconfigcustom.md) keys for custom link composition |
-|  [GithubConfig](./cli.githubconfig.md) |  |
+|  [GitConfig](./cli.gitconfig.md) |  |
 |  [Link](./cli.link.md) | Custom created link for a component |
 |  [LinkConfig](./cli.linkconfig.md) | Base URLs for custom link composition |
 |  [Plugin](./cli.plugin.md) |  |
