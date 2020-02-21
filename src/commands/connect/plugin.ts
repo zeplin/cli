@@ -1,4 +1,5 @@
 import chalk from "chalk";
+import path from "path";
 import dedent from "ts-dedent";
 import urljoin from "url-join";
 import { ComponentConfigFile, ConnectPluginInstance, Plugin, GitConfig } from "./interfaces/config";
@@ -103,13 +104,15 @@ const createRepoLink = (
     const url = gitConfig.url || repoDefaults.url;
     const { repository } = gitConfig;
     const branch = gitConfig.branch || repoDefaults.branch;
-    const path = encodeURIComponent(gitConfig.path || "");
-    const encodedPath = encodeURIComponent(componentPath);
+    const basePath = gitConfig.path || "";
     const prefix = repoDefaults.prefix || "";
+    const filePath = componentPath.split(path.sep);
 
     return {
         type: repoDefaults.type,
-        url: urljoin(url, repository, prefix, branch, path, encodedPath)
+        url: encodeURI(
+            urljoin(url, repository, prefix, branch, basePath, ...filePath)
+        )
     };
 };
 
