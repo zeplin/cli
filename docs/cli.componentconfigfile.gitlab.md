@@ -4,6 +4,8 @@
 
 ## ComponentConfigFile.gitlab property
 
+[GitConfig](./cli.gitconfig.md)
+
 <b>Signature:</b>
 
 ```typescript

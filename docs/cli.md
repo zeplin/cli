@@ -27,7 +27,6 @@
 |  [Plugin](./cli.plugin.md) |  |
 |  [PluginConfig](./cli.pluginconfig.md) | Arbitrary key/values for custom plugin configuration. |
 |  [PluginContext](./cli.plugincontext.md) | Contains custom plugin configuration |
-|  [StyleguidistComponentConfig](./cli.styleguidistcomponentconfig.md) |  |
 
 ## Type Aliases
 

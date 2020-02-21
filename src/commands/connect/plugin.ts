@@ -14,6 +14,8 @@ const ALLOWED_LINK_TYPES = [
     LinkType.styleguidist,
     LinkType.storybook,
     LinkType.github,
+    LinkType.gitlab,
+    LinkType.bitbucket,
     LinkType.custom
 ];
 
@@ -88,7 +90,7 @@ const convertToData = (plugin: string, componentData: ComponentData): Data => {
     };
 };
 
-const processLink = (link: Link): Link => {
+const normalizeLinkType = (link: Link): Link => {
     if (!ALLOWED_LINK_TYPES.includes(link.type)) {
         link.type = LinkType.custom;
     }
@@ -149,7 +151,7 @@ const connectComponentConfig = async (
                 data.push(convertToData(plugin.name, componentData));
 
                 componentData.links?.forEach(link =>
-                    urlPaths.push(processLink(link))
+                    urlPaths.push(normalizeLinkType(link))
                 );
 
                 logger.debug(`${plugin.name} processed ${component.path}: ${componentData}`);
@@ -170,11 +172,7 @@ const connectComponentConfig = async (
     componentConfigFile.links?.forEach(link => {
         const { name, type, url } = link;
 
-        // TODO: remove styleguidist specific configuration from CLI core
-        if (type === "styleguidist" && component.styleguidist) {
-            const encodedKind = encodeURIComponent(component.styleguidist.kind);
-            urlPaths.push({ name, type: LinkType.styleguidist, url: urljoin(url, `#${encodedKind}`) });
-        } else if (component[type]) {
+        if (component[type]) {
             const customUrlPath = (component[type] as CustomUrlConfig).urlPath;
             if (customUrlPath) {
                 urlPaths.push({ name, type: LinkType.custom, url: urljoin(url, customUrlPath) });

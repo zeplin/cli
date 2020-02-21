@@ -16,10 +16,10 @@ export interface ComponentConfigFile
 
 |  Property | Type | Description |
 |  --- | --- | --- |
-|  [bitbucket](./cli.componentconfigfile.bitbucket.md) | <code>GitConfig</code> |  |
+|  [bitbucket](./cli.componentconfigfile.bitbucket.md) | <code>GitConfig</code> | [GitConfig](./cli.gitconfig.md) |
 |  [components](./cli.componentconfigfile.components.md) | <code>ComponentConfig[]</code> | Union of [ComponentConfigBase](./cli.componentconfigbase.md) and [ComponentConfigCustom](./cli.componentconfigcustom.md) |
 |  [github](./cli.componentconfigfile.github.md) | <code>GitConfig</code> | [GitConfig](./cli.gitconfig.md) |
-|  [gitlab](./cli.componentconfigfile.gitlab.md) | <code>GitConfig</code> |  |
+|  [gitlab](./cli.componentconfigfile.gitlab.md) | <code>GitConfig</code> | [GitConfig](./cli.gitconfig.md) |
 |  [links](./cli.componentconfigfile.links.md) | <code>LinkConfig[]</code> | Base URLs for custom link composition |
 |  [plugins](./cli.componentconfigfile.plugins.md) | <code>Plugin[]</code> | [Plugin](./cli.plugin.md) names and their configurations |
 |  [projects](./cli.componentconfigfile.projects.md) | <code>string[]</code> | Zeplin project IDs which the components belong to |
