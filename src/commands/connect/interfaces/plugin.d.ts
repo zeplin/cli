@@ -58,13 +58,6 @@ export interface ComponentData {
 }
 
 /**
- * @public
- */
-export interface StyleguidistComponentConfig {
-    kind: string;
-}
-
-/**
  * Arbitrary key/values for custom plugin configuration.
  *
  * @public
@@ -85,8 +78,6 @@ export interface ComponentConfigBase {
     zeplinNames: string[];
     /** Name for the component */
     name?: string;
-    /** Styleguidist name for the component (Optional) */
-    styleguidist?: StyleguidistComponentConfig;
 }
 
 /**

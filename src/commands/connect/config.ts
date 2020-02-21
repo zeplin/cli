@@ -13,10 +13,7 @@ const linkConfigSchema = Joi.object({
 const componentConfigSchema = Joi.object({
     path: Joi.string(),
     zeplinNames: Joi.array().items(Joi.string()).min(1),
-    name: Joi.string().optional(),
-    styleguidist: Joi.object({
-        kind: Joi.string()
-    }).optional()
+    name: Joi.string().optional()
 });
 
 const gitConfigSchema = Joi.object({

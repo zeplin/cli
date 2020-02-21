@@ -63,7 +63,9 @@ export interface ComponentConfigFile {
 
     /** {@link GitConfig} */
     github?: GitConfig;
+    /** {@link GitConfig} */
     bitbucket?: GitConfig;
+    /** {@link GitConfig} */
     gitlab?: GitConfig;
 }
 
