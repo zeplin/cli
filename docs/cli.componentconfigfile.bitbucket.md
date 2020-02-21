@@ -4,6 +4,8 @@
 
 ## ComponentConfigFile.bitbucket property
 
+[GitConfig](./cli.gitconfig.md)
+
 <b>Signature:</b>
 
 ```typescript

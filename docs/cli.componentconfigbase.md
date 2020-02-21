@@ -18,6 +18,5 @@ export interface ComponentConfigBase
 |  --- | --- | --- |
 |  [name](./cli.componentconfigbase.name.md) | <code>string</code> | Name for the component |
 |  [path](./cli.componentconfigbase.path.md) | <code>string</code> | Path to the file, relative to project folder. |
-|  [styleguidist](./cli.componentconfigbase.styleguidist.md) | <code>StyleguidistComponentConfig</code> | Styleguidist name for the component (Optional) |
 |  [zeplinNames](./cli.componentconfigbase.zeplinnames.md) | <code>string[]</code> | Zeplin component names related to this component file |
 
