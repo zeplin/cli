@@ -61,7 +61,7 @@ export interface ComponentData {
  * @public
  */
 export interface StyleguidistComponentConfig {
-    kind: string;
+    name: string;
 }
 
 /**

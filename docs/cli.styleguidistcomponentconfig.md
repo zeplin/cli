@@ -15,5 +15,5 @@ export interface StyleguidistComponentConfig
 
 |  Property | Type | Description |
 |  --- | --- | --- |
-|  [kind](./cli.styleguidistcomponentconfig.kind.md) | <code>string</code> |  |
+|  [name](./cli.styleguidistcomponentconfig.name.md) | <code>string</code> |  |
 

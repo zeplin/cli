@@ -172,7 +172,7 @@ const connectComponentConfig = async (
 
         // TODO: remove styleguidist specific configuration from CLI core
         if (type === "styleguidist" && component.styleguidist) {
-            const encodedKind = encodeURIComponent(component.styleguidist.kind);
+            const encodedKind = encodeURIComponent(component.styleguidist.name);
             urlPaths.push({ name, type: LinkType.styleguidist, url: urljoin(url, `#${encodedKind}`) });
         } else if (component[type]) {
             const customUrlPath = (component[type] as CustomUrlConfig).urlPath;
