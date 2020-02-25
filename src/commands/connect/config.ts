@@ -15,7 +15,7 @@ const componentConfigSchema = Joi.object({
     zeplinNames: Joi.array().items(Joi.string()).min(1),
     name: Joi.string().optional(),
     styleguidist: Joi.object({
-        kind: Joi.string()
+        name: Joi.string()
     }).optional()
 });
 
