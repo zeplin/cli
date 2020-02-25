@@ -14,11 +14,11 @@ npm install -g @zeplin/cli
 
 ### Connected Components
 
-[Connected Components](https://blog.zeplin.io/introducing-connected-components-components-in-design-and-code-in-harmony-aa894ed5bd95) in Zeplin lets you access components in your codebase directly on designs in Zeplin, with links to Storybook, GitHub and any other source of documentation based on your workflow. 🧩
+[Connected Components](https://zpl.io/connected-components) in Zeplin lets you access components in your codebase directly on designs in Zeplin, with links to Storybook, GitHub and any other source of documentation based on your workflow. 🧩
 
 CLI `connect` command uses plugins to analyze component source code and publishes a high-level overview to be displayed in Zeplin. You can either publish changes to your components manually, or better yet, you can always keep them in sync by running the CLI as a step in your CI workflow.
 
-Make sure that you created a configuration file (`.zeplin/components.json`) following [Connected Components documentation]() and run the `connect` command:
+Make sure that you created a configuration file (`.zeplin/components.json`) following [Connected Components documentation](https://github.com/zeplin/connected-components-docs) and run the `connect` command:
 
 ```sh
 zeplin connect [options]
