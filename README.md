@@ -70,7 +70,7 @@ You can also provide a list of plugins via the `plugins` parameter of the [compo
 
 Zeplin CLI can authenticate using an access token instead of your Zeplin credentials which makes it easier to integrate it into your CI workflow.
 
-1. Get a CLI access token from your [Profile](https://app.zeplin.io/profile/connectedapps) in Zeplin.
+1. Get a CLI access token from your [Profile](https://app.zeplin.io/profile/developer) in Zeplin.
 2. Set `ZEPLIN_ACCESS_TOKEN` environment variable in your CI.
 
 ## Contributing and Issue Tracking
