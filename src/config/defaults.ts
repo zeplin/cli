@@ -27,8 +27,7 @@ export const defaults = {
     },
     bitbucket: {
         url: "https://bitbucket.org",
-        branch: "master",
-        prefix: "/src/",
+        cloudPrefix: "/src/",
         type: LinkType.bitbucket
     }
 };

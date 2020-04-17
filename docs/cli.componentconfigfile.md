@@ -16,7 +16,7 @@ export interface ComponentConfigFile
 
 |  Property | Type | Description |
 |  --- | --- | --- |
-|  [bitbucket](./cli.componentconfigfile.bitbucket.md) | <code>GitConfig</code> |  |
+|  [bitbucket](./cli.componentconfigfile.bitbucket.md) | <code>BitbucketConfig</code> |  |
 |  [components](./cli.componentconfigfile.components.md) | <code>ComponentConfig[]</code> | Union of [ComponentConfigBase](./cli.componentconfigbase.md) and [ComponentConfigCustom](./cli.componentconfigcustom.md) |
 |  [github](./cli.componentconfigfile.github.md) | <code>GitConfig</code> | [GitConfig](./cli.gitconfig.md) |
 |  [gitlab](./cli.componentconfigfile.gitlab.md) | <code>GitConfig</code> |  |

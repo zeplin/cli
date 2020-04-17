@@ -19,6 +19,14 @@ export interface GitConfig {
 }
 
 /** @public */
+export interface BitbucketConfig extends GitConfig {
+    /** Project name that the repo belongs to */
+    project?: string;
+    /** User name that the repo belongs to*/
+    user?: string;
+}
+
+/** @public */
 export interface Plugin {
     /** npm package name of the plugin */
     name: string;
@@ -63,7 +71,7 @@ export interface ComponentConfigFile {
 
     /** {@link GitConfig} */
     github?: GitConfig;
-    bitbucket?: GitConfig;
+    bitbucket?: BitbucketConfig;
     gitlab?: GitConfig;
 }
 
