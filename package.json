@@ -1,6 +1,6 @@
 {
   "name": "@zeplin/cli",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Zeplin CLI",
   "main": "./dist/src/app",
   "types": "./dist/types/index",
