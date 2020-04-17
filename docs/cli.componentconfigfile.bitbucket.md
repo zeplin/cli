@@ -7,5 +7,5 @@
 <b>Signature:</b>
 
 ```typescript
-bitbucket?: GitConfig;
+bitbucket?: BitbucketConfig;
 ```

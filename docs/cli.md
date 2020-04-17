@@ -15,6 +15,7 @@
 
 |  Interface | Description |
 |  --- | --- |
+|  [BitbucketConfig](./cli.bitbucketconfig.md) |  |
 |  [ComponentConfigBase](./cli.componentconfigbase.md) | Contains basic configuration for a component. |
 |  [ComponentConfigCustom](./cli.componentconfigcustom.md) | Custom key/value configuration for a component. Can be used to compose custom links for components or can be processed by plugins for custom usage. |
 |  [ComponentConfigFile](./cli.componentconfigfile.md) | Component configuration structure |

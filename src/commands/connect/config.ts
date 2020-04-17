@@ -26,6 +26,15 @@ const gitConfigSchema = Joi.object({
     path: Joi.string().optional()
 });
 
+const bitbucketConfigSchema = Joi.object({
+    repository: Joi.string(),
+    branch: Joi.string().optional(),
+    url: Joi.string().optional(),
+    path: Joi.string().optional(),
+    project: Joi.string().optional(),
+    user: Joi.string().optional()
+}).xor("project", "user");
+
 const pluginSchema = Joi.object({
     name: Joi.string(),
     config: Joi.object().unknown().optional()
@@ -39,7 +48,7 @@ const componentConfigFileSchema = Joi.object({
     components: Joi.array().items(componentConfigSchema).min(1),
     github: gitConfigSchema.optional(),
     gitlab: gitConfigSchema.optional(),
-    bitbucket: gitConfigSchema.optional()
+    bitbucket: bitbucketConfigSchema.optional()
 }).custom((value, helpers) => {
     if (value.projects && value.styleguides) {
         if (value.projects.length === 0 && value.styleguides.length === 0) {

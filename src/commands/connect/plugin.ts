@@ -2,7 +2,9 @@ import chalk from "chalk";
 import path from "path";
 import dedent from "ts-dedent";
 import urljoin from "url-join";
-import { ComponentConfigFile, ConnectPluginInstance, Plugin, GitConfig } from "./interfaces/config";
+import {
+    ComponentConfigFile, ConnectPluginInstance, Plugin, GitConfig, BitbucketConfig
+} from "./interfaces/config";
 import { ConnectedComponent, ConnectedBarrelComponents, Data } from "./interfaces/api";
 import {
     ComponentData, ComponentConfig, CustomUrlConfig, Link, LinkType
@@ -116,6 +118,48 @@ const createRepoLink = (
     };
 };
 
+const createBitbucketLink = (
+    componentPath: string,
+    bitbucketConfig: BitbucketConfig
+): Link => {
+    const {
+        url = defaults.bitbucket.url,
+        repository,
+        branch = "",
+        project = "",
+        user = "",
+        path: basePath = ""
+    } = bitbucketConfig;
+
+    const isCloud = url === defaults.bitbucket.url;
+
+    const filePath = componentPath.split(path.sep);
+
+    let preparedUrl;
+
+    if (isCloud) {
+        const prefix = defaults.bitbucket.cloudPrefix;
+        preparedUrl = urljoin(url, user, repository, prefix, branch, basePath, ...filePath);
+    } else if (!project && !user) {
+        // Backward compatibility
+        // TODO: remove this block after a while
+        preparedUrl = urljoin(url, repository, branch, basePath, ...filePath);
+    } else {
+        const owner = project
+            ? { path: "projects", name: project }
+            : { path: "users", name: user };
+
+        preparedUrl = urljoin(url, owner.path, owner.name, "repos", repository, "browse", basePath, ...filePath);
+        if (branch) {
+            preparedUrl += `?at=${branch}`;
+        }
+    }
+    return {
+        type: defaults.bitbucket.type,
+        url: encodeURI(preparedUrl)
+    };
+};
+
 const createRepoLinks = (componentPath: string, componentConfigFile: ComponentConfigFile): Link[] => {
     const repoLinks: Link[] = [];
 
@@ -128,7 +172,7 @@ const createRepoLinks = (componentPath: string, componentConfigFile: ComponentCo
     }
 
     if (componentConfigFile.bitbucket) {
-        repoLinks.push(createRepoLink(componentPath, componentConfigFile.bitbucket, defaults.bitbucket));
+        repoLinks.push(createBitbucketLink(componentPath, componentConfigFile.bitbucket));
     }
 
     return repoLinks;
