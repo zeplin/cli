@@ -1,18 +1,20 @@
 import chalk from "chalk";
 import dedent from "ts-dedent";
+import os from "os";
+import path from "path";
 import { isVerbose } from "../util/env";
 import { CLIError } from "../errors";
 import logger from "../util/logger";
 
 const waitForLoggerAndExit = (exitCode = 0): Promise<void> =>
     new Promise((resolve): void => {
+        logger.end();
         logger.on("finish", () => {
             resolve();
             process.exit(exitCode);
         });
     });
-
-const errorHandler = (error: Error): void => {
+const errorHandler = async (error: Error): Promise<void> => {
     if (isVerbose()) {
         logger.error(`\n${chalk.redBright(error.stack)}`);
     } else {
@@ -24,15 +26,17 @@ const errorHandler = (error: Error): void => {
         const errorDetails = JSON.stringify(error.details);
         if (isVerbose()) {
             logger.error(chalk.redBright(dedent`
-                Details:
-                ${errorDetails}`));
+            Details:
+            ${errorDetails}`));
         } else {
             logger.debug(`${errorDetails}`);
         }
     }
-    logger.info(`\nPlease check ${chalk.dim("~/.zeplin/cli.log")} for details.\n`);
 
-    waitForLoggerAndExit(1);
+    const logFile = path.join(os.homedir(), ".zeplin", "cli.log");
+    logger.info(`\nPlease check ${chalk.dim(logFile)} for details.\n`);
+
+    await waitForLoggerAndExit(1);
 };
 
 type FunctionReturnsPromise = (...args: Array<any>) => Promise<void>;
