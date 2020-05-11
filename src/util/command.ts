@@ -4,17 +4,9 @@ import os from "os";
 import path from "path";
 import { isVerbose } from "../util/env";
 import { CLIError } from "../errors";
-import logger from "../util/logger";
+import logger, { loggerFinishAndExit } from "../util/logger";
 
-const waitForLoggerAndExit = (exitCode = 0): Promise<void> =>
-    new Promise((resolve): void => {
-        logger.end();
-        logger.on("finish", () => {
-            resolve();
-            process.exit(exitCode);
-        });
-    });
-const errorHandler = async (error: Error): Promise<void> => {
+const errorHandler = (error: Error): Promise<never> => {
     if (isVerbose()) {
         logger.error(`\n${chalk.redBright(error.stack)}`);
     } else {
@@ -36,17 +28,16 @@ const errorHandler = async (error: Error): Promise<void> => {
     const logFile = path.join(os.homedir(), ".zeplin", "cli.log");
     logger.info(`\nPlease check ${chalk.dim(logFile)} for details.\n`);
 
-    await waitForLoggerAndExit(1);
+    return loggerFinishAndExit(1);
 };
 
 type FunctionReturnsPromise = (...args: Array<any>) => Promise<void>;
 
 function commandRunner(fn: FunctionReturnsPromise): FunctionReturnsPromise {
-    return async (...args: Array<any>): Promise<void> => {
-        await fn(...args)
-            .then(() => waitForLoggerAndExit())
+    return (...args: Array<any>): Promise<void> =>
+        fn(...args)
+            .then(() => loggerFinishAndExit())
             .catch(errorHandler);
-    };
 }
 
 export { commandRunner };
