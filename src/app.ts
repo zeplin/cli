@@ -15,7 +15,9 @@ function beforeCommand(): void {
         pkg: {
             name,
             version
-        }
+        },
+        updateCheckInterval: 0,
+        shouldNotifyInNpmScript: true
     });
     un.notify();
 }
