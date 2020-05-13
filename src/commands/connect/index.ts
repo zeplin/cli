@@ -47,10 +47,6 @@ const startDevServer = async (
 
     const devServer = new ConnectDevServer(connectedBarrels);
 
-    await devServer.start(devModePort);
-
-    logger.info(chalk.green(`Development server is started.`));
-
     if (devModeWatch) {
         let componentFiles = getComponentFilePaths(connectedBarrels);
 
@@ -78,12 +74,14 @@ const startDevServer = async (
                 watcher.add(componentFiles);
             } catch (error) {
                 logger.error(chalk.red(dedent`
-                    Could not update components.
+                    Could not update connected components.
                     ${error}
                 `));
             }
         });
     }
+
+    await devServer.listen(devModePort);
 };
 
 const upload = async (connectedBarrels: ConnectedBarrelComponents[]): Promise<void> => {

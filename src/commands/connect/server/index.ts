@@ -1,3 +1,4 @@
+import chalk from "chalk";
 import express from "express";
 import { Server } from "http";
 import { OK } from "http-status-codes";
@@ -29,7 +30,7 @@ export class ConnectDevServer {
     }
 
     start(port: number): Promise<Server> {
-        if (this.server && this.server.listening) {
+        if (this.server?.listening) {
             return Promise.resolve(this.server);
         }
 
@@ -55,6 +56,9 @@ export class ConnectDevServer {
             this.server = app.listen(port)
                 .on("listening", () => {
                     logger.debug(`Started dev server on port ${port}`);
+
+                    logger.info(chalk.green(`Development server is started.`));
+
                     resolve(this.server);
                 })
                 .on("error", (err: NodeJS.ErrnoException) => {
@@ -80,6 +84,15 @@ export class ConnectDevServer {
         return new Promise((resolve): void => {
             this.server?.close(() => {
                 logger.debug("Stopped dev server.");
+                resolve();
+            });
+        });
+    }
+    async listen(port: number): Promise<void> {
+        await this.start(port);
+        return new Promise((resolve): void => {
+            process.on("SIGINT", async () => {
+                await this.stop();
                 resolve();
             });
         });
