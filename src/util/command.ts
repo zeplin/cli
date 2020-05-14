@@ -2,9 +2,10 @@ import chalk from "chalk";
 import dedent from "ts-dedent";
 import os from "os";
 import path from "path";
-import { isVerbose } from "../util/env";
+import { isVerbose } from "./env";
 import { CLIError } from "../errors";
-import logger, { loggerFinishAndExit } from "../util/logger";
+import logger from "./logger";
+import { gracefulExit } from "./process";
 
 const errorHandler = (error: Error): Promise<never> => {
     if (isVerbose()) {
@@ -28,16 +29,20 @@ const errorHandler = (error: Error): Promise<never> => {
     const logFile = path.join(os.homedir(), ".zeplin", "cli.log");
     logger.info(`\nPlease check ${chalk.dim(logFile)} for details.\n`);
 
-    return loggerFinishAndExit(1);
+    return gracefulExit(1);
 };
 
 type FunctionReturnsPromise = (...args: Array<any>) => Promise<void>;
 
 function commandRunner(fn: FunctionReturnsPromise): FunctionReturnsPromise {
-    return (...args: Array<any>): Promise<void> =>
-        fn(...args)
-            .then(() => loggerFinishAndExit())
-            .catch(errorHandler);
+    return async (...args: Array<any>): Promise<void> => {
+        try {
+            await fn(...args);
+            await gracefulExit();
+        } catch (e) {
+            await errorHandler(e);
+        }
+    };
 }
 
 export { commandRunner };

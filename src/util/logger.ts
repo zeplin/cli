@@ -50,14 +50,14 @@ fileTransport.on("open", () => {
     });
 });
 
-const loggerFinishAndExit = (exitCode = 0): Promise<never> => new Promise((): void => {
+const waitForLoggerFinish = (): Promise<never> => new Promise((resolve): void => {
     fileLogWatcher.on("finish", (): void => {
-        process.exit(exitCode);
+        resolve();
     });
     logger.end();
 });
 
 export default logger;
 export {
-    loggerFinishAndExit
+    waitForLoggerFinish
 };
