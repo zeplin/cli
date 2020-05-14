@@ -50,7 +50,7 @@ fileTransport.on("open", () => {
     });
 });
 
-const waitForLoggerFinish = (): Promise<never> => new Promise((resolve): void => {
+const finishLogger = (): Promise<never> => new Promise((resolve): void => {
     fileLogWatcher.on("finish", (): void => {
         resolve();
     });
@@ -59,5 +59,5 @@ const waitForLoggerFinish = (): Promise<never> => new Promise((resolve): void =>
 
 export default logger;
 export {
-    waitForLoggerFinish
+    finishLogger
 };

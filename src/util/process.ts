@@ -1,7 +1,7 @@
-import { waitForLoggerFinish } from "./logger";
+import { finishLogger } from "./logger";
 
 const gracefulExit = async (exitCode = 0): Promise<never> => {
-    await waitForLoggerFinish();
+    await finishLogger();
     process.exit(exitCode);
 };
 
