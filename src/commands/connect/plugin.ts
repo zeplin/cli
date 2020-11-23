@@ -12,6 +12,8 @@ import {
 import { CLIError } from "../../errors";
 import { defaults } from "../../config/defaults";
 import logger from "../../util/logger";
+import { isRunningFromGlobal } from "../../util/package";
+import { getInstallCommand } from "../../util/text";
 
 const ALLOWED_LINK_TYPES = [
     LinkType.styleguidist,
@@ -30,8 +32,8 @@ const importPlugin = async (pluginName: string): Promise<ConnectPluginConstructo
     } catch (e) {
         const error = new CLIError(dedent`
             Could not find plugin ${chalk.bold(pluginName)} failed.
-            Please make sure that it's globally installed and try again.
-                npm install -g ${pluginName}
+            Please make sure that it's ${isRunningFromGlobal() ? "globally " : ""}installed and try again.
+                ${getInstallCommand(pluginName)}
         `);
         error.stack = e.stack;
         throw error;

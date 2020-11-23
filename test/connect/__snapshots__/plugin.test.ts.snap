@@ -1,0 +1,25 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`PluginProcessor when plugin not exists and CLI is globally installed in using npm fails and prints instructions 1`] = `
+"Could not find plugin [1mnon-existent-plugin[22m failed.
+Please make sure that it's globally installed and try again.
+    npm install -g non-existent-plugin"
+`;
+
+exports[`PluginProcessor when plugin not exists and CLI is globally installed in using yarn fails and prints instructions 1`] = `
+"Could not find plugin [1mnon-existent-plugin[22m failed.
+Please make sure that it's globally installed and try again.
+    yarn global add non-existent-plugin"
+`;
+
+exports[`PluginProcessor when plugin not exists and CLI is locally installed using npm fails and prints instructions 1`] = `
+"Could not find plugin [1mnon-existent-plugin[22m failed.
+Please make sure that it's installed and try again.
+    npm install non-existent-plugin"
+`;
+
+exports[`PluginProcessor when plugin not exists and CLI is locally installed using yarn fails and prints instructions 1`] = `
+"Could not find plugin [1mnon-existent-plugin[22m failed.
+Please make sure that it's installed and try again.
+    yarn add non-existent-plugin"
+`;

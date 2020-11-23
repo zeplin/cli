@@ -104,3 +104,21 @@ export const uploadParams = {
     barrelId: "pid",
     barrelType: "projects" as BarrelType
 };
+
+export const sampleComponentConfig1 = {
+    path: "src/Sample1.jsx",
+    zeplinNames: ["screen1"]
+};
+
+export const sampleComponentConfig2 = {
+    path: "src/Sample1.jsx",
+    zeplinNames: ["screen1"]
+};
+
+export const sampleConfig = {
+    plugins: [] as Array<{
+        /** npm package name of the plugin */
+        name: string;
+    }>,
+    components: [sampleComponentConfig1, sampleComponentConfig2]
+};
