@@ -17,7 +17,27 @@ async function writeJsonIntoFile(filePath: string, content: {}): Promise<void> {
     });
 }
 
+async function getPackageJson(): Promise<{} | null> {
+    const resolvedFilePath = path.resolve("package.json");
+    if (!(await fs.pathExists(resolvedFilePath))) {
+        return null;
+    }
+
+    return fs.readJson(resolvedFilePath, { encoding: "utf-8" });
+}
+
+async function getBowerJson(): Promise<{} | null> {
+    const resolvedFilePath = path.resolve("bower.json");
+    if (!(await fs.pathExists(resolvedFilePath))) {
+        return null;
+    }
+
+    return fs.readJson(resolvedFilePath, { encoding: "utf-8" });
+}
+
 export {
     readJsonFile,
-    writeJsonIntoFile
+    writeJsonIntoFile,
+    getPackageJson,
+    getBowerJson
 };
