@@ -1,5 +1,7 @@
+import { cosmiconfig } from "cosmiconfig";
+import strip from "strip-comments";
 import Joi from "@hapi/joi";
-import * as fileUtil from "../../util/file";
+import path from "path";
 import { ComponentConfigFile } from "./interfaces/config";
 import { CLIError } from "../../errors";
 import logger from "../../util/logger";
@@ -68,12 +70,44 @@ const componentConfigFileSchema = Joi.object({
     return value;
 });
 
+const configExplorerOptions = {
+    searchPlaces: [
+        "components.json",
+        "components.yaml",
+        "components.config.js"
+    ],
+    stopDir: process.cwd(),
+    loaders: {
+        ".json": (_filePath: string, content: string): object | null => {
+            const stripped = strip(content);
+
+            return JSON.parse(stripped);
+        }
+    }
+};
+
+const configExplorer = cosmiconfig("@zeplin/cli", configExplorerOptions);
+
 const getComponentConfigFile = async (filePath: string): Promise<ComponentConfigFile> => {
-    const file = await fileUtil.readJsonFile(filePath);
+    let result;
 
-    logger.debug(`${filePath} content: ${JSON.stringify(file)}`);
+    try {
+        result = await configExplorer.load(filePath);
+    } catch (err) {
+        throw new CLIError(`Cannot access ${filePath}: ${err.message}`);
+    }
 
-    const { error, value } = componentConfigFileSchema.validate(file, { allowUnknown: true, presence: "required" });
+    logger.info(`Found filepath: ${result?.filepath}`);
+
+    if (result === null || result.isEmpty) {
+        throw new CLIError(`Oops! Looks like ${filePath} is empty.`);
+    }
+
+    const { config } = result;
+
+    logger.info(`${filePath} content: ${JSON.stringify(config)}`);
+
+    const { error, value } = componentConfigFileSchema.validate(config, { allowUnknown: true, presence: "required" });
 
     if (error) {
         throw new CLIError(`Oops! Looks like ${filePath} has some problems: ${error.message}`);
@@ -82,13 +116,59 @@ const getComponentConfigFile = async (filePath: string): Promise<ComponentConfig
     return value as ComponentConfigFile;
 };
 
+const discoverDefaultConfigFile = async (configRootDir: string): Promise<ComponentConfigFile | null> => {
+    let discoveredConfigFile;
+
+    try {
+        const searchFrom = path.join(configRootDir, ".zeplin");
+
+        discoveredConfigFile = await configExplorer.search(searchFrom);
+    } catch (err) {
+        logger.debug(`Failed configuration file discovery: ${err.message}`);
+    }
+
+    if (discoveredConfigFile === null || discoveredConfigFile === void 0) {
+        logger.debug("Could not find a configuration file during discovery");
+
+        return null;
+    }
+
+    const { config, filepath } = discoveredConfigFile;
+
+    const { error, value } = componentConfigFileSchema.validate(config, { allowUnknown: true, presence: "required" });
+
+    if (error) {
+        throw new CLIError(`Oops! Looks like ${filepath} has some problems: ${error.message}`);
+    }
+
+    return value as ComponentConfigFile;
+};
+
 const getComponentConfigFiles = async (
-    configFilePaths: string[], globalPlugins: string[] = []
+    configFilePaths: string[], globalPlugins: string[] = [], configRootDir = process.cwd()
 ): Promise<ComponentConfigFile[]> => {
     try {
-        const configFiles = await Promise.all(
-            configFilePaths.map(configFile => getComponentConfigFile(configFile))
-        );
+        let configFiles: ComponentConfigFile[];
+
+        /**
+         * If config file path array is not empty, use only the specified config files.
+         *
+         * If no config file was specified by the user, try to discover default configutation
+         * file.
+         */
+        if (configFilePaths.length > 0) {
+            configFiles = await Promise.all(
+                configFilePaths.map(configFile => getComponentConfigFile(configFile))
+            );
+        } else {
+            const defaultConfigFile = await discoverDefaultConfigFile(configRootDir);
+
+            if (defaultConfigFile === null) {
+                throw new Error("Missing configuration file!");
+            }
+
+            configFiles = [defaultConfigFile];
+        }
 
         /**
          * Global plugins and plugins from the config files may contain the same plugin
