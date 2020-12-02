@@ -7,6 +7,7 @@ import path from "path";
 import { ComponentConfigFile } from "./interfaces/config";
 import { CLIError } from "../../errors";
 import logger from "../../util/logger";
+import { transformAbsolutePathToRelativePath } from "../../util/file";
 
 const linkConfigSchema = Joi.object({
     type: Joi.string(),
@@ -75,8 +76,10 @@ const componentConfigFileSchema = Joi.object({
 const validateConfigSchema = (config: unknown, params: { filePath: string }): ComponentConfigFile => {
     const { error, value } = componentConfigFileSchema.validate(config, { allowUnknown: true, presence: "required" });
 
+    const relativeFilePath = transformAbsolutePathToRelativePath(params.filePath);
+
     if (error) {
-        throw new CLIError(`Oops! Looks like ${params.filePath} has some problems: ${error.message}`);
+        throw new CLIError(`Oops! Looks like ${relativeFilePath} has some problems: ${error.message}`);
     }
 
     return value as ComponentConfigFile;
@@ -103,14 +106,16 @@ const configExplorer = cosmiconfig("@zeplin/cli", configExplorerOptions);
 const getComponentConfigFile = async (filePath: string): Promise<ComponentConfigFile> => {
     let result;
 
+    const relativeFilePath = transformAbsolutePathToRelativePath(filePath);
+
     try {
         result = await configExplorer.load(filePath);
     } catch (err) {
-        throw new CLIError(`Cannot access ${filePath}: ${err.message}`);
+        throw new CLIError(`Cannot access ${relativeFilePath}: ${err.message}`);
     }
 
     if (!result || result.isEmpty) {
-        throw new CLIError(`Oops! Looks like ${filePath} is empty.`);
+        throw new CLIError(`Oops! Looks like ${relativeFilePath} is empty.`);
     }
 
     const { config } = result;

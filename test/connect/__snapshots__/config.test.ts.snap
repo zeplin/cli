@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`ConfigProcessor when config file options are passed and at least one is invalid fails 1`] = `"Oops! Looks like /Users/mertkizilirmak/projects/cli/test/resources/config/invalid/.zeplin/components.json has some problems: \\"components\\" must be an array"`;
+exports[`ConfigProcessor when config file options are passed and at least one is invalid fails 1`] = `"Oops! Looks like test/resources/config/invalid/.zeplin/components.json has some problems: \\"components\\" must be an array"`;
 
 exports[`ConfigProcessor when config file options are passed and they are valid parses the config files 1`] = `
 Array [
@@ -47,7 +47,7 @@ Array [
 ]
 `;
 
-exports[`ConfigProcessor when no config file option is passed and discovered config file is invalid fails 1`] = `"Oops! Looks like /Users/mertkizilirmak/projects/cli/test/resources/config/invalid/.zeplin/components.json has some problems: \\"components\\" must be an array"`;
+exports[`ConfigProcessor when no config file option is passed and discovered config file is invalid fails 1`] = `"Oops! Looks like test/resources/config/invalid/.zeplin/components.json has some problems: \\"components\\" must be an array"`;
 
 exports[`ConfigProcessor when no config file option is passed and json config file is discovered parses the config 1`] = `
 Array [

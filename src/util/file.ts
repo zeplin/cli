@@ -13,3 +13,7 @@ export async function readJsonFile(filePath: string): Promise<{}> {
 export async function writeJsonIntoFile(filePath: string, content: {}): Promise<void> {
     await fs.writeFile(filePath, JSON.stringify(content));
 }
+
+export function transformAbsolutePathToRelativePath(filePath: string): string {
+    return path.isAbsolute(filePath) ? path.relative(process.cwd(), filePath) : filePath;
+}
