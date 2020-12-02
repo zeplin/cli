@@ -7,7 +7,7 @@ import path from "path";
 import { ComponentConfigFile } from "./interfaces/config";
 import { CLIError } from "../../errors";
 import logger from "../../util/logger";
-import { transformAbsolutePathToRelativePath } from "../../util/file";
+import { getAsRelativePath } from "../../util/file";
 
 const linkConfigSchema = Joi.object({
     type: Joi.string(),
@@ -76,7 +76,7 @@ const componentConfigFileSchema = Joi.object({
 const validateConfigSchema = (config: unknown, params: { filePath: string }): ComponentConfigFile => {
     const { error, value } = componentConfigFileSchema.validate(config, { allowUnknown: true, presence: "required" });
 
-    const relativeFilePath = transformAbsolutePathToRelativePath(params.filePath);
+    const relativeFilePath = getAsRelativePath(params.filePath);
 
     if (error) {
         throw new CLIError(`Oops! Looks like ${relativeFilePath} has some problems: ${error.message}`);
@@ -106,7 +106,7 @@ const configExplorer = cosmiconfig("@zeplin/cli", configExplorerOptions);
 const getComponentConfigFile = async (filePath: string): Promise<ComponentConfigFile> => {
     let result;
 
-    const relativeFilePath = transformAbsolutePathToRelativePath(filePath);
+    const relativeFilePath = getAsRelativePath(filePath);
 
     try {
         result = await configExplorer.load(filePath);
