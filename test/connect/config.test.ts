@@ -2,7 +2,7 @@ import path from "path";
 
 import { getComponentConfigFiles } from "../../src/commands/connect/config";
 
-const configResourcePath = path.join(process.cwd(), "test", "resources", "config");
+const configResourcePath = path.resolve("test", "resources", "config");
 
 describe("ConfigProcessor", () => {
     describe("when no config file option is passed", () => {

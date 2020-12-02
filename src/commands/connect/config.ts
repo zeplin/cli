@@ -1,6 +1,8 @@
 import { cosmiconfig } from "cosmiconfig";
 import strip from "strip-comments";
 import Joi from "@hapi/joi";
+import chalk from "chalk";
+import dedent from "ts-dedent";
 import path from "path";
 import { ComponentConfigFile } from "./interfaces/config";
 import { CLIError } from "../../errors";
@@ -70,6 +72,16 @@ const componentConfigFileSchema = Joi.object({
     return value;
 });
 
+const validateConfigSchema = (config: unknown, params: { filePath: string }): ComponentConfigFile => {
+    const { error, value } = componentConfigFileSchema.validate(config, { allowUnknown: true, presence: "required" });
+
+    if (error) {
+        throw new CLIError(`Oops! Looks like ${params.filePath} has some problems: ${error.message}`);
+    }
+
+    return value as ComponentConfigFile;
+};
+
 const configExplorerOptions = {
     searchPlaces: [
         "components.json",
@@ -97,23 +109,13 @@ const getComponentConfigFile = async (filePath: string): Promise<ComponentConfig
         throw new CLIError(`Cannot access ${filePath}: ${err.message}`);
     }
 
-    logger.info(`Found filepath: ${result?.filepath}`);
-
-    if (result === null || result.isEmpty) {
+    if (!result || result.isEmpty) {
         throw new CLIError(`Oops! Looks like ${filePath} is empty.`);
     }
 
     const { config } = result;
 
-    logger.info(`${filePath} content: ${JSON.stringify(config)}`);
-
-    const { error, value } = componentConfigFileSchema.validate(config, { allowUnknown: true, presence: "required" });
-
-    if (error) {
-        throw new CLIError(`Oops! Looks like ${filePath} has some problems: ${error.message}`);
-    }
-
-    return value as ComponentConfigFile;
+    return validateConfigSchema(config, { filePath });
 };
 
 const discoverDefaultConfigFile = async (configRootDir: string): Promise<ComponentConfigFile | null> => {
@@ -127,7 +129,7 @@ const discoverDefaultConfigFile = async (configRootDir: string): Promise<Compone
         logger.debug(`Failed configuration file discovery: ${err.message}`);
     }
 
-    if (discoveredConfigFile === null || discoveredConfigFile === void 0) {
+    if (!discoveredConfigFile) {
         logger.debug("Could not find a configuration file during discovery");
 
         return null;
@@ -135,13 +137,7 @@ const discoverDefaultConfigFile = async (configRootDir: string): Promise<Compone
 
     const { config, filepath } = discoveredConfigFile;
 
-    const { error, value } = componentConfigFileSchema.validate(config, { allowUnknown: true, presence: "required" });
-
-    if (error) {
-        throw new CLIError(`Oops! Looks like ${filepath} has some problems: ${error.message}`);
-    }
-
-    return value as ComponentConfigFile;
+    return validateConfigSchema(config, { filePath: filepath });
 };
 
 const getComponentConfigFiles = async (
@@ -153,7 +149,7 @@ const getComponentConfigFiles = async (
         /**
          * If config file path array is not empty, use only the specified config files.
          *
-         * If no config file was specified by the user, try to discover default configutation
+         * If no config file was specified by the user, try to discover default configurtation
          * file.
          */
         if (configFilePaths.length > 0) {
@@ -163,8 +159,11 @@ const getComponentConfigFiles = async (
         } else {
             const defaultConfigFile = await discoverDefaultConfigFile(configRootDir);
 
-            if (defaultConfigFile === null) {
-                throw new Error("Missing configuration file!");
+            if (!defaultConfigFile) {
+                throw new Error(dedent`
+                Missing configuration file!
+                Please refer to ${chalk.underline`https://zpl.io/connected-components`} to create a configuration file.
+    `);
             }
 
             configFiles = [defaultConfigFile];

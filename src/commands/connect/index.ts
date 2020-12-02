@@ -23,11 +23,11 @@ const connectComponents = async (options: Pick<ConnectOptions, "configFiles" | "
 
     const componentConfigFiles = await getComponentConfigFiles(configFiles, plugins);
 
-    logger.info(`component config files: ${JSON.stringify(componentConfigFiles)}`);
+    logger.debug(`component config files: ${JSON.stringify(componentConfigFiles)}`);
 
     const connectedBarrels = await connectComponentConfigFiles(componentConfigFiles);
 
-    logger.info(`connected barrels output: ${JSON.stringify(connectedBarrels)}`);
+    logger.debug(`connected barrels output: ${JSON.stringify(connectedBarrels)}`);
 
     return connectedBarrels;
 };
