@@ -161,9 +161,9 @@ const getComponentConfigFiles = async (
 
             if (!defaultConfigFile) {
                 throw new Error(dedent`
-                Missing configuration file!
-                Please refer to ${chalk.underline`https://zpl.io/connected-components`} to create a configuration file.
-    `);
+                    Missing configuration file!
+                    Please refer to ${chalk.underline`https://zpl.io/connected-components`} to create a configuration file.
+                `);
             }
 
             configFiles = [defaultConfigFile];
