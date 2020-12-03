@@ -85,4 +85,25 @@ export class ZeplinApi {
             throw new CLIError(error.message);
         }
     }
+
+    async deleteConnectedComponents(
+        authToken: string,
+        params: { barrelId: string; barrelType: BarrelType }
+    ): Promise<void> {
+        try {
+            const { barrelId, barrelType } = params;
+
+            await this.axios.delete(
+                `/public/cli/${barrelType}/${barrelId}/connectedcomponents`,
+                {
+                    headers: { "Zeplin-Access-Token": authToken }
+                }
+            );
+        } catch (error) {
+            if (error.isAxiosError) {
+                throw new APIError(error.response);
+            }
+            throw new CLIError(error.message);
+        }
+    }
 }

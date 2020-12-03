@@ -42,6 +42,29 @@ export class ConnectedComponentsService {
         }
     }
 
+    async deleteConnectedBarrels(connectedBarrelComponents: ConnectedBarrelComponents[]): Promise<void> {
+        try {
+            const authToken = await this.authService.authenticate();
+
+            await this.delete(authToken, connectedBarrelComponents);
+        } catch (error) {
+            if (isAuthenticationError(error)) {
+                if (isCI()) {
+                    error.message = dedent`
+                    ${error.message}
+                    Please update ${chalk.dim`ZEPLIN_ACCESS_TOKEN`} environment variable.`;
+                } else {
+                    logger.info(error.message);
+                    const authToken = await this.authService.promptForLogin();
+
+                    await this.delete(authToken, connectedBarrelComponents);
+                    return;
+                }
+            }
+            throw error;
+        }
+    }
+
     private async upload(
         authToken: string,
         connectedBarrelComponents: ConnectedBarrelComponents[]
@@ -61,6 +84,28 @@ export class ConnectedComponentsService {
                     authToken,
                     { barrelId: stid, barrelType: "styleguides" },
                     { connectedComponents: connectedBarrelComponent.connectedComponents }
+                );
+            }));
+        }));
+    }
+
+    private async delete(
+        authToken: string,
+        connectedBarrelComponents: ConnectedBarrelComponents[]
+    ): Promise<void> {
+        await Promise.all(connectedBarrelComponents.map(async connectedBarrelComponent => {
+            // TODO delete progress on console
+            await Promise.all(connectedBarrelComponent.projects.map(async pid => {
+                await this.zeplinApi.deleteConnectedComponents(
+                    authToken,
+                    { barrelId: pid, barrelType: "projects" }
+                );
+            }));
+
+            await Promise.all(connectedBarrelComponent.styleguides.map(async stid => {
+                await this.zeplinApi.deleteConnectedComponents(
+                    authToken,
+                    { barrelId: stid, barrelType: "styleguides" }
                 );
             }));
         }));

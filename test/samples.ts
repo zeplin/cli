@@ -105,6 +105,11 @@ export const uploadParams = {
     barrelType: "projects" as BarrelType
 };
 
+export const deleteParams = {
+    barrelId: "pid",
+    barrelType: "projects" as BarrelType
+};
+
 export const sampleComponentConfig1 = {
     path: "src/Sample1.jsx",
     zeplinNames: ["screen1"]
