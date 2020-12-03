@@ -1,6 +1,10 @@
 import fs from "fs-extra";
 import path from "path";
 
+function getAsRelativePath(filePath: string): string {
+    return path.isAbsolute(filePath) ? path.relative(process.cwd(), filePath) : filePath;
+}
+
 async function readJsonFile(filePath: string): Promise<{}> {
     const resolvedFilePath = path.resolve(filePath);
     if (!(await fs.pathExists(resolvedFilePath))) {
@@ -36,6 +40,7 @@ async function getBowerJson(): Promise<{} | null> {
 }
 
 export {
+    getAsRelativePath,
     readJsonFile,
     writeJsonIntoFile,
     getPackageJson,

@@ -1,8 +1,13 @@
+import { cosmiconfig } from "cosmiconfig";
+import strip from "strip-comments";
 import Joi from "@hapi/joi";
-import * as fileUtil from "../../util/file";
+import chalk from "chalk";
+import dedent from "ts-dedent";
+import path from "path";
 import { ComponentConfigFile } from "./interfaces/config";
 import { CLIError } from "../../errors";
 import logger from "../../util/logger";
+import { getAsRelativePath } from "../../util/file";
 
 const linkConfigSchema = Joi.object({
     type: Joi.string(),
@@ -68,27 +73,106 @@ const componentConfigFileSchema = Joi.object({
     return value;
 });
 
-const getComponentConfigFile = async (filePath: string): Promise<ComponentConfigFile> => {
-    const file = await fileUtil.readJsonFile(filePath);
+const validateConfigSchema = (config: unknown, params: { filePath: string }): ComponentConfigFile => {
+    const { error, value } = componentConfigFileSchema.validate(config, { allowUnknown: true, presence: "required" });
 
-    logger.debug(`${filePath} content: ${JSON.stringify(file)}`);
-
-    const { error, value } = componentConfigFileSchema.validate(file, { allowUnknown: true, presence: "required" });
+    const relativeFilePath = getAsRelativePath(params.filePath);
 
     if (error) {
-        throw new CLIError(`Oops! Looks like ${filePath} has some problems: ${error.message}`);
+        throw new CLIError(`Oops! Looks like ${relativeFilePath} has some problems: ${error.message}`);
     }
 
     return value as ComponentConfigFile;
 };
 
+const configExplorerOptions = {
+    searchPlaces: [
+        "components.json",
+        "components.yaml",
+        "components.config.js"
+    ],
+    stopDir: process.cwd(),
+    loaders: {
+        ".json": (_filePath: string, content: string): object | null => {
+            const stripped = strip(content);
+
+            return JSON.parse(stripped);
+        }
+    }
+};
+
+const configExplorer = cosmiconfig("@zeplin/cli", configExplorerOptions);
+
+const getComponentConfigFile = async (filePath: string): Promise<ComponentConfigFile> => {
+    let result;
+
+    const relativeFilePath = getAsRelativePath(filePath);
+
+    try {
+        result = await configExplorer.load(filePath);
+    } catch (err) {
+        throw new CLIError(`Cannot access ${relativeFilePath}: ${err.message}`);
+    }
+
+    if (!result || result.isEmpty) {
+        throw new CLIError(`Oops! Looks like ${relativeFilePath} is empty.`);
+    }
+
+    const { config } = result;
+
+    return validateConfigSchema(config, { filePath });
+};
+
+const discoverDefaultConfigFile = async (configRootDir: string): Promise<ComponentConfigFile | null> => {
+    let discoveredConfigFile;
+
+    try {
+        const searchFrom = path.join(configRootDir, ".zeplin");
+
+        discoveredConfigFile = await configExplorer.search(searchFrom);
+    } catch (err) {
+        logger.debug(`Failed configuration file discovery: ${err.message}`);
+    }
+
+    if (!discoveredConfigFile) {
+        logger.debug("Could not find a configuration file during discovery");
+
+        return null;
+    }
+
+    const { config, filepath } = discoveredConfigFile;
+
+    return validateConfigSchema(config, { filePath: filepath });
+};
+
 const getComponentConfigFiles = async (
-    configFilePaths: string[], globalPlugins: string[] = []
+    configFilePaths: string[], globalPlugins: string[] = [], configRootDir = process.cwd()
 ): Promise<ComponentConfigFile[]> => {
     try {
-        const configFiles = await Promise.all(
-            configFilePaths.map(configFile => getComponentConfigFile(configFile))
-        );
+        let configFiles: ComponentConfigFile[];
+
+        /**
+         * If config file path array is not empty, use only the specified config files.
+         *
+         * If no config file was specified by the user, try to discover default configurtation
+         * file.
+         */
+        if (configFilePaths.length > 0) {
+            configFiles = await Promise.all(
+                configFilePaths.map(configFile => getComponentConfigFile(configFile))
+            );
+        } else {
+            const defaultConfigFile = await discoverDefaultConfigFile(configRootDir);
+
+            if (!defaultConfigFile) {
+                throw new Error(dedent`
+                    Missing configuration file!
+                    Please refer to ${chalk.underline`https://zpl.io/connected-components`} to create a configuration file.
+                `);
+            }
+
+            configFiles = [defaultConfigFile];
+        }
 
         /**
          * Global plugins and plugins from the config files may contain the same plugin
