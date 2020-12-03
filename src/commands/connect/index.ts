@@ -3,7 +3,7 @@ import chokidar from "chokidar";
 import dedent from "ts-dedent";
 import logger from "../../util/logger";
 import path from "path";
-import { indent } from "../../util/text";
+import { indent, stringify } from "../../util/text";
 import { getComponentConfigFiles } from "./config";
 import { ConnectedBarrelComponents } from "./interfaces/api";
 import { connectComponentConfigFiles } from "./plugin";
@@ -104,7 +104,7 @@ export interface ConnectOptions {
 
 export async function connect(options: ConnectOptions): Promise<void> {
     try {
-        logger.debug(`connect options: ${JSON.stringify(options)}`);
+        logger.debug(`connect options: ${stringify(options)}`);
 
         const connectedBarrels = await connectComponents(options);
 

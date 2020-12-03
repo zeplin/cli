@@ -18,7 +18,24 @@ const getInstallCommand = (packageName: string): string => {
     return `npm install ${packageName}`;
 };
 
+type Replacer = (_key: string, value: object | null) => object | null | undefined;
+const getCircularReplacer = (): Replacer => {
+    const seen = new WeakSet();
+    return (_key: string, value: object | null): object | null | undefined => {
+        if (typeof value === "object" && value !== null) {
+            if (seen.has(value)) {
+                return;
+            }
+            seen.add(value);
+        }
+        return value;
+    };
+};
+
+const stringify = (json: unknown): string => JSON.stringify(json, getCircularReplacer());
+
 export {
     indent,
-    getInstallCommand
+    getInstallCommand,
+    stringify
 };
