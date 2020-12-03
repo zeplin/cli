@@ -5,7 +5,7 @@ import logger from "../../util/logger";
 import path from "path";
 import { indent, stringify } from "../../util/text";
 import { getComponentConfigFiles } from "./config";
-import { ConnectedBarrelComponents } from "./interfaces/api";
+import { ConnectedBarrelComponents, ConnectedBarrels } from "./interfaces/api";
 import { connectComponentConfigFiles } from "./plugin";
 import { ConnectDevServer } from "./server";
 import { ConnectedComponentsService } from "./service";
@@ -30,6 +30,14 @@ const connectComponents = async (options: Pick<ConnectOptions, "configFiles" | "
     logger.debug(`connected barrels output: ${JSON.stringify(connectedBarrels)}`);
 
     return connectedBarrels;
+};
+
+const getConnectedBarrels = async (options: Pick<ConnectOptions, "configFiles">): Promise<ConnectedBarrels[]> => {
+    const { configFiles } = options;
+
+    const componentConfigFiles = await getComponentConfigFiles(configFiles, []);
+
+    return componentConfigFiles as ConnectedBarrels[];
 };
 
 const startDevServer = async (
@@ -94,7 +102,7 @@ const upload = async (connectedBarrels: ConnectedBarrelComponents[]): Promise<vo
     logger.info("🦄 Components successfully connected to components in Zeplin.");
 };
 
-const deleteConnectedBarrels = async (connectedBarrels: ConnectedBarrelComponents[]): Promise<void> => {
+const deleteConnectedBarrels = async (connectedBarrels: ConnectedBarrels[]): Promise<void> => {
     logger.info("Deleting connected components from Zeplin…");
 
     await service.deleteConnectedBarrels(connectedBarrels);
@@ -137,9 +145,9 @@ export interface ConnectDeleteOptions {
 
 export async function connectDelete(options: ConnectDeleteOptions): Promise<void> {
     try {
-        const connectedBarrels = await connectComponents({ configFiles: options.configFiles, plugins: [] });
+        const barrels = await getConnectedBarrels({ configFiles: options.configFiles });
 
-        await deleteConnectedBarrels(connectedBarrels);
+        await deleteConnectedBarrels(barrels);
     } catch (error) {
         error.message = dedent`
             ${chalk.bold`Deleting connected components from Zeplin components failed.`}

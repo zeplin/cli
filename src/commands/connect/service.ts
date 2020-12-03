@@ -3,7 +3,7 @@ import dedent from "ts-dedent";
 import { isCI } from "../../util/env";
 import { ZeplinApi } from "../../api";
 import { AuthenticationService } from "../../service/auth";
-import { ConnectedBarrelComponents } from "./interfaces/api";
+import { ConnectedBarrelComponents, ConnectedBarrels } from "./interfaces/api";
 import { APIError, AuthError } from "../../errors";
 import logger from "../../util/logger";
 
@@ -42,7 +42,7 @@ export class ConnectedComponentsService {
         }
     }
 
-    async deleteConnectedBarrels(connectedBarrelComponents: ConnectedBarrelComponents[]): Promise<void> {
+    async deleteConnectedBarrels(connectedBarrelComponents: ConnectedBarrels[]): Promise<void> {
         try {
             const authToken = await this.authService.authenticate();
 
@@ -91,7 +91,7 @@ export class ConnectedComponentsService {
 
     private async delete(
         authToken: string,
-        connectedBarrelComponents: ConnectedBarrelComponents[]
+        connectedBarrelComponents: ConnectedBarrels[]
     ): Promise<void> {
         await Promise.all(connectedBarrelComponents.map(async connectedBarrelComponent => {
             // TODO delete progress on console
