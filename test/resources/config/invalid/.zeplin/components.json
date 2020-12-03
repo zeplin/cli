@@ -1,0 +1,13 @@
+{
+    // My plugins go here!
+    "plugins": [],
+    "projects": [
+        "pid"
+    ],
+    /**
+    * Here are some comments about components:
+    *
+    * This should be an array not an object.
+    */
+    "components": {}
+}

@@ -3,7 +3,7 @@ import { LinkType } from "../commands/connect/interfaces/plugin";
 export const defaults = {
     commands: {
         connect: {
-            filePaths: [".zeplin/components.json"],
+            filePaths: [],
             devMode: false,
             devModeWatch: true,
             port: 9756

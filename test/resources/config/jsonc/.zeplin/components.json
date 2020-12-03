@@ -1,0 +1,22 @@
+{
+    // My plugins go here!
+    "plugins": [],
+    "projects": [
+        "pid"
+    ],
+    /**
+    * Here are some comments about components:
+    *
+    * We need more!
+    */
+    "components": [
+        {
+            "path": "src/Sample1.jsx",
+            "zeplinNames": ["screen1"]
+        },
+        {
+            "path": "src/Sample2.jsx",
+            "zeplinNames": ["screen2"]
+        }
+    ]
+}
