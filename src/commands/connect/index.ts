@@ -146,6 +146,7 @@ export interface ConnectDeleteOptions {
 export async function connectDelete(options: ConnectDeleteOptions): Promise<void> {
     try {
 <<<<<<< HEAD
+<<<<<<< HEAD
         const barrels = await getConnectedBarrels({ configFiles: options.configFiles });
 
         await deleteConnectedBarrels(barrels);
@@ -154,6 +155,11 @@ export async function connectDelete(options: ConnectDeleteOptions): Promise<void
 
         await deleteConnectedBarrels(connectedBarrels);
 >>>>>>> 61639ef... Add delete command
+=======
+        const barrels = await getConnectedBarrels({ configFiles: options.configFiles });
+
+        await deleteConnectedBarrels(barrels);
+>>>>>>> 832196a... Use ConnectedBarrels interface for delete command
     } catch (error) {
         error.message = dedent`
             ${chalk.bold`Deleting connected components from Zeplin components failed.`}
