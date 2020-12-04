@@ -4,7 +4,7 @@ import updateNotifier from "update-notifier";
 
 import { defaults } from "./config/defaults";
 import { bin, name, version } from "../package.json";
-import { connect, ConnectOptions } from "./commands/connect";
+import { connect, connectDelete, ConnectDeleteOptions, ConnectOptions } from "./commands/connect";
 import { login } from "./commands/login";
 import { commandRunner } from "./util/command";
 import { activateVerbose } from "./util/env";
@@ -62,6 +62,17 @@ const connectCommand = program.command("connect")
         };
 
         await connect(connectOptions);
+    }));
+
+connectCommand.command("delete")
+    .description("Delete component connections from Zeplin")
+    .option("-f, --file <file>", "Full path to components file", createCollector(), defaults.commands.connect.filePaths)
+    .action(commandRunner(async options => {
+        const connectDeleteOptions: ConnectDeleteOptions = {
+            configFiles: options.file
+        };
+
+        await connectDelete(connectDeleteOptions);
     }));
 
 const loginCommand = program.command("login")

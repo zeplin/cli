@@ -28,3 +28,9 @@ export interface ConnectedBarrelComponents {
     styleguides: string[];
     connectedComponents: ConnectedComponent[];
 }
+
+/** @internal */
+export interface ConnectedBarrels {
+    projects: string[];
+    styleguides: string[];
+}

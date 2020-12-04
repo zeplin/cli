@@ -168,4 +168,63 @@ describe("ZeplinApi", () => {
             );
         });
     });
+
+    describe("deleteConnectedComponents()", () => {
+        it("resolves when HTTP request succeeds", async () => {
+            const zeplinApi = new ZeplinApi();
+
+            await zeplinApi.deleteConnectedComponents(
+                samples.validJwt,
+                samples.deleteParams
+            );
+
+            const { barrelType, barrelId } = samples.deleteParams;
+
+            expect(Axios.delete).toHaveBeenCalledWith(
+                `/public/cli/${barrelType}/${barrelId}/connectedcomponents`,
+                { headers: { "Zeplin-Access-Token": samples.validJwt } }
+            );
+        });
+
+        it("throws APIError when HTTP request fails", async () => {
+            const zeplinApi = new ZeplinApi();
+
+            mocked(Axios.delete).mockRejectedValueOnce(samples.axiosError);
+
+            await expect(
+                zeplinApi.deleteConnectedComponents(
+                    samples.validJwt,
+                    samples.deleteParams
+                )
+            ).rejects.toThrowError(new APIError(samples.axiosError.response));
+
+            const { barrelType, barrelId } = samples.uploadParams;
+
+            expect(Axios.delete).toHaveBeenCalledWith(
+                `/public/cli/${barrelType}/${barrelId}/connectedcomponents`,
+                { headers: { "Zeplin-Access-Token": samples.validJwt } }
+            );
+        });
+
+        it("throws CLIError when non-HTTP error occurs", async () => {
+            const zeplinApi = new ZeplinApi();
+
+            const errorMessage = "some other error";
+            mocked(Axios.delete).mockRejectedValueOnce(new Error(errorMessage));
+
+            await expect(
+                zeplinApi.deleteConnectedComponents(
+                    samples.validJwt,
+                    samples.deleteParams
+                )
+            ).rejects.toThrowError(new CLIError(errorMessage));
+
+            const { barrelType, barrelId } = samples.deleteParams;
+
+            expect(Axios.delete).toHaveBeenCalledWith(
+                `/public/cli/${barrelType}/${barrelId}/connectedcomponents`,
+                { headers: { "Zeplin-Access-Token": samples.validJwt } }
+            );
+        });
+    });
 });
