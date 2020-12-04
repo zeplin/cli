@@ -42,11 +42,11 @@ export class ConnectedComponentsService {
         }
     }
 
-    async deleteConnectedBarrels(connectedBarrelComponents: ConnectedBarrels[]): Promise<void> {
+    async deleteConnectedBarrels(connectedComponents: ConnectedBarrels[]): Promise<void> {
         try {
             const authToken = await this.authService.authenticate();
 
-            await this.delete(authToken, connectedBarrelComponents);
+            await this.delete(authToken, connectedComponents);
         } catch (error) {
             if (isAuthenticationError(error)) {
                 if (isCI()) {
@@ -57,7 +57,7 @@ export class ConnectedComponentsService {
                     logger.info(error.message);
                     const authToken = await this.authService.promptForLogin();
 
-                    await this.delete(authToken, connectedBarrelComponents);
+                    await this.delete(authToken, connectedComponents);
                     return;
                 }
             }
@@ -91,9 +91,9 @@ export class ConnectedComponentsService {
 
     private async delete(
         authToken: string,
-        connectedBarrelComponents: ConnectedBarrels[]
+        connectedComponents: ConnectedBarrels[]
     ): Promise<void> {
-        await Promise.all(connectedBarrelComponents.map(async connectedBarrelComponent => {
+        await Promise.all(connectedComponents.map(async connectedBarrelComponent => {
             // TODO delete progress on console
             await Promise.all(connectedBarrelComponent.projects.map(async pid => {
                 await this.zeplinApi.deleteConnectedComponents(
