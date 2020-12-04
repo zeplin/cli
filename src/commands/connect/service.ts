@@ -3,7 +3,7 @@ import dedent from "ts-dedent";
 import { isCI } from "../../util/env";
 import { ZeplinApi } from "../../api";
 import { AuthenticationService } from "../../service/auth";
-import { ConnectedBarrelComponents } from "./interfaces/api";
+import { ConnectedBarrelComponents, ConnectedBarrels } from "./interfaces/api";
 import { APIError, AuthError } from "../../errors";
 import logger from "../../util/logger";
 
@@ -42,6 +42,29 @@ export class ConnectedComponentsService {
         }
     }
 
+    async deleteConnectedBarrels(connectedComponents: ConnectedBarrels[]): Promise<void> {
+        try {
+            const authToken = await this.authService.authenticate();
+
+            await this.delete(authToken, connectedComponents);
+        } catch (error) {
+            if (isAuthenticationError(error)) {
+                if (isCI()) {
+                    error.message = dedent`
+                    ${error.message}
+                    Please update ${chalk.dim`ZEPLIN_ACCESS_TOKEN`} environment variable.`;
+                } else {
+                    logger.info(error.message);
+                    const authToken = await this.authService.promptForLogin();
+
+                    await this.delete(authToken, connectedComponents);
+                    return;
+                }
+            }
+            throw error;
+        }
+    }
+
     private async upload(
         authToken: string,
         connectedBarrelComponents: ConnectedBarrelComponents[]
@@ -61,6 +84,28 @@ export class ConnectedComponentsService {
                     authToken,
                     { barrelId: stid, barrelType: "styleguides" },
                     { connectedComponents: connectedBarrelComponent.connectedComponents }
+                );
+            }));
+        }));
+    }
+
+    private async delete(
+        authToken: string,
+        connectedComponents: ConnectedBarrels[]
+    ): Promise<void> {
+        await Promise.all(connectedComponents.map(async connectedBarrelComponent => {
+            // TODO delete progress on console
+            await Promise.all(connectedBarrelComponent.projects.map(async pid => {
+                await this.zeplinApi.deleteConnectedComponents(
+                    authToken,
+                    { barrelId: pid, barrelType: "projects" }
+                );
+            }));
+
+            await Promise.all(connectedBarrelComponent.styleguides.map(async stid => {
+                await this.zeplinApi.deleteConnectedComponents(
+                    authToken,
+                    { barrelId: stid, barrelType: "styleguides" }
                 );
             }));
         }));
