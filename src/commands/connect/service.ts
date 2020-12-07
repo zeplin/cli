@@ -44,7 +44,7 @@ export class ConnectedComponentsService {
 
     async deleteConnectedBarrels(connectedComponents: ConnectedBarrels[]): Promise<void> {
         try {
-            const authToken = await this.authService.authenticate();
+            const authToken = await this.authService.authenticate(["delete"]);
 
             await this.delete(authToken, connectedComponents);
         } catch (error) {
