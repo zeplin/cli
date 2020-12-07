@@ -104,7 +104,7 @@ describe("AuthenticationService", () => {
 
                 mocked(envUtil.getAccessTokenFromEnv).mockReturnValueOnce(samples.validJwt);
 
-                await expect(authenticationService.authenticate(["write", "delete"]))
+                await expect(authenticationService.authenticate({ requiredScopes: ["write", "delete"] }))
                     .resolves
                     .toBe(samples.validJwt);
 
@@ -141,7 +141,7 @@ describe("AuthenticationService", () => {
 
                 mocked(envUtil.getAccessTokenFromEnv).mockReturnValueOnce(samples.validJwtWithoutDeleteScope);
 
-                await expect(authenticationService.authenticate(["delete"]))
+                await expect(authenticationService.authenticate({ requiredScopes: ["delete"] }))
                     .rejects
                     .toThrowError(new AuthError("Access token has missing privileges, please login again to re-create access token."));
             });

@@ -50,7 +50,7 @@ export class AuthenticationService {
     authToken?: string;
     zeplinApi = new ZeplinApi();
 
-    async authenticate(requiredScopes?: string[]): Promise<string> {
+    async authenticate(params?: { requiredScopes: string[] }): Promise<string> {
         const tokenFromEnv = envUtil.getAccessTokenFromEnv();
 
         if (tokenFromEnv) {
@@ -67,7 +67,7 @@ export class AuthenticationService {
             }
         }
 
-        return validate(this.authToken, requiredScopes);
+        return validate(this.authToken, params?.requiredScopes);
     }
 
     async promptForLogin(
