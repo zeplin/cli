@@ -19,14 +19,15 @@ export class ConnectedComponentsService {
         this.authService = new AuthenticationService();
     }
 
-    async uploadConnectedBarrels(connectedBarrelComponents: ConnectedBarrelComponents[]): Promise<void> {
+    async uploadConnectedBarrels(connectedBarrelComponents: ConnectedBarrelComponents[],
+        params?: { ciMode: boolean }): Promise<void> {
         try {
-            const authToken = await this.authService.authenticate();
+            const authToken = await this.authService.authenticate(params);
 
             await this.upload(authToken, connectedBarrelComponents);
         } catch (error) {
             if (isAuthenticationError(error)) {
-                if (isCI()) {
+                if (params?.ciMode || isCI()) {
                     error.message = dedent`
                     ${error.message}
                     Please update ${chalk.dim`ZEPLIN_ACCESS_TOKEN`} environment variable.`;
@@ -42,14 +43,15 @@ export class ConnectedComponentsService {
         }
     }
 
-    async deleteConnectedBarrels(connectedComponents: ConnectedBarrels[]): Promise<void> {
+    async deleteConnectedBarrels(connectedComponents: ConnectedBarrels[],
+        params?: { ciMode: boolean }): Promise<void> {
         try {
-            const authToken = await this.authService.authenticate({ requiredScopes: ["delete"] });
+            const authToken = await this.authService.authenticate({ requiredScopes: ["delete"], ciMode: params?.ciMode });
 
             await this.delete(authToken, connectedComponents);
         } catch (error) {
             if (isAuthenticationError(error)) {
-                if (isCI()) {
+                if (params?.ciMode || isCI()) {
                     error.message = dedent`
                     ${error.message}
                     Please update ${chalk.dim`ZEPLIN_ACCESS_TOKEN`} environment variable.`;

@@ -49,12 +49,14 @@ logger.info(`\nZeplin CLI - v${version}\n`);
 const connectCommand = program.command("connect")
     .description("Connect components to code")
     .option("-f, --file <file>", "Full path to components file", createCollector(), defaults.commands.connect.filePaths)
+    .option("--ci", "Activate CI mode", defaults.commands.connect.ciMode)
     .option("-d, --dev", "Activate development mode", defaults.commands.connect.devMode)
     .option("--no-watch", "Disable watch files on development mode", defaults.commands.connect.devModeWatch)
     .option("-p, --plugin <plugin>", "npm package name of a Zeplin CLI connect plugin", createCollector(), [])
     .action(commandRunner(async options => {
         const connectOptions: ConnectOptions = {
             configFiles: options.file,
+            ciMode: options.ci,
             devMode: options.dev,
             devModePort: defaults.commands.connect.port,
             devModeWatch: options.watch,
@@ -67,9 +69,11 @@ const connectCommand = program.command("connect")
 connectCommand.command("delete")
     .description("Delete component connections from Zeplin")
     .option("-f, --file <file>", "Full path to components file", createCollector(), defaults.commands.connect.filePaths)
+    .option("--ci", "Activate CI mode", defaults.commands.connect.ciMode)
     .action(commandRunner(async options => {
         const connectDeleteOptions: ConnectDeleteOptions = {
-            configFiles: options.file
+            configFiles: options.file,
+            ciMode: options.ciMode
         };
 
         await connectDelete(connectDeleteOptions);

@@ -4,6 +4,7 @@ export const defaults = {
     commands: {
         connect: {
             filePaths: [],
+            ciMode: false,
             devMode: false,
             devModeWatch: true,
             port: 9756

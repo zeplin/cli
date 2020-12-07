@@ -50,13 +50,13 @@ export class AuthenticationService {
     authToken?: string;
     zeplinApi = new ZeplinApi();
 
-    async authenticate(params?: { requiredScopes: string[] }): Promise<string> {
+    async authenticate(params?: { requiredScopes?: string[]; ciMode?: boolean }): Promise<string> {
         const tokenFromEnv = envUtil.getAccessTokenFromEnv();
 
         if (tokenFromEnv) {
             logger.debug(`Found access token from ZEPLIN_ACCESS_TOKEN env var. value: ${tokenFromEnv}`);
             this.authToken = tokenFromEnv;
-        } else if (!envUtil.isCI()) {
+        } else if (!params?.ciMode && !envUtil.isCI()) {
             const tokenFromFile = await authFileUtil.readAuthToken();
             if (tokenFromFile) {
                 logger.debug(`Found access token from auth file. value: ${tokenFromFile}`);
