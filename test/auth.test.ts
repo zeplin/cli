@@ -5,6 +5,7 @@ import { AuthenticationService } from "../src/service/auth";
 import { AuthError } from "../src/errors";
 import * as envUtil from "../src/util/env";
 import * as samples from "./samples";
+import dedent from "ts-dedent";
 
 jest.mock("inquirer");
 jest.mock("../src/api");
@@ -98,6 +99,22 @@ describe("AuthenticationService", () => {
                 expect(saveAuthToken).not.toHaveBeenCalled();
             });
 
+            it("returns JWT when token has the required scopes", async () => {
+                const authenticationService = new AuthenticationService();
+
+                mocked(envUtil.getAccessTokenFromEnv).mockReturnValueOnce(samples.validJwt);
+
+                await expect(authenticationService.authenticate({ requiredScopes: ["write", "delete"] }))
+                    .resolves
+                    .toBe(samples.validJwt);
+
+                expect(readAuthToken).not.toHaveBeenCalled();
+                expect(inquirer.prompt).not.toHaveBeenCalled();
+                expect(authenticationService.zeplinApi.login).not.toHaveBeenCalled();
+                expect(authenticationService.zeplinApi.generateToken).not.toHaveBeenCalled();
+                expect(saveAuthToken).not.toHaveBeenCalled();
+            });
+
             it("throws 'Invalid authentication token.' when token is invalid.", async () => {
                 const authenticationService = new AuthenticationService();
 
@@ -116,6 +133,17 @@ describe("AuthenticationService", () => {
                 await expect(authenticationService.authenticate())
                     .rejects
                     .toThrowError(new AuthError("Audience is not set in authentication token."));
+            });
+
+            it(dedent`throws 'Access token has missing privileges, please login again to re-create access token.' 
+            when token does not have the required delete scope`, async () => {
+                const authenticationService = new AuthenticationService();
+
+                mocked(envUtil.getAccessTokenFromEnv).mockReturnValueOnce(samples.validJwtWithoutDeleteScope);
+
+                await expect(authenticationService.authenticate({ requiredScopes: ["delete"] }))
+                    .rejects
+                    .toThrowError(new AuthError("Access token has missing privileges, please login again to re-create access token."));
             });
         });
 
