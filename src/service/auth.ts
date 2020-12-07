@@ -14,7 +14,8 @@ function notEmptyValidator(errorMessage: string) {
 type JWT = { [key: string]: string | number | boolean };
 
 // Just a sanity check
-const validate = (authToken: string | undefined): string => {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const validate = (authToken: string | undefined, requiredScopes?: string[]): string => {
     if (!authToken) {
         throw new AuthError("No authentication token is found.");
     }
@@ -29,6 +30,20 @@ const validate = (authToken: string | undefined): string => {
         throw new AuthError("Audience is not set in authentication token.");
     }
 
+    if (!requiredScopes) {
+        return authToken;
+    }
+
+    const scopes = decodeURI((decodedToken.scope as string || "")).split(" ");
+
+    const missingScopes = requiredScopes.filter(scope => !scopes.includes(scope));
+
+    if (missingScopes.length > 0) {
+        logger.debug(`Missing ${missingScopes.join(", ")} scope${missingScopes.length === 1 ? "" : "s"} in authentication token.`);
+
+        throw new AuthError("Access token has missing privileges, please login again to re-create access token.");
+    }
+
     return authToken;
 };
 
@@ -36,7 +51,7 @@ export class AuthenticationService {
     authToken?: string;
     zeplinApi = new ZeplinApi();
 
-    async authenticate(): Promise<string> {
+    async authenticate(requiredScopes?: string[]): Promise<string> {
         const tokenFromEnv = envUtil.getAccessTokenFromEnv();
 
         if (tokenFromEnv) {
@@ -53,7 +68,7 @@ export class AuthenticationService {
             }
         }
 
-        return validate(this.authToken);
+        return validate(this.authToken, requiredScopes);
     }
 
     async promptForLogin(
