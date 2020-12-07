@@ -43,7 +43,7 @@ export class ZeplinApi {
                 params: {
                     client_id: defaults.api.clientId,
                     response_type: "token",
-                    scope: "write"
+                    scope: "write delete"
                 },
                 headers: { "Zeplin-Token": zeplinToken },
                 maxRedirects: 0,
