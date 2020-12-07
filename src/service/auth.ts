@@ -14,7 +14,6 @@ function notEmptyValidator(errorMessage: string) {
 type JWT = { [key: string]: string | number | boolean };
 
 // Just a sanity check
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const validate = (authToken: string | undefined, requiredScopes?: string[]): string => {
     if (!authToken) {
         throw new AuthError("No authentication token is found.");
