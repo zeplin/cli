@@ -94,26 +94,24 @@ const startDevServer = async (
 
 const service = new ConnectedComponentsService();
 
-const upload = async (connectedBarrels: ConnectedBarrelComponents[], params?: { ciMode: boolean }): Promise<void> => {
+const upload = async (connectedBarrels: ConnectedBarrelComponents[]): Promise<void> => {
     logger.info("Connecting all connected components into Zeplin…");
 
-    await service.uploadConnectedBarrels(connectedBarrels, params);
+    await service.uploadConnectedBarrels(connectedBarrels);
 
     logger.info("🦄 Components successfully connected to components in Zeplin.");
 };
 
-const deleteConnectedBarrels = async (connectedBarrels: ConnectedBarrels[],
-    params?: { ciMode: boolean }): Promise<void> => {
+const deleteConnectedBarrels = async (connectedBarrels: ConnectedBarrels[]): Promise<void> => {
     logger.info("Deleting connected components from Zeplin…");
 
-    await service.deleteConnectedBarrels(connectedBarrels, params);
+    await service.deleteConnectedBarrels(connectedBarrels);
 
     logger.info("🔥 Component connections successfully deleted from components in Zeplin.");
 };
 
 export interface ConnectOptions {
     configFiles: string[];
-    ciMode: boolean;
     devMode: boolean;
     devModePort: number;
     devModeWatch: boolean;
@@ -129,7 +127,7 @@ export async function connect(options: ConnectOptions): Promise<void> {
         if (options.devMode) {
             await startDevServer(options, connectedBarrels);
         } else {
-            await upload(connectedBarrels, { ciMode: options.ciMode });
+            await upload(connectedBarrels);
         }
     } catch (error) {
         error.message = dedent`
@@ -143,14 +141,13 @@ export async function connect(options: ConnectOptions): Promise<void> {
 
 export interface ConnectDeleteOptions {
     configFiles: string[];
-    ciMode: boolean;
 }
 
 export async function connectDelete(options: ConnectDeleteOptions): Promise<void> {
     try {
         const barrels = await getConnectedBarrels({ configFiles: options.configFiles });
 
-        await deleteConnectedBarrels(barrels, { ciMode: options.ciMode });
+        await deleteConnectedBarrels(barrels);
     } catch (error) {
         error.message = dedent`
             ${chalk.bold`Deleting connected components from Zeplin components failed.`}
