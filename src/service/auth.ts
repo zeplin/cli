@@ -50,7 +50,7 @@ export class AuthenticationService {
     authToken?: string;
     zeplinApi = new ZeplinApi();
 
-    async authenticate(params?: { requiredScopes?: string[] }): Promise<string> {
+    async authenticate(params?: { requiredScopes: string[] }): Promise<string> {
         const tokenFromEnv = envUtil.getAccessTokenFromEnv();
 
         if (tokenFromEnv) {
