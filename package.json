@@ -2,10 +2,10 @@
   "name": "@zeplin/cli",
   "version": "1.0.4",
   "description": "Zeplin CLI",
-  "main": "./dist/src/app",
+  "main": "./dist/src/index.js",
   "types": "./dist/types/index",
   "bin": {
-    "zeplin": "dist/src/app.js"
+    "zeplin": "bin/cli.js"
   },
   "scripts": {
     "test": "jest",
@@ -68,6 +68,7 @@
     "fs-extra": "^8.1.0",
     "has-yarn": "^2.1.0",
     "http-status-codes": "^1.4.0",
+    "import-local": "^3.0.2",
     "inquirer": "^7.0.0",
     "is-installed-globally": "^0.3.2",
     "is-yarn-global": "^0.3.0",
