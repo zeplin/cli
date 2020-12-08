@@ -1,6 +1,6 @@
 import { isCI as libIsCI } from "ci-info";
 let VERBOSE = false;
-let CI = false;
+let CI = libIsCI;
 
 const isVerbose = (): boolean => VERBOSE;
 
@@ -10,7 +10,7 @@ const activateVerbose = (): void => {
 
 const getAccessTokenFromEnv = (): string | undefined => process.env.ZEPLIN_ACCESS_TOKEN;
 
-const isCI = (): boolean => CI || libIsCI;
+const isCI = (): boolean => CI;
 
 const activateCI = (): void => {
     CI = true;
