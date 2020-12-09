@@ -7,7 +7,7 @@ import { bin, name, version } from "../package.json";
 import { connect, connectDelete, ConnectDeleteOptions, ConnectOptions } from "./commands/connect";
 import { login } from "./commands/login";
 import { commandRunner } from "./util/command";
-import { activateVerbose } from "./util/env";
+import { activateCI, activateVerbose } from "./util/env";
 import logger from "./util/logger";
 
 function beforeCommand(): void {
@@ -85,8 +85,10 @@ const loginCommand = program.command("login")
     loginCommand
 ].forEach(command => {
     command.option("--verbose", "Enable verbose logs");
+    command.option("--ci", "Enforce CI mode (no prompts)");
 
     command.on("option:verbose", () => activateVerbose());
+    command.on("option:ci", () => activateCI());
 });
 
 program.on("command:*", () => {
