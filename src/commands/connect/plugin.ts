@@ -67,7 +67,7 @@ const createPluginInstance = async (plugin: Plugin, components: ComponentConfig[
 };
 
 const initializePlugins = async (
-    plugins: Plugin[], 
+    plugins: Plugin[],
     components: ComponentConfig[]
 ): Promise<ConnectPluginInstance[]> => {
     const imports = plugins.map(plugin => createPluginInstance(plugin, components));
