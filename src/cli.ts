@@ -5,7 +5,7 @@ import updateNotifier from "update-notifier";
 import { defaults } from "./config/defaults";
 import { bin, name, version } from "../package.json";
 import { connect, connectDelete, ConnectDeleteOptions, ConnectOptions } from "./commands/connect";
-import { login } from "./commands/login";
+import { login, LoginOptions } from "./commands/login";
 import { commandRunner } from "./util/command";
 import { activateCI, activateVerbose } from "./util/env";
 import logger from "./util/logger";
@@ -77,7 +77,14 @@ connectCommand.command("delete")
 
 const loginCommand = program.command("login")
     .description("Login to Zeplin")
-    .action(commandRunner(login));
+    .option("--no-browser", "Skip browser login", defaults.commands.login.noBrowser)
+    .action(commandRunner(async options => {
+        const loginOptions: LoginOptions = {
+            noBrowser: options.noBrowser
+        };
+
+        await login(loginOptions);
+    }));
 
 // Configure common options
 [
