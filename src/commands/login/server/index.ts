@@ -1,7 +1,6 @@
 import express, { ErrorRequestHandler } from "express";
 import { Server } from "http";
 import { BAD_REQUEST, OK } from "http-status-codes";
-import methodOverride from "method-override";
 import { Socket } from "net";
 
 import { CLIError } from "../../../errors";
@@ -46,7 +45,6 @@ export class LoginAuthServer {
             }
         });
 
-        app.use(methodOverride());
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const errorHandler: ErrorRequestHandler = async (err, req, res, _next) => {
             // TODO: Render meaningful views
