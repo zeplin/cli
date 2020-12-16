@@ -146,7 +146,7 @@ export class AuthenticationService {
             wrapAndCall<string>(
                 () => this.loginServer.waitForToken({ port: defaults.commands.login.port }),
                 {
-                    onComplete: () => closePrompt(),
+                    onComplete: closePrompt,
                     onError: (err: Error) => {
                         logger.error(err);
                         this.loginServer.stop();
