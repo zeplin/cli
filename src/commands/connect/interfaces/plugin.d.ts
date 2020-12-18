@@ -8,6 +8,8 @@ import { PrismLang } from "./prism";
 export interface PluginContext {
     /** {@inheritdoc PluginConfig} */
     config?: PluginConfig;
+    /** {@inheritdoc ComponentConfig} */
+    components: ComponentConfig[];
 }
 
 /**
