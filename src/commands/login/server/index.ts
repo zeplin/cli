@@ -38,8 +38,7 @@ export class LoginAuthServer {
             if (!this.accessToken) {
                 next(new Error("No access token!"));
             } else {
-                // TODO: Render meaningful views
-                res.status(OK).json(`Got access token: ${this.accessToken}`);
+                res.status(OK).json({ accessToken: this.accessToken });
 
                 await this.stop();
             }
@@ -47,7 +46,6 @@ export class LoginAuthServer {
 
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const errorHandler: ErrorRequestHandler = async (err, req, res, _next) => {
-            // TODO: Render meaningful views
             res.status(BAD_REQUEST).json({ error: err.message });
 
             if (req.path === this.redirectPath) {
