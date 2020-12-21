@@ -40,7 +40,7 @@ const importPlugin = async (pluginName: string): Promise<ConnectPluginConstructo
     }
 };
 
-const createPluginInstance = async (plugin: Plugin): Promise<ConnectPluginInstance> => {
+const createPluginInstance = async (plugin: Plugin, components: ComponentConfig[]): Promise<ConnectPluginInstance> => {
     const PluginClass = await importPlugin(plugin.name);
     const pluginInstance = new PluginClass();
 
@@ -60,14 +60,17 @@ const createPluginInstance = async (plugin: Plugin): Promise<ConnectPluginInstan
 
     if (typeof pluginInstance.init === "function") {
         logger.debug(`${plugin.name} has init method. Initializing with ${JSON.stringify(plugin.config)}`);
-        await pluginInstance.init({ config: plugin.config, logger });
+        await pluginInstance.init({ config: plugin.config, components, logger });
     }
 
     return pluginInstance;
 };
 
-const initializePlugins = async (plugins: Plugin[]): Promise<ConnectPluginInstance[]> => {
-    const imports = plugins.map(plugin => createPluginInstance(plugin));
+const initializePlugins = async (
+    plugins: Plugin[], 
+    components: ComponentConfig[]
+): Promise<ConnectPluginInstance[]> => {
+    const imports = plugins.map(plugin => createPluginInstance(plugin, components));
 
     const pluginInstances = await Promise.all(imports);
     return pluginInstances;
@@ -245,10 +248,12 @@ const connectComponentConfig = async (
 const connectComponentConfigFile = async (
     componentConfigFile: ComponentConfigFile
 ): Promise<ConnectedBarrelComponents> => {
-    const plugins = await initializePlugins(componentConfigFile.plugins || []);
+    const { components } = componentConfigFile;
+
+    const plugins = await initializePlugins(componentConfigFile.plugins || [], components);
 
     const connectedComponents = await Promise.all(
-        componentConfigFile.components.map(component =>
+        components.map(component =>
             connectComponentConfig(
                 component,
                 componentConfigFile,
