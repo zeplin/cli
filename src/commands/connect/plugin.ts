@@ -66,8 +66,10 @@ const createPluginInstance = async (plugin: Plugin, components: ComponentConfig[
     return pluginInstance;
 };
 
-const initializePlugins =
-async (plugins: Plugin[], components: ComponentConfig[]): Promise<ConnectPluginInstance[]> => {
+const initializePlugins = async (
+    plugins: Plugin[], 
+    components: ComponentConfig[]
+): Promise<ConnectPluginInstance[]> => {
     const imports = plugins.map(plugin => createPluginInstance(plugin, components));
 
     const pluginInstances = await Promise.all(imports);
