@@ -18,6 +18,8 @@ interface LeveledLogMethod {
 export interface PluginContext {
     /** {@inheritdoc PluginConfig} */
     config?: PluginConfig;
+    /** {@inheritdoc ComponentConfig} */
+    components: ComponentConfig[];
     logger: Logger;
 }
 
