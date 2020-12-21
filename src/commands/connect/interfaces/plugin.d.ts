@@ -1,7 +1,17 @@
 import { PrismLang } from "./prism";
 
 /**
- * Contains custom plugin configuration
+ * @public
+ */
+interface LeveledLogMethod {
+    (message: string): void;
+    (message: string, meta: unknown): void;
+    (message: string, ...meta: any[]): void;
+    (infoObject: object): void;
+}
+
+/**
+ * Contains custom plugin configuration and logger
  *
  * @public
  */
@@ -10,6 +20,7 @@ export interface PluginContext {
     config?: PluginConfig;
     /** {@inheritdoc ComponentConfig} */
     components: ComponentConfig[];
+    logger: Logger;
 }
 
 /**
@@ -153,4 +164,16 @@ export interface ConnectPlugin {
      * @returns true if the plugin supports the component, false otherwise
     */
     supports(componentConfig: ComponentConfig): boolean;
+}
+
+/**
+ * Interface for Zeplin CLI's logger.
+ *
+ * @public
+ */
+export interface Logger {
+    error: LeveledLogMethod;
+    warn: LeveledLogMethod;
+    info: LeveledLogMethod;
+    debug: LeveledLogMethod;
 }
