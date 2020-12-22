@@ -2,6 +2,7 @@ import chalk from "chalk";
 import jwt from "jsonwebtoken";
 import inquirer from "inquirer";
 import open from "open";
+import { URL } from "url";
 import { ZeplinApi } from "../api";
 import { AuthError } from "../errors";
 import * as authFileUtil from "../util/auth-file";
@@ -9,7 +10,6 @@ import * as envUtil from "../util/env";
 import logger from "../util/logger";
 import { LoginAuthServer } from "../commands/login/server";
 import { defaults } from "../config/defaults";
-import { wrapAndCall } from "../util/func";
 
 function notEmptyValidator(errorMessage: string) {
     return (input: string): boolean | string => (input && input.length > 0 ? true : errorMessage);
@@ -91,7 +91,7 @@ export class AuthenticationService {
             authToken = await this.promptForBrowserLogin();
 
             if (!authToken) {
-                logger.info("Failed login using browser. Enter your login credentials below.");
+                logger.info("Login via browser is failed. Please type in your Zeplin credentials to login.");
 
                 authToken = await this.promptForCLILogin();
             }
@@ -118,6 +118,7 @@ export class AuthenticationService {
 
         authUrl.searchParams.append("client_id", defaults.api.clientId);
         authUrl.searchParams.append("scope", "read+write+delete");
+        authUrl.searchParams.append("redirect_uri", defaults.app.webAuthRedirectURL);
 
         await open(authUrl.toString());
 
@@ -128,40 +129,36 @@ export class AuthenticationService {
             validate: notEmptyValidator("Please enter your access token.")
         }]);
 
-        const closePrompt = (): void => {
-            if (prompt) {
-                // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                (prompt.ui as any)?.close();
-            }
-        };
-
         /**
          * Zeplin should redirect to local login server with authorization token;
          * however, if redirection fails user should be able to paste the token from their browser.
          *
          * Since we don't know which will happen first, we race the promises for both conditions.
          */
-        return Promise.race([
+        const accessToken = await Promise.race([
             // Run auth server
-            wrapAndCall<string>(
-                () => this.loginServer.waitForToken({ port: defaults.commands.login.port }),
-                {
-                    onComplete: closePrompt,
-                    onError: (err: Error) => {
-                        logger.error(err);
-                        this.loginServer.stop();
-                    }
+            this.loginServer.waitForToken({ port: defaults.commands.login.port })
+                .then(token => token)
+                .catch(err => {
+                    logger.error(err);
+                    this.loginServer.stop();
                 }),
             // Wait for paste prompt
-            wrapAndCall<string>(
-                async () => (await prompt).token,
-                {
-                    onComplete: async () => { await this.loginServer.stop(); },
-                    onError: (err: Error) => {
-                        logger.error(err);
-                    }
-                })
+            prompt
+                .then((answer: { token: string }) => answer.token)
+                .catch(err => { logger.error(err); })
         ]);
+
+        // Cleanup
+        await this.loginServer.stop();
+        try {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            (prompt.ui as any)?.close();
+        } catch (_) {
+            // Ignore
+        }
+
+        return accessToken as string;
     }
 
     async promptForCLILogin(): Promise<string | undefined> {

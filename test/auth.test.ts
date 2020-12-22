@@ -8,6 +8,7 @@ import { AuthError } from "../src/errors";
 import * as envUtil from "../src/util/env";
 import * as samples from "./samples";
 import dedent from "ts-dedent";
+import PromptUI from "inquirer/lib/ui/prompt";
 
 jest.mock("inquirer");
 jest.mock("open");
@@ -95,14 +96,23 @@ describe("AuthenticationService", () => {
                     mocked(envUtil.isCI).mockReturnValueOnce(false);
                     mocked(readAuthToken).mockResolvedValueOnce("");
                     mocked(open).mockResolvedValueOnce(jest.fn() as unknown as ChildProcess);
+                    mocked(inquirer.prompt)
+                        .mockReturnValueOnce(new Promise((): void => {}) as Promise<unknown> & { ui: PromptUI });
                     mocked(authenticationService.loginServer.waitForToken).mockResolvedValueOnce(samples.validJwt);
 
-                    await expect(authenticationService.authenticate())
+                    const tokenPromies = authenticationService.authenticate();
+
+                    await expect(tokenPromies)
                         .resolves
                         .toBe(samples.validJwt);
 
                     expect(readAuthToken).toHaveBeenCalled();
                     expect(open).toHaveBeenCalled();
+                    expect(inquirer.prompt).not.toHaveReturnedWith(samples.validJwt);
+                    expect(authenticationService.zeplinApi.login).not.toHaveBeenCalled();
+                    expect(authenticationService.zeplinApi.generateToken).not.toHaveBeenCalled();
+                    expect(authenticationService.loginServer.waitForToken)
+                        .toHaveReturnedWith(Promise.resolve(samples.validJwt));
                     expect(saveAuthToken).toHaveBeenCalledWith(samples.validJwt);
                 });
 
@@ -112,7 +122,7 @@ describe("AuthenticationService", () => {
                     mocked(envUtil.isCI).mockReturnValueOnce(false);
                     mocked(readAuthToken).mockResolvedValueOnce("");
                     mocked(open).mockResolvedValueOnce(jest.fn() as unknown as ChildProcess);
-                    mocked(authenticationService.loginServer.waitForToken).mockResolvedValueOnce(void 0);
+                    mocked(authenticationService.loginServer.waitForToken).mockResolvedValueOnce(undefined);
                     mocked(inquirer.prompt).mockResolvedValueOnce(samples.loginRequest);
                     mocked(authenticationService.zeplinApi.login).mockResolvedValueOnce(samples.loginResponse);
                     mocked(authenticationService.zeplinApi.generateToken).mockResolvedValueOnce(samples.validJwt);
@@ -123,6 +133,10 @@ describe("AuthenticationService", () => {
 
                     expect(readAuthToken).toHaveBeenCalled();
                     expect(open).toHaveBeenCalled();
+                    expect(authenticationService.zeplinApi.generateToken)
+                        .toHaveReturnedWith(Promise.resolve(samples.validJwt));
+                    expect(authenticationService.loginServer.waitForToken)
+                        .toHaveReturnedWith(Promise.resolve(undefined));
                     expect(saveAuthToken).toHaveBeenCalledWith(samples.validJwt);
                 });
             });
