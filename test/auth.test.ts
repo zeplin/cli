@@ -7,6 +7,7 @@ import { AuthenticationService } from "../src/service/auth";
 import { AuthError } from "../src/errors";
 import * as envUtil from "../src/util/env";
 import * as samples from "./samples";
+import { mockResolvedWithValue } from "./util";
 import dedent from "ts-dedent";
 import PromptUI from "inquirer/lib/ui/prompt";
 
@@ -100,19 +101,18 @@ describe("AuthenticationService", () => {
                         .mockReturnValueOnce(new Promise((): void => {}) as Promise<unknown> & { ui: PromptUI });
                     mocked(authenticationService.loginServer.waitForToken).mockResolvedValueOnce(samples.validJwt);
 
-                    const tokenPromies = authenticationService.authenticate();
-
-                    await expect(tokenPromies)
+                    await expect(authenticationService.authenticate())
                         .resolves
                         .toBe(samples.validJwt);
 
                     expect(readAuthToken).toHaveBeenCalled();
                     expect(open).toHaveBeenCalled();
-                    expect(inquirer.prompt).not.toHaveReturnedWith(samples.validJwt);
                     expect(authenticationService.zeplinApi.login).not.toHaveBeenCalled();
                     expect(authenticationService.zeplinApi.generateToken).not.toHaveBeenCalled();
-                    expect(authenticationService.loginServer.waitForToken)
-                        .toHaveReturnedWith(Promise.resolve(samples.validJwt));
+                    await mockResolvedWithValue(
+                        mocked(authenticationService.loginServer.waitForToken),
+                        samples.validJwt
+                    );
                     expect(saveAuthToken).toHaveBeenCalledWith(samples.validJwt);
                 });
 
@@ -133,10 +133,14 @@ describe("AuthenticationService", () => {
 
                     expect(readAuthToken).toHaveBeenCalled();
                     expect(open).toHaveBeenCalled();
-                    expect(authenticationService.zeplinApi.generateToken)
-                        .toHaveReturnedWith(Promise.resolve(samples.validJwt));
-                    expect(authenticationService.loginServer.waitForToken)
-                        .toHaveReturnedWith(Promise.resolve(undefined));
+                    await mockResolvedWithValue(
+                        mocked(authenticationService.zeplinApi.generateToken),
+                        samples.validJwt
+                    );
+                    await mockResolvedWithValue(
+                        mocked(authenticationService.loginServer.waitForToken),
+                        undefined
+                    );
                     expect(saveAuthToken).toHaveBeenCalledWith(samples.validJwt);
                 });
             });
