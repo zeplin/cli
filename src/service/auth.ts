@@ -71,23 +71,23 @@ export class AuthenticationService {
 
                 const noBrowser = params?.noBrowser || false;
 
-                this.authToken = await this.promptForLogin({ ignoreSaveTokenErrors: true, noBrowser });
+                this.authToken = await this.promptForLogin({ noBrowser });
             }
         }
 
         return validate(this.authToken, params?.requiredScopes);
     }
 
-    async promptForLogin(options: {
-        ignoreSaveTokenErrors: boolean; noBrowser: boolean;
-    } = {
-        ignoreSaveTokenErrors: true, noBrowser: false
-    }): Promise<string> {
+    async promptForLogin({
+        ignoreSaveTokenErrors = true, noBrowser = false
+    }: {
+        ignoreSaveTokenErrors?: boolean; noBrowser?: boolean;
+    } = {}): Promise<string> {
         logger.info("\nLogin into Zeplin…");
 
         let authToken: string | undefined;
 
-        if (!options.noBrowser) {
+        if (!noBrowser) {
             authToken = await this.promptForBrowserLogin();
 
             if (!authToken) {
@@ -105,7 +105,7 @@ export class AuthenticationService {
             await authFileUtil.saveAuthToken(authToken);
         } catch (err) {
             logger.debug(`${err.stack}`);
-            if (!options.ignoreSaveTokenErrors) {
+            if (!ignoreSaveTokenErrors) {
                 throw err;
             }
         }

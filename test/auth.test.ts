@@ -272,7 +272,7 @@ describe("AuthenticationService", () => {
             mocked(authenticationService.zeplinApi.login).mockResolvedValueOnce(samples.loginResponse);
             mocked(authenticationService.zeplinApi.generateToken).mockResolvedValueOnce(samples.validJwt);
 
-            await expect(authenticationService.promptForLogin({ ignoreSaveTokenErrors: true, noBrowser: true }))
+            await expect(authenticationService.promptForLogin({ noBrowser: true }))
                 .resolves
                 .toBe(samples.validJwt);
         });
