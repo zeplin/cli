@@ -1,6 +1,6 @@
 import express, { ErrorRequestHandler } from "express";
 import { Server } from "http";
-import { BAD_REQUEST, OK } from "http-status-codes";
+import { BAD_REQUEST, INTERNAL_SERVER_ERROR, OK } from "http-status-codes";
 import { Socket } from "net";
 
 import { CLIError } from "../../../errors";
@@ -32,25 +32,26 @@ export class LoginAuthServer {
             next();
         });
 
-        app.get(this.redirectPath, async (req, res, next) => {
+        app.get(this.redirectPath, async (req, res) => {
             this.accessToken = req.query.access_token;
 
             if (!this.accessToken) {
-                next(new Error("No access token!"));
+                res.status(BAD_REQUEST).json({ error: "No access token" });
             } else {
                 res.status(OK).json({ accessToken: this.accessToken });
-
-                await this.stop();
             }
+
+            await this.stop();
         });
 
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        const errorHandler: ErrorRequestHandler = async (err, req, res, _next) => {
-            res.status(BAD_REQUEST).json({ error: err.message });
-
-            if (req.path === this.redirectPath) {
-                await this.stop();
+        const errorHandler: ErrorRequestHandler = (err, _req, res, next) => {
+            if (!res.headersSent) {
+                res.status(err?.statusCode || INTERNAL_SERVER_ERROR).json({
+                    detail: err?.message || "Unexpected Error",
+                    title: err?.title || "Unexpected Error"
+                });
             }
+            next(err);
         };
 
         app.use(errorHandler);
@@ -100,7 +101,6 @@ export class LoginAuthServer {
         return new Promise<string | undefined>((resolve): void => {
             process.on("SIGINT", async () => {
                 await this.stop();
-                resolve(this.accessToken);
             });
 
             this.server?.on("close", () => resolve(this.accessToken));

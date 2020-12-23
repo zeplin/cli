@@ -35,7 +35,7 @@ describe("AuthenticationService", () => {
                     mocked(authenticationService.zeplinApi.login).mockResolvedValueOnce(samples.loginResponse);
                     mocked(authenticationService.zeplinApi.generateToken).mockResolvedValueOnce(samples.validJwt);
 
-                    await expect(authenticationService.authenticate({ requiredScopes: [], noBrowser: true }))
+                    await expect(authenticationService.authenticate({ noBrowser: true }))
                         .resolves
                         .toBe(samples.validJwt);
 
@@ -58,7 +58,7 @@ describe("AuthenticationService", () => {
                     mocked(authenticationService.zeplinApi.login).mockRejectedValueOnce(apiError);
                     mocked(authenticationService.zeplinApi.generateToken).mockResolvedValueOnce(samples.validJwt);
 
-                    await expect(authenticationService.authenticate({ requiredScopes: [], noBrowser: true }))
+                    await expect(authenticationService.authenticate({ noBrowser: true }))
                         .rejects
                         .toThrow(apiError);
 
@@ -79,7 +79,7 @@ describe("AuthenticationService", () => {
                     mocked(authenticationService.zeplinApi.login).mockResolvedValueOnce(samples.loginResponse);
                     mocked(authenticationService.zeplinApi.generateToken).mockRejectedValueOnce(apiError);
 
-                    await expect(authenticationService.authenticate({ requiredScopes: [], noBrowser: true }))
+                    await expect(authenticationService.authenticate({ noBrowser: true }))
                         .rejects
                         .toThrow(apiError);
 
@@ -152,7 +152,7 @@ describe("AuthenticationService", () => {
 
                 mocked(envUtil.getAccessTokenFromEnv).mockReturnValueOnce(samples.validJwt);
 
-                await expect(authenticationService.authenticate({ requiredScopes: [], noBrowser: true }))
+                await expect(authenticationService.authenticate())
                     .resolves
                     .toBe(samples.validJwt);
 
@@ -168,7 +168,7 @@ describe("AuthenticationService", () => {
 
                 mocked(envUtil.getAccessTokenFromEnv).mockReturnValueOnce(samples.validJwt);
 
-                await expect(authenticationService.authenticate({ requiredScopes: ["write", "delete"], noBrowser: true }))
+                await expect(authenticationService.authenticate({ requiredScopes: ["write", "delete"] }))
                     .resolves
                     .toBe(samples.validJwt);
 
@@ -184,7 +184,7 @@ describe("AuthenticationService", () => {
 
                 mocked(envUtil.getAccessTokenFromEnv).mockReturnValueOnce(samples.invalidJwt);
 
-                await expect(authenticationService.authenticate({ requiredScopes: [], noBrowser: true }))
+                await expect(authenticationService.authenticate())
                     .rejects
                     .toThrowError(new AuthError("Invalid authentication token."));
             });
@@ -194,7 +194,7 @@ describe("AuthenticationService", () => {
 
                 mocked(envUtil.getAccessTokenFromEnv).mockReturnValueOnce(samples.validJwtWithoutAudience);
 
-                await expect(authenticationService.authenticate({ requiredScopes: [], noBrowser: true }))
+                await expect(authenticationService.authenticate())
                     .rejects
                     .toThrowError(new AuthError("Audience is not set in authentication token."));
             });
@@ -205,7 +205,7 @@ describe("AuthenticationService", () => {
 
                 mocked(envUtil.getAccessTokenFromEnv).mockReturnValueOnce(samples.validJwtWithoutDeleteScope);
 
-                await expect(authenticationService.authenticate({ requiredScopes: ["delete"], noBrowser: true }))
+                await expect(authenticationService.authenticate({ requiredScopes: ["delete"] }))
                     .rejects
                     .toThrowError(new AuthError("Access token has missing privileges, please login again to re-create access token."));
             });

@@ -55,7 +55,11 @@ export class AuthenticationService {
     zeplinApi = new ZeplinApi();
     loginServer = new LoginAuthServer(defaults.app.authRedirectPath);
 
-    async authenticate(params?: { requiredScopes: string[]; noBrowser: boolean }): Promise<string> {
+    async authenticate({
+        requiredScopes = [], noBrowser = false
+    }: {
+        requiredScopes?: string[]; noBrowser?: boolean;
+    } = {}): Promise<string> {
         const tokenFromEnv = envUtil.getAccessTokenFromEnv();
 
         if (tokenFromEnv) {
@@ -69,13 +73,11 @@ export class AuthenticationService {
             } else {
                 logger.info(`Access token not found in ${chalk.dim`ZEPLIN_ACCESS_TOKEN`} environment variable.`);
 
-                const noBrowser = params?.noBrowser || false;
-
                 this.authToken = await this.promptForLogin({ noBrowser });
             }
         }
 
-        return validate(this.authToken, params?.requiredScopes);
+        return validate(this.authToken, requiredScopes);
     }
 
     async promptForLogin({
