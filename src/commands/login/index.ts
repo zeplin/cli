@@ -8,7 +8,11 @@ import * as envUtil from "../../util/env";
 import * as authFileUtil from "../../util/auth-file";
 import { AuthenticationService } from "../../service/index";
 
-export async function login(): Promise<void> {
+export interface LoginOptions {
+    noBrowser: boolean;
+}
+
+export async function login(options: LoginOptions): Promise<void> {
     const tokenFromEnv = envUtil.getAccessTokenFromEnv();
 
     if (tokenFromEnv) {
@@ -29,7 +33,7 @@ export async function login(): Promise<void> {
         }
 
         const authService = new AuthenticationService();
-        await authService.promptForLogin({ ignoreSaveTokenErrors: false });
+        await authService.promptForLogin({ ignoreSaveTokenErrors: false, noBrowser: options.noBrowser });
 
         logger.info(chalk.bold("\n🦄 Successfully authenticated."));
     }

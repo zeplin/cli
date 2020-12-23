@@ -27,6 +27,7 @@ module.exports = {
         "no-sync": "off",
         "no-process-exit": "off",
         "no-process-env": "off",
+        "no-undefined": "off",
         "@typescript-eslint/no-explicit-any": ["error", { "ignoreRestArgs": true }],
         "@typescript-eslint/camelcase": ["error", { "properties": "never", "ignoreDestructuring": true }],
         "class-methods-use-this": "off"
