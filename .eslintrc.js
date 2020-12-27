@@ -31,5 +31,15 @@ module.exports = {
         "@typescript-eslint/no-explicit-any": ["error", { "ignoreRestArgs": true }],
         "@typescript-eslint/camelcase": ["error", { "properties": "never", "ignoreDestructuring": true }],
         "class-methods-use-this": "off"
-    }
+    },
+    overrides: [
+        {
+            files: [
+                "test/**/*"
+            ],
+            rules: {
+                "no-magic-numbers": "off"
+            }
+        }
+    ]
 }
