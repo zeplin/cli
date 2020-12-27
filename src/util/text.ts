@@ -2,9 +2,10 @@ import { isRunningFromYarnGlobal, isRunningFromGlobal, projectHasYarn } from "./
 
 const indentRegex = /^(?!\s*$)/gm;
 const indentCount = 4;
+const indentText = " ".repeat(indentCount);
 
-const indent = (multiLineText: string, opts: { character: string } = { character: " " }): string =>
-    multiLineText.replace(indentRegex, opts.character.repeat(indentCount));
+const indent = (multiLineText: string, prefix = indentText): string =>
+    multiLineText.replace(indentRegex, prefix);
 
 const getInstallCommand = (packageName: string): string => {
     if (isRunningFromYarnGlobal()) {
@@ -33,7 +34,6 @@ const getCircularReplacer = (): Replacer => {
 };
 
 const stringify = (json: unknown): string => JSON.stringify(json, getCircularReplacer());
-
 export {
     indent,
     getInstallCommand,
