@@ -75,6 +75,7 @@
     "jsonwebtoken": "^8.5.1",
     "mask-json": "^1.0.3",
     "open": "^7.3.0",
+    "ora": "^5.1.0",
     "strip-ansi": "^6.0.0",
     "strip-comments": "^2.0.1",
     "ts-dedent": "^1.1.0",
