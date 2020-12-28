@@ -1,12 +1,14 @@
 import { Workflow } from "../../util/task";
+import { detectRepository } from "../../tasks";
+import { DetectRepositoryContext } from "../../tasks/context";
 
-interface InitializeContext {
+type InitializeContext = DetectRepositoryContext & {
     projectId?: string;
     styleguideId?: string;
     componentId?: string;
     filename?: string;
-    output: string;
-    skipConnect: boolean;
+    output?: string;
+    skipConnect?: boolean;
 }
 
 export interface InitializeOptions {
@@ -15,6 +17,7 @@ export interface InitializeOptions {
     componentId?: string;
     filename?: string;
     output?: string;
+    skipConnect?: boolean;
 }
 
 export async function initialize(options: InitializeOptions): Promise<void> {
@@ -22,7 +25,9 @@ export async function initialize(options: InitializeOptions): Promise<void> {
 
     const workflow = new Workflow({
         context,
-        tasks: []
+        tasks: [
+            detectRepository
+        ]
     });
 
     await workflow.run();
