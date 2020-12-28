@@ -1,15 +1,22 @@
 import { Workflow } from "../../util/task";
-import { detectRepository } from "../../tasks";
-import { DetectRepositoryContext } from "../../tasks/context";
+import {
+    authentication,
+    detectRepository
+} from "../../tasks";
+import {
+    AuthenticationContext,
+    DetectRepositoryContext
+} from "../../tasks/context";
 
-type InitializeContext = DetectRepositoryContext & {
-    projectId?: string;
-    styleguideId?: string;
-    componentId?: string;
-    filename?: string;
-    output?: string;
-    skipConnect?: boolean;
-}
+type InitializeContext = AuthenticationContext &
+    DetectRepositoryContext & {
+        projectId?: string;
+        styleguideId?: string;
+        componentId?: string;
+        filename?: string;
+        output?: string;
+        skipConnect?: boolean;
+    }
 
 export interface InitializeOptions {
     projectId?: string;
@@ -26,6 +33,7 @@ export async function initialize(options: InitializeOptions): Promise<void> {
     const workflow = new Workflow({
         context,
         tasks: [
+            authentication,
             detectRepository
         ]
     });
