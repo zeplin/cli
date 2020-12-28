@@ -1,11 +1,11 @@
 #!/usr/bin/env node
 import commander from "commander";
 import updateNotifier from "update-notifier";
-
-import { defaults } from "./config/defaults";
 import { bin, name, version } from "../package.json";
 import { connect, connectDelete, ConnectDeleteOptions, ConnectOptions } from "./commands/connect";
+import { initialize, InitializeOptions } from "./commands/connect/initialize";
 import { login, LoginOptions } from "./commands/login";
+import { defaults } from "./config/defaults";
 import { commandRunner } from "./util/command";
 import { activateCI, activateVerbose } from "./util/env";
 import logger from "./util/logger";
@@ -74,6 +74,18 @@ connectCommand.command("delete")
 
         await connectDelete(connectDeleteOptions);
     }));
+
+connectCommand.command("initialize")
+    .description("Initialize connected components interactively")
+    .option("--project-id <projectId>", "Initializes configuration for this project")
+    .option("--styleguide-id <styleguideId>", "Initializes configuration for this styleguide")
+    .option("--component-id <componentId>", "Initializes configuration for this Zeplin component")
+    .option("--filename <filename>", "Initializes configuration for this component file")
+    .option("--output <output>", "Optional file path to create configuration", ".zeplin/components.json")
+    .option("--skip-connect", "Skip connecting after configuration is created", false)
+    .action(async options => {
+        await initialize(options as InitializeOptions);
+    });
 
 const loginCommand = program.command("login")
     .description("Login to Zeplin")
