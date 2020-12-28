@@ -21,9 +21,9 @@ export class ConnectedComponentsService {
 
     async uploadConnectedBarrels(connectedBarrelComponents: ConnectedBarrelComponents[]): Promise<void> {
         try {
-            const authToken = await this.authService.authenticate();
+            const { token } = await this.authService.authenticate();
 
-            await this.upload(authToken, connectedBarrelComponents);
+            await this.upload(token, connectedBarrelComponents);
         } catch (error) {
             if (isAuthenticationError(error)) {
                 if (isCI()) {
@@ -32,9 +32,9 @@ export class ConnectedComponentsService {
                     Please update ${chalk.dim`ZEPLIN_ACCESS_TOKEN`} environment variable.`;
                 } else {
                     logger.info(error.message);
-                    const authToken = await this.authService.promptForLogin();
+                    const { token } = await this.authService.promptForLogin();
 
-                    await this.upload(authToken, connectedBarrelComponents);
+                    await this.upload(token, connectedBarrelComponents);
                     return;
                 }
             }
@@ -44,9 +44,9 @@ export class ConnectedComponentsService {
 
     async deleteConnectedBarrels(connectedComponents: ConnectedBarrels[]): Promise<void> {
         try {
-            const authToken = await this.authService.authenticate({ requiredScopes: ["delete"] });
+            const { token } = await this.authService.authenticate({ requiredScopes: ["delete"] });
 
-            await this.delete(authToken, connectedComponents);
+            await this.delete(token, connectedComponents);
         } catch (error) {
             if (isAuthenticationError(error)) {
                 if (isCI()) {
@@ -55,9 +55,9 @@ export class ConnectedComponentsService {
                     Please update ${chalk.dim`ZEPLIN_ACCESS_TOKEN`} environment variable.`;
                 } else {
                     logger.info(error.message);
-                    const authToken = await this.authService.promptForLogin();
+                    const { token } = await this.authService.promptForLogin();
 
-                    await this.delete(authToken, connectedComponents);
+                    await this.delete(token, connectedComponents);
                     return;
                 }
             }

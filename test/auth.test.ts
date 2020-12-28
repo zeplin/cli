@@ -3,7 +3,7 @@ import inquirer from "inquirer";
 import { mocked } from "ts-jest/utils";
 import open from "open";
 import { readAuthToken, saveAuthToken } from "../src/util/auth-file";
-import { AuthenticationService } from "../src/service/auth";
+import { AuthenticationService, AUTH_METHOD } from "../src/service/auth";
 import { AuthError } from "../src/errors";
 import * as envUtil from "../src/util/env";
 import * as samples from "./samples";
@@ -37,7 +37,10 @@ describe("AuthenticationService", () => {
 
                     await expect(authenticationService.authenticate({ noBrowser: true }))
                         .resolves
-                        .toBe(samples.validJwt);
+                        .toStrictEqual({
+                            token: samples.validJwt,
+                            method: AUTH_METHOD.LOGIN_WITH_PROMPT
+                        });
 
                     expect(readAuthToken).toHaveBeenCalled();
                     expect(inquirer.prompt).toHaveBeenCalled();
@@ -103,7 +106,10 @@ describe("AuthenticationService", () => {
 
                     await expect(authenticationService.authenticate())
                         .resolves
-                        .toBe(samples.validJwt);
+                        .toStrictEqual({
+                            token: samples.validJwt,
+                            method: AUTH_METHOD.LOGIN_WITH_BROWSER
+                        });
 
                     expect(readAuthToken).toHaveBeenCalled();
                     expect(open).toHaveBeenCalled();
@@ -129,7 +135,10 @@ describe("AuthenticationService", () => {
 
                     await expect(authenticationService.authenticate())
                         .resolves
-                        .toBe(samples.validJwt);
+                        .toStrictEqual({
+                            token: samples.validJwt,
+                            method: AUTH_METHOD.LOGIN_WITH_PROMPT
+                        });
 
                     expect(readAuthToken).toHaveBeenCalled();
                     expect(open).toHaveBeenCalled();
@@ -154,7 +163,10 @@ describe("AuthenticationService", () => {
 
                 await expect(authenticationService.authenticate())
                     .resolves
-                    .toBe(samples.validJwt);
+                    .toStrictEqual({
+                        token: samples.validJwt,
+                        method: AUTH_METHOD.ENVIRONMENT_VARIABLE
+                    });
 
                 expect(readAuthToken).not.toHaveBeenCalled();
                 expect(inquirer.prompt).not.toHaveBeenCalled();
@@ -170,7 +182,10 @@ describe("AuthenticationService", () => {
 
                 await expect(authenticationService.authenticate({ requiredScopes: ["write", "delete"] }))
                     .resolves
-                    .toBe(samples.validJwt);
+                    .toStrictEqual({
+                        token: samples.validJwt,
+                        method: AUTH_METHOD.ENVIRONMENT_VARIABLE
+                    });
 
                 expect(readAuthToken).not.toHaveBeenCalled();
                 expect(inquirer.prompt).not.toHaveBeenCalled();
@@ -219,7 +234,10 @@ describe("AuthenticationService", () => {
 
                 await expect(authenticationService.authenticate())
                     .resolves
-                    .toBe(samples.validJwt);
+                    .toStrictEqual({
+                        token: samples.validJwt,
+                        method: AUTH_METHOD.LOCAL_AUTH_FILE
+                    });
 
                 expect(readAuthToken).toHaveBeenCalled();
                 expect(inquirer.prompt).not.toHaveBeenCalled();
@@ -278,7 +296,10 @@ describe("AuthenticationService", () => {
 
             await expect(authenticationService.promptForLogin({ noBrowser: true }))
                 .resolves
-                .toBe(samples.validJwt);
+                .toStrictEqual({
+                    token: samples.validJwt,
+                    method: AUTH_METHOD.LOGIN_WITH_PROMPT
+                });
         });
 
         it("throws error when couldn't save token if ignoreSaveTokenErrors is false", async () => {

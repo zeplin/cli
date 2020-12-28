@@ -50,8 +50,21 @@ const validate = (authToken: string | undefined, requiredScopes?: string[]): str
     return authToken;
 };
 
+export enum AUTH_METHOD {
+    ENVIRONMENT_VARIABLE,
+    LOCAL_AUTH_FILE,
+    LOGIN_WITH_PROMPT,
+    LOGIN_WITH_BROWSER,
+    UNKNOWN
+}
+
+export interface Authentication {
+    token: string;
+    method: AUTH_METHOD;
+}
+
 export class AuthenticationService {
-    authToken?: string;
+    authentication?: Authentication;
     zeplinApi = new ZeplinApi();
     loginServer = new LoginServer(defaults.app.authRedirectPath);
 
@@ -59,52 +72,65 @@ export class AuthenticationService {
         requiredScopes = [], noBrowser = false
     }: {
         requiredScopes?: string[]; noBrowser?: boolean;
-    } = {}): Promise<string> {
+    } = {}): Promise<Authentication> {
+        if (this.authentication) {
+            return this.authentication;
+        }
+
         const tokenFromEnv = envUtil.getAccessTokenFromEnv();
 
+        let token: string | undefined;
+        let method = AUTH_METHOD.UNKNOWN;
         if (tokenFromEnv) {
             logger.debug(`Found access token from ZEPLIN_ACCESS_TOKEN env var. value: ${tokenFromEnv}`);
-            this.authToken = tokenFromEnv;
+            token = tokenFromEnv;
+            method = AUTH_METHOD.ENVIRONMENT_VARIABLE;
         } else if (!envUtil.isCI()) {
             const tokenFromFile = await authFileUtil.readAuthToken();
             if (tokenFromFile) {
                 logger.debug(`Found access token from auth file. value: ${tokenFromFile}`);
-                this.authToken = tokenFromFile;
+                token = tokenFromFile;
+                method = AUTH_METHOD.LOCAL_AUTH_FILE;
             } else {
                 logger.info(`Access token not found in ${chalk.dim`ZEPLIN_ACCESS_TOKEN`} environment variable.`);
 
-                this.authToken = await this.promptForLogin({ noBrowser });
+                ({ token, method } = await this.promptForLogin({ noBrowser }));
             }
         }
 
-        return validate(this.authToken, requiredScopes);
+        token = validate(token, requiredScopes);
+
+        this.authentication = { token, method };
+
+        return this.authentication;
     }
 
     async promptForLogin({
-        ignoreSaveTokenErrors = true, noBrowser = false
+        requiredScopes = [], ignoreSaveTokenErrors = true, noBrowser = false
     }: {
-        ignoreSaveTokenErrors?: boolean; noBrowser?: boolean;
-    } = {}): Promise<string> {
+        requiredScopes?: string[]; ignoreSaveTokenErrors?: boolean; noBrowser?: boolean;
+    } = {}): Promise<Authentication> {
         logger.info("\nLogin into Zeplin…");
 
-        let authToken: string | undefined;
+        let token: string | undefined;
+        let method: AUTH_METHOD;
 
         if (!noBrowser) {
-            authToken = await this.promptForBrowserLogin();
+            ({ token, method } = await this.promptForBrowserLogin());
 
-            if (!authToken) {
+            if (!token) {
                 logger.info("Login via browser is failed. Please type in your Zeplin credentials to login.");
 
-                authToken = await this.promptForCLILogin();
+                ({ token, method } = await this.promptForCLILogin());
             }
         } else {
-            authToken = await this.promptForCLILogin();
+            ({ token, method } = await this.promptForCLILogin());
         }
 
-        authToken = validate(authToken);
+        token = validate(token, requiredScopes);
 
         try {
-            await authFileUtil.saveAuthToken(authToken);
+            await authFileUtil.saveAuthToken(token);
         } catch (err) {
             logger.debug(`${err.stack}`);
             if (!ignoreSaveTokenErrors) {
@@ -112,10 +138,10 @@ export class AuthenticationService {
             }
         }
 
-        return authToken;
+        return { token, method };
     }
 
-    async promptForBrowserLogin(): Promise<string | undefined> {
+    async promptForBrowserLogin(): Promise<Authentication> {
         const authUrl = new URL("/oauth/authorize", defaults.app.webURL);
 
         authUrl.searchParams.append("client_id", defaults.api.clientId);
@@ -160,10 +186,15 @@ export class AuthenticationService {
             // Ignore
         }
 
-        return accessToken as string;
+        const token = accessToken as string;
+
+        return {
+            token,
+            method: AUTH_METHOD.LOGIN_WITH_BROWSER
+        };
     }
 
-    async promptForCLILogin(): Promise<string | undefined> {
+    async promptForCLILogin(): Promise<Authentication> {
         const credentials = await inquirer.prompt([
             {
                 type: "input",
@@ -181,6 +212,11 @@ export class AuthenticationService {
 
         const loginResponse = await this.zeplinApi.login({ ...credentials });
 
-        return this.zeplinApi.generateToken(loginResponse.token);
+        const token = await this.zeplinApi.generateToken(loginResponse.token);
+
+        return {
+            token,
+            method: AUTH_METHOD.LOGIN_WITH_PROMPT
+        };
     }
 }
