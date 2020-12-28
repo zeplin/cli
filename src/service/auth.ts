@@ -8,7 +8,7 @@ import { AuthError } from "../errors";
 import * as authFileUtil from "../util/auth-file";
 import * as envUtil from "../util/env";
 import logger from "../util/logger";
-import { LoginAuthServer } from "../commands/login/server";
+import { LoginServer } from "../server";
 import { defaults } from "../config/defaults";
 
 function notEmptyValidator(errorMessage: string) {
@@ -53,7 +53,7 @@ const validate = (authToken: string | undefined, requiredScopes?: string[]): str
 export class AuthenticationService {
     authToken?: string;
     zeplinApi = new ZeplinApi();
-    loginServer = new LoginAuthServer(defaults.app.authRedirectPath);
+    loginServer = new LoginServer(defaults.app.authRedirectPath);
 
     async authenticate({
         requiredScopes = [], noBrowser = false
