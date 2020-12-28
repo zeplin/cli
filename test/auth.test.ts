@@ -14,7 +14,7 @@ import PromptUI from "inquirer/lib/ui/prompt";
 jest.mock("inquirer");
 jest.mock("open");
 jest.mock("../src/api");
-jest.mock("../src/commands/login/server");
+jest.mock("../src/server");
 jest.mock("../src/util/env");
 jest.mock("../src/util/auth-file");
 
@@ -199,7 +199,7 @@ describe("AuthenticationService", () => {
                     .toThrowError(new AuthError("Audience is not set in authentication token."));
             });
 
-            it(dedent`throws 'Access token has missing privileges, please login again to re-create access token.' 
+            it(dedent`throws 'Access token has missing privileges, please login again to re-create access token.'
             when token does not have the required delete scope`, async () => {
                 const authenticationService = new AuthenticationService();
 
