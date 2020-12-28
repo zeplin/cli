@@ -3,6 +3,7 @@ import { ConnectedComponentsService } from "../../src/commands/connect/service";
 import * as samples from "../samples";
 import { AuthError } from "../../src/errors";
 import { isCI } from "../../src/util/env";
+import { AUTH_METHOD } from "../../src/service/auth";
 
 jest.mock("../../src/service/auth");
 jest.mock("../../src/api");
@@ -22,7 +23,10 @@ describe("ConnectedComponentsService", () => {
                 const authError = new AuthError("Rich gifts wax poor when the givers prove unkind.");
 
                 mocked(service.authService.authenticate).mockRejectedValueOnce(authError);
-                mocked(service.authService.promptForLogin).mockResolvedValueOnce(samples.validJwt);
+                mocked(service.authService.promptForLogin).mockResolvedValueOnce({
+                    token: samples.validJwt,
+                    method: AUTH_METHOD.ENVIRONMENT_VARIABLE
+                });
 
                 await service.uploadConnectedBarrels([sample]);
 
@@ -50,8 +54,14 @@ describe("ConnectedComponentsService", () => {
 
                 const authError = new AuthError("Rich gifts wax poor when the givers prove unkind.");
 
-                mocked(service.authService.authenticate).mockResolvedValueOnce(samples.invalidJwt);
-                mocked(service.authService.promptForLogin).mockResolvedValueOnce(samples.validJwt);
+                mocked(service.authService.authenticate).mockResolvedValueOnce({
+                    token: samples.invalidJwt,
+                    method: AUTH_METHOD.ENVIRONMENT_VARIABLE
+                });
+                mocked(service.authService.promptForLogin).mockResolvedValueOnce({
+                    token: samples.validJwt,
+                    method: AUTH_METHOD.ENVIRONMENT_VARIABLE
+                });
                 mocked(service.zeplinApi.uploadConnectedComponents).mockRejectedValueOnce(authError);
 
                 await service.uploadConnectedBarrels([sample]);
@@ -110,7 +120,10 @@ describe("ConnectedComponentsService", () => {
 
                 const error = new Error("");
 
-                mocked(service.authService.authenticate).mockResolvedValueOnce(samples.validJwt);
+                mocked(service.authService.authenticate).mockResolvedValueOnce({
+                    token: samples.validJwt,
+                    method: AUTH_METHOD.ENVIRONMENT_VARIABLE
+                });
                 mocked(service.zeplinApi.uploadConnectedComponents).mockRejectedValueOnce(error);
 
                 await expect(service.uploadConnectedBarrels([sample]))
@@ -125,7 +138,10 @@ describe("ConnectedComponentsService", () => {
                 const sample = samples.connectedComponents;
                 const service = new ConnectedComponentsService();
 
-                mocked(service.authService.authenticate).mockResolvedValueOnce(samples.validJwt);
+                mocked(service.authService.authenticate).mockResolvedValueOnce({
+                    token: samples.validJwt,
+                    method: AUTH_METHOD.ENVIRONMENT_VARIABLE
+                });
 
                 await service.uploadConnectedBarrels([sample]);
 
@@ -179,7 +195,10 @@ describe("ConnectedComponentsService", () => {
                 const authError = new AuthError("Rich gifts wax poor when the givers prove unkind.");
 
                 mocked(service.authService.authenticate).mockRejectedValueOnce(authError);
-                mocked(service.authService.promptForLogin).mockResolvedValueOnce(samples.validJwt);
+                mocked(service.authService.promptForLogin).mockResolvedValueOnce({
+                    token: samples.validJwt,
+                    method: AUTH_METHOD.ENVIRONMENT_VARIABLE
+                });
 
                 await service.deleteConnectedBarrels([sample]);
 
@@ -206,8 +225,14 @@ describe("ConnectedComponentsService", () => {
 
                 const authError = new AuthError("Rich gifts wax poor when the givers prove unkind.");
 
-                mocked(service.authService.authenticate).mockResolvedValueOnce(samples.invalidJwt);
-                mocked(service.authService.promptForLogin).mockResolvedValueOnce(samples.validJwt);
+                mocked(service.authService.authenticate).mockResolvedValueOnce({
+                    token: samples.invalidJwt,
+                    method: AUTH_METHOD.ENVIRONMENT_VARIABLE
+                });
+                mocked(service.authService.promptForLogin).mockResolvedValueOnce({
+                    token: samples.validJwt,
+                    method: AUTH_METHOD.ENVIRONMENT_VARIABLE
+                });
                 mocked(service.zeplinApi.deleteConnectedComponents).mockRejectedValueOnce(authError);
 
                 await service.deleteConnectedBarrels([sample]);
@@ -265,7 +290,10 @@ describe("ConnectedComponentsService", () => {
 
                 const error = new Error("");
 
-                mocked(service.authService.authenticate).mockResolvedValueOnce(samples.validJwt);
+                mocked(service.authService.authenticate).mockResolvedValueOnce({
+                    token: samples.validJwt,
+                    method: AUTH_METHOD.ENVIRONMENT_VARIABLE
+                });
                 mocked(service.zeplinApi.deleteConnectedComponents).mockRejectedValueOnce(error);
 
                 await expect(service.deleteConnectedBarrels([sample]))
@@ -280,7 +308,10 @@ describe("ConnectedComponentsService", () => {
                 const sample = samples.connectedComponents;
                 const service = new ConnectedComponentsService();
 
-                mocked(service.authService.authenticate).mockResolvedValueOnce(samples.validJwt);
+                mocked(service.authService.authenticate).mockResolvedValueOnce({
+                    token: samples.validJwt,
+                    method: AUTH_METHOD.ENVIRONMENT_VARIABLE
+                });
 
                 await service.deleteConnectedBarrels([sample]);
 
