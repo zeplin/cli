@@ -1,20 +1,32 @@
-import express, { ErrorRequestHandler } from "express";
+import chalk from "chalk";
+import express from "express";
 import { Server } from "http";
-import { BAD_REQUEST, INTERNAL_SERVER_ERROR, OK } from "http-status-codes";
+import { OK } from "http-status-codes";
 import { Socket } from "net";
-
 import { CLIError } from "../../../errors";
 import logger from "../../../util/logger";
+import { ConnectedBarrelComponents, ConnectedComponent } from "../interfaces/api";
 
-export class LoginAuthServer {
-    redirectPath: string;
+export class ConnectDevServer {
+    connectedBarrels: ConnectedBarrelComponents[] = [];
     stopped = false;
     server: Server | undefined;
     connections: Socket[] = [];
-    accessToken: string | undefined;
 
-    constructor(redirectPath: string) {
-        this.redirectPath = redirectPath;
+    constructor(connectedBarrels: ConnectedBarrelComponents[]) {
+        this.connectedBarrels = connectedBarrels;
+    }
+
+    getConnectedComponents(barrelId: string): ConnectedComponent[] | null {
+        const found = this.connectedBarrels.find(connectedBarrel =>
+            connectedBarrel.projects.find(pid => pid === barrelId) ||
+            connectedBarrel.styleguides.find(stid => stid === barrelId));
+
+        return found ? found.connectedComponents : null;
+    }
+
+    updateConnectedBarrels(connectedBarrels: ConnectedBarrelComponents[]): void {
+        this.connectedBarrels = connectedBarrels;
     }
 
     start(port: number): Promise<Server> {
@@ -32,34 +44,20 @@ export class LoginAuthServer {
             next();
         });
 
-        app.get(this.redirectPath, async (req, res) => {
-            this.accessToken = req.query.access_token;
+        app.get("/:type/:barrelId/connectedcomponents", (req, res) => {
+            const { barrelId } = req.params;
 
-            if (!this.accessToken) {
-                res.status(BAD_REQUEST).json({ error: "No access token" });
-            } else {
-                res.status(OK).json({ accessToken: this.accessToken });
-            }
+            const connectedComponents = this.getConnectedComponents(barrelId);
 
-            await this.stop();
+            return res.status(OK).json({ connectedComponents });
         });
-
-        const errorHandler: ErrorRequestHandler = (err, _req, res, next) => {
-            if (!res.headersSent) {
-                res.status(err?.statusCode || INTERNAL_SERVER_ERROR).json({
-                    detail: err?.message || "Unexpected Error",
-                    title: err?.title || "Unexpected Error"
-                });
-            }
-            next(err);
-        };
-
-        app.use(errorHandler);
 
         return new Promise<Server>((resolve, reject): void => {
             this.server = app.listen(port)
                 .on("listening", () => {
-                    logger.debug(`Started auth server on port ${port}`);
+                    logger.debug(`Started dev server on port ${port}`);
+
+                    logger.info(chalk.green(`Development server is started.`));
 
                     resolve(this.server);
                 })
@@ -78,32 +76,25 @@ export class LoginAuthServer {
     }
 
     stop(): Promise<void> {
-        if (this.stopped) {
-            return Promise.resolve();
-        }
-
-        logger.debug("Stopping auth server.");
+        logger.debug("Stopping dev server.");
 
         this.stopped = true;
         this.connections.forEach(conn => conn.end());
 
         return new Promise((resolve): void => {
             this.server?.close(() => {
-                logger.debug("Stopped auth server.");
+                logger.debug("Stopped dev server.");
                 resolve();
             });
         });
     }
-
-    async waitForToken(params: { port: number }): Promise<string | undefined> {
-        await this.start(params.port);
-
-        return new Promise<string | undefined>((resolve): void => {
+    async listen(port: number): Promise<void> {
+        await this.start(port);
+        return new Promise((resolve): void => {
             process.on("SIGINT", async () => {
                 await this.stop();
+                resolve();
             });
-
-            this.server?.on("close", () => resolve(this.accessToken));
         });
     }
 }

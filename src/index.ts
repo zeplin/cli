@@ -1,5 +1,1 @@
-import * as commands from "./commands";
-
-export {
-    commands
-};
+export * from "./commands";
