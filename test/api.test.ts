@@ -227,4 +227,52 @@ describe("ZeplinApi", () => {
             );
         });
     });
+
+    describe("getProjects()", () => {
+        it("resolves when HTTP request succeeds", async () => {
+            const zeplinApi = new ZeplinApi();
+
+            mocked(Axios.get).mockResolvedValueOnce({ data: samples.getProjectsResponse });
+
+            await expect(zeplinApi.getProjects(samples.validJwt))
+                .resolves
+                .toBe(samples.getProjectsResponse);
+
+            expect(Axios.get).toHaveBeenCalledWith(
+                `/public/cli/projects`,
+                { headers: { "Zeplin-Access-Token": samples.validJwt } }
+            );
+        });
+
+        it("throws APIError when HTTP request fails", async () => {
+            const zeplinApi = new ZeplinApi();
+
+            mocked(Axios.get).mockRejectedValueOnce(samples.axiosError);
+
+            await expect(
+                zeplinApi.getProjects(samples.validJwt)
+            ).rejects.toThrowError(new APIError(samples.axiosError.response));
+
+            expect(Axios.get).toHaveBeenCalledWith(
+                `/public/cli/projects`,
+                { headers: { "Zeplin-Access-Token": samples.validJwt } }
+            );
+        });
+
+        it("throws CLIError when non-HTTP error occurs", async () => {
+            const zeplinApi = new ZeplinApi();
+
+            const errorMessage = "some other error";
+            mocked(Axios.get).mockRejectedValueOnce(new Error(errorMessage));
+
+            await expect(
+                zeplinApi.getProjects(samples.validJwt)
+            ).rejects.toThrowError(new CLIError(errorMessage));
+
+            expect(Axios.get).toHaveBeenCalledWith(
+                `/public/cli/projects`,
+                { headers: { "Zeplin-Access-Token": samples.validJwt } }
+            );
+        });
+    });
 });

@@ -1,7 +1,7 @@
 import Axios, { AxiosInstance } from "axios";
 import { defaults } from "../config/defaults";
 import { interceptors } from "./interceptors";
-import { LoginRequest, LoginResponse } from "./interfaces";
+import { LoginRequest, LoginResponse, ProjectsResponse } from "./interfaces";
 import { APIError, CLIError } from "../errors";
 import { ConnectedComponentList } from "../commands/connect/interfaces/api";
 import { MOVED_TEMPORARILY } from "http-status-codes";
@@ -99,6 +99,23 @@ export class ZeplinApi {
                     headers: { "Zeplin-Access-Token": authToken }
                 }
             );
+        } catch (error) {
+            if (error.isAxiosError) {
+                throw new APIError(error.response);
+            }
+            throw new CLIError(error.message);
+        }
+    }
+
+    async getProjects(authToken: string): Promise<ProjectsResponse> {
+        try {
+            const response = await this.axios.get(
+                `/public/cli/projects`,
+                {
+                    headers: { "Zeplin-Access-Token": authToken }
+                }
+            );
+            return response.data;
         } catch (error) {
             if (error.isAxiosError) {
                 throw new APIError(error.response);

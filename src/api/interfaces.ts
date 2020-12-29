@@ -15,3 +15,16 @@ export interface LoginResponse {
     notificationLastReadTime: Date;
     token: string;
 }
+
+export interface ProjectsResponse {
+    projects: Array<{
+        _id: string;
+        name: string;
+        type: string;
+        description: string;
+        organization?: {
+            _id: string;
+            name: string;
+        };
+    }>;
+}

@@ -128,3 +128,21 @@ export const sampleConfig = {
     }>,
     components: [sampleComponentConfig1, sampleComponentConfig2]
 };
+
+export const getProjectsResponse = {
+    projects: [{
+        _id: "540b91990ffebc59619fa193",
+        name: "Project-Name",
+        type: "android",
+        description: "A project description"
+    }, {
+        _id: "540b6c6b2bd0742860c6b1d4",
+        name: "Another-Project-Name",
+        type: "web",
+        description: "A project description",
+        organization: {
+            _id: "540b91990ffebc59619fa197",
+            name: "Organization-Name"
+        }
+    }]
+};
