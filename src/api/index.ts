@@ -6,7 +6,8 @@ import {
     LoginResponse,
     ProjectsResponse,
     ProjectResponse,
-    StyleguidesResponse
+    StyleguidesResponse,
+    StyleguideResponse
 } from "./interfaces";
 import { APIError, CLIError } from "../errors";
 import { ConnectedComponentList } from "../commands/connect/interfaces/api";
@@ -151,6 +152,23 @@ export class ZeplinApi {
         try {
             const response = await this.axios.get(
                 `/public/cli/styleguides`,
+                {
+                    headers: { "Zeplin-Access-Token": authToken }
+                }
+            );
+            return response.data;
+        } catch (error) {
+            if (error.isAxiosError) {
+                throw new APIError(error.response);
+            }
+            throw new CLIError(error.message);
+        }
+    }
+
+    async getStyleguide(authToken: string, styleguideId: string): Promise<StyleguideResponse> {
+        try {
+            const response = await this.axios.get(
+                `/public/cli/styleguides/${styleguideId}`,
                 {
                     headers: { "Zeplin-Access-Token": authToken }
                 }
