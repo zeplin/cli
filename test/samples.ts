@@ -231,3 +231,75 @@ export const getStyleguidesResponse = {
         }
     }]
 };
+
+export const getStyleguideResponse = {
+    _id: "540b91990ffebc59619fa197",
+    name: "Styleguide-Name",
+    description: "A description that I used to know",
+    type: "android",
+    densityScale: 1.0,
+    thumbnail: "http://placekitten.com/480/720",
+    parent: "540b91990ffebc59619fa196",
+    ancestors: [
+        "540b91990ffebc59619fa195",
+        "540b91990ffebc59619fa196"
+    ],
+    componentSections: [
+        {
+            "_id:": "540b91990ffebc5961977777",
+            "name": "default",
+            "description": "Component Default Section",
+            "componentSections": [],
+            "components": [
+                {
+                    _id: "540b91990ffebc5961977777",
+                    name: "test_component",
+                    sourceId: "source-id",
+                    description: "Test Component",
+                    tags: []
+                },
+                {
+                    _id: "540b91990ffebc5961977778",
+                    name: "test_component-2",
+                    sourceId: "source-id-2",
+                    description: "Test Component 2",
+                    tags: [],
+                    variant: {
+                        values: [
+                            {
+                                propertyId: "5fe4fd77cb2872034714afae",
+                                value: "Primary"
+                            },
+                            {
+                                propertyId: "5fe4fdff524c3b07aeab5c40",
+                                value: "Pressed"
+                            }
+                        ]
+                    }
+                }
+            ]
+        }
+    ],
+    variant: {
+        key: "Controls / Button",
+        properties: [
+            {
+                _id: "5fe4fd77cb2872034714afae",
+                name: "Variant",
+                values: [
+                    "Secondary",
+                    "Primary"
+                ]
+            },
+            {
+                _id: "5fe4fdff524c3b07aeab5c40",
+                name: "State",
+                values: [
+                    "Hover",
+                    "Selected",
+                    "Pressed"
+                ]
+            }
+        ]
+    }
+};

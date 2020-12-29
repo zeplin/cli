@@ -84,3 +84,14 @@ export interface ProjectResponse {
     componentSections: ComponentSection[];
     variant: VariantProperties[];
 }
+
+export interface StyleguideResponse {
+    _id: string;
+    name: string;
+    type: string;
+    description: string;
+    parent: string;
+    ancestors: string[];
+    componentSections: ComponentSection[];
+    variant: VariantProperties[];
+}
