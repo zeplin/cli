@@ -146,3 +146,22 @@ export const getProjectsResponse = {
         }
     }]
 };
+
+export const getStyleguidesResponse = {
+    styleguides: [{
+        _id: "540b91990ffebc59619fa193",
+        name: "Styleguide-Name",
+        type: "android",
+        thumbnail: "http://placekitten.com/400/400"
+    }, {
+        _id: "540b6c6b2bd0742860c6b1d4",
+        name: "Another-Styleguide-Name",
+        type: "web",
+        densityScale: 1.0,
+        thumbnail: "http://placekitten.com/400/400",
+        organization: {
+            _id: "540b91990ffebc59619fa197",
+            name: "Organization-Name"
+        }
+    }]
+};
