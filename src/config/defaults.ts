@@ -20,7 +20,7 @@ export const defaults = {
     app: {
         webURL: process.env.WEB_URL || "https://app.zeplin.io",
         authRedirectPath: process.env.AUTH_REDIRECT_PATH || "/authorize",
-        webAuthRedirectURL: process.env.WEB_AUTH_REDIRECT_URI || "http://app.zeplin.io/cliAuthorized"
+        webAuthRedirectURL: process.env.WEB_AUTH_REDIRECT_URI || "https://app.zeplin.io/cliAuthorized"
     },
     github: {
         url: "https://github.com",

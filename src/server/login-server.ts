@@ -25,11 +25,16 @@ export class LoginServer {
         const app = express();
 
         // CORS
-        app.use((_req, res, next) => {
+        app.use((req, res, next) => {
             res.header("Access-Control-Allow-Origin", "*");
-            res.header("Access-Control-Allow-Headers", "X-Requested-With, Origin");
+            res.header("Access-Control-Allow-Headers", "X-Requested-With, Origin, Content-Type, Zeplin-Token");
             res.header("Access-Control-Allow-Methods", "GET");
-            next();
+
+            if (req.method === "OPTIONS") {
+                res.sendStatus(OK);
+            } else {
+                next();
+            }
         });
 
         app.get(this.redirectPath, async (req, res) => {
