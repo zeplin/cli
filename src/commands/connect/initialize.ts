@@ -1,15 +1,18 @@
 import { Workflow } from "../../util/task";
 import {
     authentication,
-    detectRepository
+    detectRepository,
+    selectResource
 } from "../../tasks";
 import {
     AuthenticationContext,
-    DetectRepositoryContext
+    DetectRepositoryContext,
+    ResourceContext
 } from "../../tasks/context";
 
 type InitializeContext = AuthenticationContext &
-    DetectRepositoryContext & {
+    DetectRepositoryContext &
+    ResourceContext & {
         projectId?: string;
         styleguideId?: string;
         componentId?: string;
@@ -34,7 +37,8 @@ export async function initialize(options: InitializeOptions): Promise<void> {
         context,
         tasks: [
             authentication,
-            detectRepository
+            detectRepository,
+            selectResource
         ]
     });
 
