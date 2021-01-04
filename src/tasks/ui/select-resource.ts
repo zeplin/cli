@@ -2,7 +2,7 @@ import chalk from "chalk";
 import { TaskUI } from "../../util/task";
 import { ResourceContext } from "../context/resource";
 
-function resourceName(ctx: ResourceContext): string {
+function resourceTypeName(ctx: ResourceContext): string {
     if (ctx.projectId && !ctx.styleguideId) {
         return "project";
     } else if (!ctx.projectId && ctx.styleguideId) {
@@ -13,13 +13,7 @@ function resourceName(ctx: ResourceContext): string {
 }
 
 function resourceId(ctx: ResourceContext): string {
-    if (ctx.projectId) {
-        return ctx.projectId;
-    } else if (ctx.styleguideId) {
-        return ctx.styleguideId;
-    }
-
-    return "";
+    return ctx.projectId || ctx.styleguideId || "";
 }
 
 export const initial = (): TaskUI => ({
@@ -27,11 +21,11 @@ export const initial = (): TaskUI => ({
 });
 
 export const retrieving = (ctx: ResourceContext): TaskUI => ({
-    text: `Retrieving Zeplin ${resourceName(ctx)}s...`
+    text: `Retrieving Zeplin ${resourceTypeName(ctx)}s...`
 });
 
 export const noMatchingResource = (ctx: ResourceContext): TaskUI => ({
-    text: `Could not find matching ${resourceName(ctx)} ${chalk.cyan(resourceId(ctx))}`
+    text: `Could not find matching ${resourceTypeName(ctx)} ${chalk.cyan(resourceId(ctx))}`
 });
 
 export const skippedSelection = (ctx: ResourceContext): TaskUI => ({
