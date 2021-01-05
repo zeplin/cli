@@ -6,34 +6,21 @@ import * as ui from "./ui/select-resource";
 import { ZeplinApi } from "../api";
 import logger from "../util/logger";
 import { CLIError } from "../errors";
+import { WorkaroundChoice } from "../util/inquirer-helpers";
 
 inquirer.registerPrompt("search-list", inquirerSearchList);
 
 const zeplinApi = new ZeplinApi();
 
-/**
- * Workaround for inquirer-search-list to print value name
- * on terminal but retrieve the actual value of the user's choice
- */
-class Choice<T extends { name: string }> {
-    value: T;
-    constructor(choice: T) {
-        this.value = choice;
-    }
+function createChoice(resource: ZeplinResource): { name: string; value: WorkaroundChoice<ZeplinResource> } {
+    const name = resource.organization
+        ? `${resource.organization.name}'s Workspace/${resource.name}`
+        : `Personal Workspace/${resource.name}`;
+    const choice = new WorkaroundChoice(name, resource);
 
-    toString(): string {
-        return this.value.name;
-    }
-}
-
-function createChoice(resource: ZeplinResource): { name: string; value: Choice<ZeplinResource> } {
-    let { name } = resource;
-    if (resource.organization) {
-        name = `${resource.name} (${resource.organization.name} org.)`;
-    }
     return {
         name,
-        value: new Choice(resource)
+        value: choice
     };
 }
 
