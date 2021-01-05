@@ -10,7 +10,7 @@ inquirer.registerPrompt("search-checkbox", inquirerSearchCheckbox);
 
 const zeplinApi = new ZeplinApi();
 
-function mapComponents(components: Component[]): ZeplinComponent[] {
+function mapComponents(components?: Component[]): ZeplinComponent[] {
     return (components || []).map(c => ({
         _id: c._id,
         name: c.name,
@@ -18,7 +18,7 @@ function mapComponents(components: Component[]): ZeplinComponent[] {
     }));
 }
 
-function extractComponents(componentSections: ComponentSection[]): ZeplinComponent[] {
+function extractComponents(componentSections?: ComponentSection[]): ZeplinComponent[] {
     const components: ZeplinComponent[] = [];
 
     (componentSections || []).forEach(cs => {

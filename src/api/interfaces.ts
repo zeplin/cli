@@ -70,9 +70,9 @@ export interface ComponentSection {
     _id: string;
     name: string;
     description: string;
-    componentSections: ComponentSection[];
-    components: Component[];
-    variant: VariantValues;
+    componentSections?: ComponentSection[];
+    components?: Component[];
+    variant?: VariantValues;
 }
 
 export interface ProjectResponse {
@@ -80,8 +80,8 @@ export interface ProjectResponse {
     name: string;
     type: string;
     description: string;
-    styleguide: string;
-    componentSections: ComponentSection[];
+    styleguide?: string;
+    componentSections?: ComponentSection[];
     variant: VariantProperties[];
 }
 
@@ -92,6 +92,6 @@ export interface StyleguideResponse {
     description: string;
     parent: string;
     ancestors: string[];
-    componentSections: ComponentSection[];
-    variant: VariantProperties[];
+    componentSections?: ComponentSection[];
+    variant?: VariantProperties[];
 }
