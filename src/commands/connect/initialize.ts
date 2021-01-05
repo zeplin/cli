@@ -2,7 +2,8 @@ import { Workflow } from "../../util/task";
 import {
     authentication,
     detectRepository,
-    selectResource
+    selectResource,
+    selectComponent
 } from "../../tasks";
 import {
     AuthenticationContext,
@@ -38,7 +39,8 @@ export async function initialize(options: InitializeOptions): Promise<void> {
         tasks: [
             authentication,
             detectRepository,
-            selectResource
+            selectResource,
+            selectComponent
         ]
     });
 

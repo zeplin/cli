@@ -73,6 +73,7 @@
     "http-status-codes": "^1.4.0",
     "import-local": "^3.0.2",
     "inquirer": "^7.0.0",
+    "inquirer-search-checkbox": "^1.0.0",
     "inquirer-search-list": "^1.2.6",
     "is-installed-globally": "^0.3.2",
     "is-yarn-global": "^0.3.0",
