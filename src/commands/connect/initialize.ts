@@ -3,17 +3,20 @@ import {
     authentication,
     detectRepository,
     selectResource,
-    selectComponent
+    selectComponent,
+    selectFile
 } from "../../tasks";
 import {
     AuthenticationContext,
     DetectRepositoryContext,
+    FileContext,
     ResourceContext
 } from "../../tasks/context";
 
 type InitializeContext = AuthenticationContext &
     DetectRepositoryContext &
-    ResourceContext & {
+    ResourceContext &
+    FileContext & {
         projectId?: string;
         styleguideId?: string;
         componentId?: string;
@@ -40,7 +43,8 @@ export async function initialize(options: InitializeOptions): Promise<void> {
             authentication,
             detectRepository,
             selectResource,
-            selectComponent
+            selectComponent,
+            selectFile
         ]
     });
 
