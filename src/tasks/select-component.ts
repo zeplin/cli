@@ -10,18 +10,18 @@ inquirer.registerPrompt("search-checkbox", inquirerSearchCheckbox);
 
 const zeplinApi = new ZeplinApi();
 
-function mapComponents(components?: Component[]): ZeplinComponent[] {
-    return (components || []).map(c => ({
+function mapComponents(components: Component[] = []): ZeplinComponent[] {
+    return components.map(c => ({
         _id: c._id,
         name: c.name,
         sourceId: c.sourceId
     }));
 }
 
-function extractComponents(componentSections?: ComponentSection[]): ZeplinComponent[] {
+function extractComponents(componentSections: ComponentSection[] = []): ZeplinComponent[] {
     const components: ZeplinComponent[] = [];
 
-    (componentSections || []).forEach(cs => {
+    componentSections.forEach(cs => {
         components.push(...(mapComponents(cs.components)));
         components.push(...extractComponents(cs.componentSections));
     });
