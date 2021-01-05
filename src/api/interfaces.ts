@@ -30,7 +30,7 @@ export interface ProjectsResponse {
 }
 
 export interface StyleguidesResponse {
-    projects: Array<{
+    styleguides: Array<{
         _id: string;
         name: string;
         type: string;

@@ -40,6 +40,14 @@ module.exports = {
             rules: {
                 "no-magic-numbers": "off"
             }
+        },
+        {
+            files: [
+                "src/tasks/**/*"
+            ],
+            rules: {
+                "require-atomic-updates": "off"
+            }
         }
     ]
 }
