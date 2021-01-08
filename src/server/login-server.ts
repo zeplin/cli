@@ -3,6 +3,7 @@ import { Server } from "http";
 import { BAD_REQUEST, INTERNAL_SERVER_ERROR, OK } from "http-status-codes";
 import { Socket } from "net";
 
+import { defaults } from "../config/defaults";
 import { CLIError } from "../errors";
 import logger from "../util/logger";
 
@@ -26,8 +27,8 @@ export class LoginServer {
 
         // CORS
         app.use((req, res, next) => {
-            res.header("Access-Control-Allow-Origin", "*");
-            res.header("Access-Control-Allow-Headers", "X-Requested-With, Origin, Content-Type, Zeplin-Token");
+            res.header("Access-Control-Allow-Origin", defaults.app.webURL);
+            res.header("Access-Control-Allow-Headers", "*");
             res.header("Access-Control-Allow-Methods", "GET");
 
             if (req.method === "OPTIONS") {
