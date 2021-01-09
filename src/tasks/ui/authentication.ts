@@ -5,7 +5,7 @@ import { AUTH_METHOD } from "../../service/auth";
 
 const authenticatedSubtext = (ctx: AuthenticationContext): string | undefined => {
     let subtext;
-    switch (ctx.auth?.method) {
+    switch (ctx.auth.method) {
         case AUTH_METHOD.ENVIRONMENT_VARIABLE:
             subtext = `Authenticated using ${chalk.dim("ZEPLIN_ACCESS_TOKEN")} environment variable.`;
             break;

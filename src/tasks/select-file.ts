@@ -25,8 +25,8 @@ function createFileMetadata(filepath: string): File {
 }
 
 const checkResourceFlags: TaskStep<FileContext> = async (ctx, task): Promise<void> => {
-    if (ctx.filename) {
-        const absolutePath = path.resolve(ctx.filename);
+    if (ctx.cliOptions.filename) {
+        const absolutePath = path.resolve(ctx.cliOptions.filename);
 
         if (!await fs.pathExists(absolutePath)) {
             task.fail(ctx, ui.fileNotFound);

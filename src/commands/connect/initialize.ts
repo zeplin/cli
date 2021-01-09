@@ -12,20 +12,9 @@ import {
     FileContext,
     ResourceContext
 } from "../../tasks/context";
+import { detectProjectType } from "../../tasks/detect-project-type";
 
-type InitializeContext = AuthenticationContext &
-    DetectRepositoryContext &
-    ResourceContext &
-    FileContext & {
-        projectId?: string;
-        styleguideId?: string;
-        componentId?: string;
-        filename?: string;
-        output?: string;
-        skipConnect?: boolean;
-    }
-
-export interface InitializeOptions {
+export interface InitializeCommandOptions {
     projectId?: string;
     styleguideId?: string;
     componentId?: string;
@@ -34,7 +23,14 @@ export interface InitializeOptions {
     skipConnect?: boolean;
 }
 
-export async function initialize(options: InitializeOptions): Promise<void> {
+export type InitializeContext = Partial<AuthenticationContext &
+    DetectRepositoryContext &
+    ResourceContext &
+    FileContext & {
+        cliOptions: InitializeCommandOptions;
+    }>;
+
+export async function initialize(options: InitializeCommandOptions): Promise<void> {
     const context: InitializeContext = Object.assign(Object.create(null), options);
 
     const workflow = new Workflow({

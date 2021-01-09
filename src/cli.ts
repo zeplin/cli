@@ -3,7 +3,7 @@ import commander from "commander";
 import updateNotifier from "update-notifier";
 import { bin, name, version } from "../package.json";
 import { connect, connectDelete, ConnectDeleteOptions, ConnectOptions } from "./commands/connect";
-import { initialize, InitializeOptions } from "./commands/connect/initialize";
+import { initialize, InitializeCommandOptions } from "./commands/connect/initialize";
 import { login, LoginOptions } from "./commands/login";
 import { defaults } from "./config/defaults";
 import { commandRunner } from "./util/command";
@@ -84,7 +84,7 @@ connectCommand.command("initialize")
     .option("--output <output>", "Optional file path to create configuration", ".zeplin/components.json")
     .option("--skip-connect", "Skip connecting after configuration is created", false)
     .action(async options => {
-        await initialize(options as InitializeOptions);
+        await initialize(options as InitializeCommandOptions);
     });
 
 const loginCommand = program.command("login")

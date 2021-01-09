@@ -41,8 +41,8 @@ const retrieveComponents: TaskStep<ResourceContext> = async (ctx): Promise<void>
 };
 
 const checkComponentFlag: TaskStep<ResourceContext> = (ctx, task): void => {
-    if (ctx.componentId) {
-        const foundComponent = Object.values(ctx.components).find(b => b._id === ctx.componentId);
+    if (ctx.cliOptions.componentId) {
+        const foundComponent = Object.values(ctx.components).find(b => b._id === ctx.cliOptions.componentId);
 
         if (foundComponent) {
             ctx.selectedComponents = [foundComponent];

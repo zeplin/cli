@@ -1,4 +1,3 @@
-/** @internal */
 export interface GitConfig {
     type: string;
     repository: string;
@@ -6,7 +5,6 @@ export interface GitConfig {
     branch?: string;
 }
 
-/** @internal */
 export interface DetectRepositoryContext {
     git?: GitConfig;
 }

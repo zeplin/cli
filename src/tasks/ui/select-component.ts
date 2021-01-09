@@ -16,11 +16,11 @@ export const foundNoComponents = (ctx: ResourceContext): TaskUI => ({
 
 export const skippedSelection = (ctx: ResourceContext): TaskUI => ({
     text: `Selected ${chalk.cyan(ctx.selectedComponents?.map(c => c.name)[0])}`,
-    subtext: `You provided --component-id=${ctx.componentId}`
+    subtext: `You provided --component-id=${ctx.cliOptions.componentId}`
 });
 
 export const noMatchingComponent = (ctx: ResourceContext): TaskUI => ({
-    text: `Could not find matching component ${chalk.cyan(ctx.componentId)}`
+    text: `Could not find matching component ${chalk.cyan(ctx.cliOptions.componentId)}`
 });
 
 export const select = (ctx: ResourceContext): TaskUI => ({
