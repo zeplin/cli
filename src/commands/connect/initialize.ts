@@ -1,31 +1,34 @@
 import { Workflow } from "../../util/task";
 import {
     authentication,
-    detectRepository,
+    detectGit,
     selectResource,
     selectComponent,
-    selectFile
+    selectFile,
+    detectProjectType
 } from "../../tasks";
 import {
     AuthenticationContext,
-    DetectRepositoryContext,
+    DetectGitContext,
     FileContext,
-    ResourceContext
+    ResourceContext,
+    ProjectTypeContext
 } from "../../tasks/context";
-import { detectProjectType } from "../../tasks/detect-project-type";
 
 export interface InitializeCommandOptions {
     projectId?: string;
     styleguideId?: string;
     componentId?: string;
     filename?: string;
+    type?: string[];
     output?: string;
     skipConnect?: boolean;
 }
 
 export type InitializeContext = Partial<AuthenticationContext &
-    DetectRepositoryContext &
+    DetectGitContext &
     ResourceContext &
+    ProjectTypeContext &
     FileContext & {
         cliOptions: InitializeCommandOptions;
     }>;
@@ -37,10 +40,11 @@ export async function initialize(options: InitializeCommandOptions): Promise<voi
         context,
         tasks: [
             authentication,
-            detectRepository,
+            detectProjectType,
             selectResource,
             selectComponent,
-            selectFile
+            selectFile,
+            detectGit
         ]
     });
 

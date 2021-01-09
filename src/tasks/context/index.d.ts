@@ -1,5 +1,5 @@
 export * from "./authentication";
-export * from "./detect-repository";
+export * from "./detect-git";
 export * from "./resource";
 export * from "./file";
 export * from "./project-type";

@@ -81,6 +81,7 @@ connectCommand.command("initialize")
     .option("--styleguide-id <styleguideId>", "Initializes configuration for this styleguide")
     .option("--component-id <componentId>", "Initializes configuration for this Zeplin component")
     .option("--filename <filename>", "Initializes configuration for this component file")
+    .option("--type", "Set project type manually", createCollector(), [])
     .option("--output <output>", "Optional file path to create configuration", ".zeplin/components.json")
     .option("--skip-connect", "Skip connecting after configuration is created", false)
     .action(async options => {
