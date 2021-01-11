@@ -6,7 +6,7 @@ import { connect, connectDelete, ConnectDeleteOptions, ConnectOptions } from "./
 import { initialize, InitializeCommandOptions } from "./commands/connect/initialize";
 import { login, LoginOptions } from "./commands/login";
 import { defaults } from "./config/defaults";
-import { commandRunner } from "./util/command";
+import { commandRunner } from "./util/commander";
 import { activateCI, activateVerbose } from "./util/env";
 import logger from "./util/logger";
 
