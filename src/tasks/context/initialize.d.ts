@@ -3,7 +3,8 @@ import {
     DetectGitContext,
     FileContext,
     ProjectTypeContext,
-    ResourceContext
+    ResourceContext,
+    InstallPackagesContext
 } from ".";
 
 export interface CliOptions {
@@ -21,6 +22,7 @@ export type InitializeContext = AuthenticationContext &
     DetectGitContext &
     ResourceContext &
     ProjectTypeContext &
-    FileContext & {
+    FileContext &
+    InstallPackagesContext & {
         cliOptions: CliOptions;
     };
