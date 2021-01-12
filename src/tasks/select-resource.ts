@@ -24,6 +24,10 @@ function createChoice(resource: ZeplinResource): { name: string; value: Workarou
     };
 }
 
+const validateAuthencation: TaskStep<ResourceContext> = (ctx): void => {
+    ctx.authService.validateToken({ requiredScopes: ["read"] });
+};
+
 const retrieveResources: TaskStep<ResourceContext> = async (ctx): Promise<void> => {
     const resources: Record<string, ZeplinResource> = {};
     try {
@@ -84,6 +88,7 @@ const select: TaskStep<ResourceContext> = async (ctx): Promise<void> => {
 
 export const selectResource = new Task({
     steps: [
+        validateAuthencation,
         transitionTo(ui.retrieving),
         retrieveResources,
         checkResourceFlags,
