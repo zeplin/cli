@@ -59,7 +59,7 @@ const select: TaskStep<FileContext> = async (ctx): Promise<void> => {
     ctx.file = createFileMetadata(selection);
 };
 
-export const selectFile = new Task({
+export const selectFile = new Task<FileContext>({
     steps: [
         checkResourceFlags,
         pauseSpinningAndExecuteTask(select),

@@ -3,6 +3,7 @@ import * as ui from "./ui/install-packages";
 import { InstallPackagesContext } from "./context/install-packages";
 import { installPackages, getLatestVersions } from "../service/package-manager";
 import { getPackageJson, writePackageJson, PackageJson } from "../util/js/config";
+import { projectHasYarn } from "../util/package";
 
 const addZeplinScripts = (packageJson: PackageJson): void => {
     packageJson.scripts = {
@@ -43,7 +44,8 @@ const install: TaskStep<InstallPackagesContext> = async (ctx, task): Promise<voi
         task.skip(ctx, ui.skippedInstallation);
     } else {
         await installPackages(packageNamesWithVersions, { installGlobal });
-        ctx.localInstalled = !installGlobal;
+        ctx.installedGlobally = installGlobal;
+        ctx.isYarn = projectHasYarn();
     }
 
     if (packageJson) {
@@ -52,7 +54,7 @@ const install: TaskStep<InstallPackagesContext> = async (ctx, task): Promise<voi
     }
 };
 
-export const installPackagesTask = new Task({
+export const installPackage = new Task<InstallPackagesContext>({
     steps: [
         install,
         transitionTo(ui.completed)

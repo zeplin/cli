@@ -76,7 +76,7 @@ const select: TaskStep<ResourceContext> = async (ctx): Promise<void> => {
     ctx.selectedComponents = choices;
 };
 
-export const selectComponent = new Task({
+export const selectComponent = new Task<ResourceContext>({
     steps: [
         validateAuthencation,
         transitionTo(ui.retrieving),

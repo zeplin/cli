@@ -18,7 +18,7 @@ const detect: TaskStep<ProjectTypeContext> = async (ctx): Promise<void> => {
     ctx.projectTypes = await detectProjectTypes();
 };
 
-export const detectProjectType = new Task({
+export const detectProjectType = new Task<ProjectTypeContext>({
     steps: [
         checkTypeFlag,
         transitionTo(ui.detecting),

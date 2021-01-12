@@ -28,7 +28,7 @@ const connect: TaskStep<ConnectContext> = async (ctx): Promise<void> => {
     await ctx.connectService.uploadConnectedBarrels(connectedComponents);
 };
 
-export const connectComponents = new Task({
+export const connectComponents = new Task<ConnectContext>({
     steps: [
         checkConnectIsAllowed,
         checkAuthentication,

@@ -7,6 +7,7 @@ export interface InstallPackagesContext {
     projectTypes: SupportedProjectType[];
     installedPackages: Record<string, string>;
     installedPlugins: string[];
+    installedGlobally: boolean;
     skippedInstallingRequiredPackages: boolean;
-    localInstalled: boolean;
+    isYarn: boolean;
 }

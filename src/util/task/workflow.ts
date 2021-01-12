@@ -3,9 +3,9 @@ import { Task } from "./task";
 
 export class Workflow<T = TaskContext> {
     private readonly context: T;
-    private readonly tasks: Task<T>[];
+    private readonly tasks: Task<TaskContext>[];
 
-    constructor(params: { context: T; tasks: Task<T>[] }) {
+    constructor(params: { context: T; tasks: Task<TaskContext>[] }) {
         this.context = params.context;
         this.tasks = params.tasks;
     }
