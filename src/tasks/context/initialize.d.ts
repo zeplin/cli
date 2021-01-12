@@ -4,7 +4,8 @@ import {
     FileContext,
     ProjectTypeContext,
     ResourceContext,
-    InstallPackagesContext
+    InstallPackagesContext,
+    ConnectContext
 } from ".";
 
 export interface CliOptions {
@@ -23,6 +24,7 @@ export type InitializeContext = AuthenticationContext &
     ResourceContext &
     ProjectTypeContext &
     FileContext &
-    InstallPackagesContext & {
+    InstallPackagesContext &
+    ConnectContext & {
         cliOptions: CliOptions;
     };

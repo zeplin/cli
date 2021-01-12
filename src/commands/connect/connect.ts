@@ -15,7 +15,9 @@ const getComponentFilePaths = (connectedBarrels: ConnectedBarrelComponents[]): s
         f.connectedComponents.map(c => path.resolve(c.path))
     ).reduce((a, b) => [...a, ...b], []);
 
-const connectComponents = async (options: Pick<ConnectOptions, "configFiles" | "plugins">): Promise<ConnectedBarrelComponents[]> => {
+const generateConnectedComponents = async (
+    options: Pick<ConnectOptions, "configFiles" | "plugins">
+): Promise<ConnectedBarrelComponents[]> => {
     const {
         configFiles,
         plugins
@@ -63,7 +65,7 @@ const startDevServer = async (
             logger.info((chalk.yellow(`\nFile change detected ${filePath}.\n`)));
 
             try {
-                const updatedConnectedBarrels = await connectComponents({ configFiles, plugins });
+                const updatedConnectedBarrels = await generateConnectedComponents({ configFiles, plugins });
 
                 watcher.unwatch(componentFiles);
 
@@ -94,19 +96,11 @@ const upload = async (connectedBarrels: ConnectedBarrelComponents[]): Promise<vo
     logger.info("🦄 Components successfully connected to components in Zeplin.");
 };
 
-export interface ConnectOptions {
-    configFiles: string[];
-    devMode: boolean;
-    devModePort: number;
-    devModeWatch: boolean;
-    plugins: string[];
-}
-
-export async function connect(options: ConnectOptions): Promise<void> {
+async function connect(options: ConnectOptions): Promise<void> {
     try {
         logger.debug(`connect options: ${stringify(options)}`);
 
-        const connectedBarrels = await connectComponents(options);
+        const connectedBarrels = await generateConnectedComponents(options);
 
         if (options.devMode) {
             await startDevServer(options, connectedBarrels);
@@ -122,3 +116,16 @@ export async function connect(options: ConnectOptions): Promise<void> {
         throw error;
     }
 }
+
+export interface ConnectOptions {
+    configFiles: string[];
+    devMode: boolean;
+    devModePort: number;
+    devModeWatch: boolean;
+    plugins: string[];
+}
+
+export {
+    generateConnectedComponents,
+    connect
+};
