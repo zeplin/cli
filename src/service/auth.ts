@@ -17,13 +17,12 @@ function notEmptyValidator(errorMessage: string) {
 
 type JWT = { [key: string]: string | number | boolean };
 
-// Just a sanity check
-const validate = (authToken: string | undefined, requiredScopes?: string[]): string => {
-    if (!authToken) {
+const validate = (authentication: Authentication | undefined, requiredScopes?: string[]): Authentication => {
+    if (!authentication || !authentication.token) {
         throw new AuthError("No authentication token is found.");
     }
 
-    const decodedToken = jwt.decode(authToken, { complete: false }) as JWT;
+    const decodedToken = jwt.decode(authentication.token, { complete: false }) as JWT;
     if (!decodedToken) {
         throw new AuthError("Invalid authentication token.");
     }
@@ -34,7 +33,7 @@ const validate = (authToken: string | undefined, requiredScopes?: string[]): str
     }
 
     if (!requiredScopes) {
-        return authToken;
+        return authentication;
     }
 
     const scopes = decodeURI((decodedToken.scope as string || "")).split(" ");
@@ -47,7 +46,7 @@ const validate = (authToken: string | undefined, requiredScopes?: string[]): str
         throw new AuthError("Access token has missing privileges, please login again to re-create access token.");
     }
 
-    return authToken;
+    return authentication;
 };
 
 export enum AUTH_METHOD {
@@ -77,32 +76,36 @@ export class AuthenticationService {
             return this.authentication;
         }
 
-        const tokenFromEnv = envUtil.getAccessTokenFromEnv();
+        if (!this.authentication) {
+            const tokenFromEnv = envUtil.getAccessTokenFromEnv();
 
-        let token: string | undefined;
-        let method = AUTH_METHOD.UNKNOWN;
-        if (tokenFromEnv) {
-            logger.debug(`Found access token from ZEPLIN_ACCESS_TOKEN env var. value: ${tokenFromEnv}`);
-            token = tokenFromEnv;
-            method = AUTH_METHOD.ENVIRONMENT_VARIABLE;
-        } else if (!envUtil.isCI()) {
-            const tokenFromFile = await authFileUtil.readAuthToken();
-            if (tokenFromFile) {
-                logger.debug(`Found access token from auth file. value: ${tokenFromFile}`);
-                token = tokenFromFile;
-                method = AUTH_METHOD.LOCAL_AUTH_FILE;
-            } else {
-                logger.info(`Access token not found in ${chalk.dim`ZEPLIN_ACCESS_TOKEN`} environment variable.`);
+            if (tokenFromEnv) {
+                logger.debug(`Found access token from ZEPLIN_ACCESS_TOKEN env var. value: ${tokenFromEnv}`);
+                this.authentication = {
+                    token: tokenFromEnv,
+                    method: AUTH_METHOD.ENVIRONMENT_VARIABLE
+                };
+            } else if (!envUtil.isCI()) {
+                const tokenFromFile = await authFileUtil.readAuthToken();
+                if (tokenFromFile) {
+                    logger.debug(`Found access token from auth file. value: ${tokenFromFile}`);
+                    this.authentication = {
+                        token: tokenFromFile,
+                        method: AUTH_METHOD.LOCAL_AUTH_FILE
+                    };
+                } else {
+                    logger.info(`Access token not found in ${chalk.dim`ZEPLIN_ACCESS_TOKEN`} environment variable.`);
 
-                ({ token, method } = await this.promptForLogin({ noBrowser }));
+                    this.authentication = await this.promptForLogin({ noBrowser });
+                }
             }
         }
 
-        token = validate(token, requiredScopes);
+        return validate(this.authentication, requiredScopes);
+    }
 
-        this.authentication = { token, method };
-
-        return this.authentication;
+    validateToken({ requiredScopes = [] }: { requiredScopes?: string[] } = {}): Authentication {
+        return validate(this.authentication, requiredScopes);
     }
 
     async promptForLogin({
@@ -112,25 +115,22 @@ export class AuthenticationService {
     } = {}): Promise<Authentication> {
         logger.info("\nLogin into Zeplin…");
 
-        let token: string | undefined;
-        let method: AUTH_METHOD;
-
         if (!noBrowser) {
-            ({ token, method } = await this.promptForBrowserLogin());
+            this.authentication = await this.promptForBrowserLogin();
 
-            if (!token) {
+            if (!this.authentication.token) {
                 logger.info("Login via browser is failed. Please type in your Zeplin credentials to login.");
 
-                ({ token, method } = await this.promptForCLILogin());
+                this.authentication = await this.promptForCLILogin();
             }
         } else {
-            ({ token, method } = await this.promptForCLILogin());
+            this.authentication = await this.promptForCLILogin();
         }
 
-        token = validate(token, requiredScopes);
+        validate(this.authentication, requiredScopes);
 
         try {
-            await authFileUtil.saveAuthToken(token);
+            await authFileUtil.saveAuthToken(this.authentication.token);
         } catch (err) {
             logger.debug(`${err.stack}`);
             if (!ignoreSaveTokenErrors) {
@@ -138,7 +138,7 @@ export class AuthenticationService {
             }
         }
 
-        return { token, method };
+        return this.authentication;
     }
 
     async promptForBrowserLogin(): Promise<Authentication> {
