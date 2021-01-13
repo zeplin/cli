@@ -27,3 +27,7 @@ export async function getBowerJson(): Promise<PackageJson | null> {
         return null;
     }
 }
+
+export async function writePackageJson(packageJson: PackageJson): Promise<void> {
+    await fileUtil.writeJsonIntoFile("./package.json", packageJson);
+}

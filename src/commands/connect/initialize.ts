@@ -5,14 +5,16 @@ import {
     selectResource,
     selectComponent,
     selectFile,
-    detectProjectType
+    detectProjectType,
+    installPackagesTask
 } from "../../tasks";
 import {
     AuthenticationContext,
     DetectGitContext,
     FileContext,
     ResourceContext,
-    ProjectTypeContext
+    ProjectTypeContext,
+    InstallPackagesContext
 } from "../../tasks/context";
 
 export interface InitializeCommandOptions {
@@ -23,13 +25,15 @@ export interface InitializeCommandOptions {
     type?: string[];
     output?: string;
     skipConnect?: boolean;
+    skipInstall?: boolean;
 }
 
 export type InitializeContext = Partial<AuthenticationContext &
     DetectGitContext &
     ResourceContext &
     ProjectTypeContext &
-    FileContext & {
+    FileContext &
+    InstallPackagesContext & {
         cliOptions: InitializeCommandOptions;
     }>;
 
@@ -44,7 +48,8 @@ export async function initialize(options: InitializeCommandOptions): Promise<voi
             selectResource,
             selectComponent,
             selectFile,
-            detectGit
+            detectGit,
+            installPackagesTask
         ]
     });
 
