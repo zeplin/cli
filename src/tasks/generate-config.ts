@@ -32,7 +32,7 @@ const generate: TaskStep<InitializeContext> = async ctx => {
     await writeFile(ctx.cliOptions.output, config);
 };
 
-export const generateConfig = new Task({
+export const generateConfig = new Task<InitializeContext>({
     steps: [
         generate,
         transitionTo(ui.completed)

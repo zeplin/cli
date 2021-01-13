@@ -84,7 +84,7 @@ const detect: TaskStep<DetectGitContext> = async (ctx, task) => {
     task.skip(ctx, ui.skipped);
 };
 
-export const detectGit = new Task({
+export const detectGit = new Task<DetectGitContext>({
     steps: [
         detect,
         transitionTo(ui.completed)

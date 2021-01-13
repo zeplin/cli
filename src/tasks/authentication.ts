@@ -13,7 +13,7 @@ const authenticate: TaskStep<AuthenticationContext> = async (ctx): Promise<void>
     ctx.auth = authentication;
 };
 
-export const authentication = new Task({
+export const authentication = new Task<AuthenticationContext>({
     steps: [
         checkAuthentication,
         transitionTo(ui.authenticating),

@@ -4,7 +4,7 @@ import {
     authentication,
     detectGit,
     detectProjectType,
-    installPackagesTask,
+    installPackage,
     selectComponent,
     selectFile,
     selectResource,
@@ -17,8 +17,8 @@ import { Workflow } from "../../util/task";
 import { indent } from "../../util/text";
 import { AuthenticationService } from "../../service";
 import { ConnectedComponentsService } from "./service";
-
-type Context = Partial<InitializeContext>;
+import logger from "../../util/logger";
+import { summary } from "../../messages/summary";
 
 export type InitializeCommandOptions = CliOptions;
 
@@ -27,7 +27,7 @@ export async function initialize(options: InitializeCommandOptions): Promise<voi
         const authService = new AuthenticationService();
         const connectService = new ConnectedComponentsService({ authService });
 
-        const context: Context = Object.assign(Object.create(null), options, {
+        const context: InitializeContext = Object.assign(Object.create(null), options, {
             authService,
             connectService
         });
@@ -41,13 +41,15 @@ export async function initialize(options: InitializeCommandOptions): Promise<voi
                 selectComponent,
                 selectFile,
                 detectGit,
-                installPackagesTask,
+                installPackage,
                 generateConfig,
                 connectComponents
             ]
         });
 
         await workflow.run();
+
+        logger.info(summary(context));
     } catch (error) {
         error.message = dedent`
             ${chalk.bold`Initializing connected components failed.`}
