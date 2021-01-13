@@ -5,6 +5,14 @@ function getAsRelativePath(filePath: string): string {
     return path.isAbsolute(filePath) ? path.relative(process.cwd(), filePath) : filePath;
 }
 
+async function pathExists(filePath: string): Promise<boolean> {
+    const resolvedFilePath = path.resolve(filePath);
+
+    const exists = await fs.pathExists(resolvedFilePath);
+
+    return exists;
+}
+
 async function readJsonFile(filePath: string): Promise<{}> {
     const resolvedFilePath = path.resolve(filePath);
     if (!(await fs.pathExists(resolvedFilePath))) {
@@ -21,28 +29,9 @@ async function writeJsonIntoFile(filePath: string, content: {}): Promise<void> {
     });
 }
 
-async function getPackageJson(): Promise<{} | null> {
-    const resolvedFilePath = path.resolve("package.json");
-    if (!(await fs.pathExists(resolvedFilePath))) {
-        return null;
-    }
-
-    return fs.readJson(resolvedFilePath, { encoding: "utf-8" });
-}
-
-async function getBowerJson(): Promise<{} | null> {
-    const resolvedFilePath = path.resolve("bower.json");
-    if (!(await fs.pathExists(resolvedFilePath))) {
-        return null;
-    }
-
-    return fs.readJson(resolvedFilePath, { encoding: "utf-8" });
-}
-
 export {
     getAsRelativePath,
+    pathExists,
     readJsonFile,
-    writeJsonIntoFile,
-    getPackageJson,
-    getBowerJson
+    writeJsonIntoFile
 };

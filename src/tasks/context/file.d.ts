@@ -1,4 +1,3 @@
-/** @internal */
 export interface File {
     name: string;
     extension: string;
@@ -6,8 +5,9 @@ export interface File {
     absolutePath: string;
 }
 
-/** @internal */
 export interface FileContext {
-    filename?: string;
+    cliOptions: {
+        filename?: string;
+    };
     file?: File;
 }

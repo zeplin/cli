@@ -55,7 +55,7 @@ const retrieveResources: TaskStep<ResourceContext> = async (ctx): Promise<void> 
 };
 
 const checkResourceFlags: TaskStep<ResourceContext> = (ctx, task): void => {
-    const resourceId = ctx.projectId || ctx.styleguideId;
+    const resourceId = ctx.cliOptions.projectId || ctx.cliOptions.styleguideId;
     if (resourceId) {
         const foundResource = Object.values(ctx.resources).find(b => b._id === resourceId);
 

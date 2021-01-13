@@ -6,7 +6,7 @@ export const initial = (): TaskUI => ({
 });
 
 export const fileNotFound = (ctx: FileContext): TaskUI => ({
-    text: `Could not find file ${ctx.filename}`
+    text: `Could not find file ${ctx.cliOptions.filename}`
 });
 
 export const completed = (ctx: FileContext): TaskUI => ({

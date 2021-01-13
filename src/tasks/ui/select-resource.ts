@@ -3,9 +3,9 @@ import { TaskUI } from "../../util/task";
 import { ResourceContext } from "../context/resource";
 
 function resourceTypeName(ctx: ResourceContext): string {
-    if (ctx.projectId && !ctx.styleguideId) {
+    if (ctx.cliOptions.projectId && !ctx.cliOptions.styleguideId) {
         return "project";
-    } else if (!ctx.projectId && ctx.styleguideId) {
+    } else if (!ctx.cliOptions.projectId && ctx.cliOptions.styleguideId) {
         return "styleguide";
     }
 
@@ -13,7 +13,7 @@ function resourceTypeName(ctx: ResourceContext): string {
 }
 
 function resourceId(ctx: ResourceContext): string {
-    return ctx.projectId || ctx.styleguideId || "";
+    return ctx.cliOptions.projectId || ctx.cliOptions.styleguideId || "";
 }
 
 export const initial = (): TaskUI => ({
@@ -30,9 +30,9 @@ export const noMatchingResource = (ctx: ResourceContext): TaskUI => ({
 
 export const skippedSelection = (ctx: ResourceContext): TaskUI => ({
     text: `Selected ${ctx.selectedResource.type.toLowerCase()} ${chalk.cyan(ctx.selectedResource.name)}`,
-    subtext: `You provided --${ctx.projectId
-        ? `project-id=${ctx.projectId}`
-        : `styleguide-id=${ctx.styleguideId}`}`
+    subtext: `You provided --${ctx.cliOptions.projectId
+        ? `project-id=${ctx.cliOptions.projectId}`
+        : `styleguide-id=${ctx.cliOptions.styleguideId}`}`
 });
 
 export const select = (): TaskUI => ({

@@ -1,50 +1,50 @@
 import { Workflow } from "../../util/task";
 import {
     authentication,
-    detectRepository,
+    detectGit,
     selectResource,
     selectComponent,
-    selectFile
+    selectFile,
+    detectProjectType
 } from "../../tasks";
 import {
     AuthenticationContext,
-    DetectRepositoryContext,
+    DetectGitContext,
     FileContext,
-    ResourceContext
+    ResourceContext,
+    ProjectTypeContext
 } from "../../tasks/context";
 
-type InitializeContext = AuthenticationContext &
-    DetectRepositoryContext &
-    ResourceContext &
-    FileContext & {
-        projectId?: string;
-        styleguideId?: string;
-        componentId?: string;
-        filename?: string;
-        output?: string;
-        skipConnect?: boolean;
-    }
-
-export interface InitializeOptions {
+export interface InitializeCommandOptions {
     projectId?: string;
     styleguideId?: string;
     componentId?: string;
     filename?: string;
+    type?: string[];
     output?: string;
     skipConnect?: boolean;
 }
 
-export async function initialize(options: InitializeOptions): Promise<void> {
+export type InitializeContext = Partial<AuthenticationContext &
+    DetectGitContext &
+    ResourceContext &
+    ProjectTypeContext &
+    FileContext & {
+        cliOptions: InitializeCommandOptions;
+    }>;
+
+export async function initialize(options: InitializeCommandOptions): Promise<void> {
     const context: InitializeContext = Object.assign(Object.create(null), options);
 
     const workflow = new Workflow({
         context,
         tasks: [
             authentication,
-            detectRepository,
+            detectProjectType,
             selectResource,
             selectComponent,
-            selectFile
+            selectFile,
+            detectGit
         ]
     });
 
