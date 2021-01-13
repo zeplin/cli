@@ -6,3 +6,4 @@ export * from "./select-file";
 export * from "./detect-project-type";
 export * from "./install-packages";
 export * from "./generate-config";
+export * from "./connect-components";

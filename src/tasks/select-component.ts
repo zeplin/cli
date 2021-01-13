@@ -29,6 +29,10 @@ function extractComponents(componentSections: ComponentSection[] = []): ZeplinCo
     return components;
 }
 
+const validateAuthencation: TaskStep<ResourceContext> = (ctx): void => {
+    ctx.authService.validateToken({ requiredScopes: ["read"] });
+};
+
 const retrieveComponents: TaskStep<ResourceContext> = async (ctx): Promise<void> => {
     const { selectedResource } = ctx;
     if (selectedResource.type === "Project") {
@@ -74,6 +78,7 @@ const select: TaskStep<ResourceContext> = async (ctx): Promise<void> => {
 
 export const selectComponent = new Task({
     steps: [
+        validateAuthencation,
         transitionTo(ui.retrieving),
         retrieveComponents,
         checkComponentFlag,

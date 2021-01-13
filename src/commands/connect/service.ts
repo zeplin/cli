@@ -12,16 +12,21 @@ const isAuthenticationError = (err: Error): boolean => (APIError.isUnauthorized(
 export class ConnectedComponentsService {
     zeplinApi: ZeplinApi;
     authService: AuthenticationService;
-    authToken: string | undefined;
 
-    constructor() {
-        this.zeplinApi = new ZeplinApi();
-        this.authService = new AuthenticationService();
+    constructor({
+        zeplinApi,
+        authService
+    }: {
+        zeplinApi?: ZeplinApi;
+        authService?: AuthenticationService;
+    } = {}) {
+        this.zeplinApi = zeplinApi || new ZeplinApi();
+        this.authService = authService || new AuthenticationService();
     }
 
     async uploadConnectedBarrels(connectedBarrelComponents: ConnectedBarrelComponents[]): Promise<void> {
         try {
-            const { token } = await this.authService.authenticate();
+            const { token } = await this.authService.authenticate({ requiredScopes: ["write"] });
 
             await this.upload(token, connectedBarrelComponents);
         } catch (error) {

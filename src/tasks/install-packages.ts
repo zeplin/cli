@@ -15,9 +15,13 @@ const addZeplinScripts = (packageJson: PackageJson): void => {
 const install: TaskStep<InstallPackagesContext> = async (ctx, task): Promise<void> => {
     const projectTypes = ctx.projectTypes || [];
 
+    const plugins = projectTypes.reduce((p, c) => p.concat(c.installPackages || []), [] as string[]);
+
+    ctx.installedPlugins = plugins;
+
     const packageNames = [
         "@zeplin/cli",
-        ...(projectTypes).reduce((p, c) => p.concat(c.installPackages || []), [] as string[])
+        ...plugins
     ];
 
     const packageNamesWithVersions = await getLatestVersions(packageNames);
@@ -29,7 +33,7 @@ const install: TaskStep<InstallPackagesContext> = async (ctx, task): Promise<voi
     const installGlobal = !packageJson;
 
     if (ctx.cliOptions.skipInstall) {
-        ctx.skippedRequiredPackages = projectTypes.length > 0;
+        ctx.skippedInstallingRequiredPackages = projectTypes.length > 0;
         if (packageJson) {
             packageJson.devDependencies = {
                 ...packageJson.devDependencies,

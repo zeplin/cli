@@ -1,5 +1,6 @@
-import { Authentication } from "../../service/auth";
+import { Authentication, AuthenticationService } from "../../service/auth";
 
 export interface AuthenticationContext {
+    authService: AuthenticationService;
     auth: Authentication;
 }

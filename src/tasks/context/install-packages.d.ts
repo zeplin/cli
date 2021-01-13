@@ -6,6 +6,7 @@ export interface InstallPackagesContext {
     };
     projectTypes: SupportedProjectType[];
     installedPackages: Record<string, string>;
-    skippedRequiredPackages: boolean;
+    installedPlugins: string[];
+    skippedInstallingRequiredPackages: boolean;
     localInstalled: boolean;
 }
