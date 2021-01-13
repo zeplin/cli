@@ -34,6 +34,7 @@ const getCircularReplacer = (): Replacer => {
 };
 
 const stringify = (json: unknown): string => JSON.stringify(json, getCircularReplacer());
+
 export {
     indent,
     getInstallCommand,
