@@ -2,43 +2,22 @@ import { Workflow } from "../../util/task";
 import {
     authentication,
     detectGit,
-    selectResource,
+    detectProjectType,
+    installPackagesTask,
     selectComponent,
     selectFile,
-    detectProjectType,
-    installPackagesTask
+    selectResource,
+    generateConfig
 } from "../../tasks";
-import {
-    AuthenticationContext,
-    DetectGitContext,
-    FileContext,
-    ResourceContext,
-    ProjectTypeContext,
-    InstallPackagesContext
-} from "../../tasks/context";
 
-export interface InitializeCommandOptions {
-    projectId?: string;
-    styleguideId?: string;
-    componentId?: string;
-    filename?: string;
-    type?: string[];
-    output?: string;
-    skipConnect?: boolean;
-    skipInstall?: boolean;
-}
+import { CliOptions, InitializeContext } from "../../tasks/context/initialize";
 
-export type InitializeContext = Partial<AuthenticationContext &
-    DetectGitContext &
-    ResourceContext &
-    ProjectTypeContext &
-    FileContext &
-    InstallPackagesContext & {
-        cliOptions: InitializeCommandOptions;
-    }>;
+type Context = Partial<InitializeContext>;
+
+export type InitializeCommandOptions = CliOptions;
 
 export async function initialize(options: InitializeCommandOptions): Promise<void> {
-    const context: InitializeContext = Object.assign(Object.create(null), options);
+    const context: Context = Object.assign(Object.create(null), options);
 
     const workflow = new Workflow({
         context,
@@ -49,7 +28,8 @@ export async function initialize(options: InitializeCommandOptions): Promise<voi
             selectComponent,
             selectFile,
             detectGit,
-            installPackagesTask
+            installPackagesTask,
+            generateConfig
         ]
     });
 

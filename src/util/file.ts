@@ -29,9 +29,14 @@ async function writeJsonIntoFile(filePath: string, content: {}): Promise<void> {
     });
 }
 
+async function mkdir(directoryPath: string): Promise<void> {
+    await fs.mkdirp(directoryPath);
+}
+
 export {
     getAsRelativePath,
     pathExists,
     readJsonFile,
-    writeJsonIntoFile
+    writeJsonIntoFile,
+    mkdir
 };

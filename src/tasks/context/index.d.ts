@@ -4,3 +4,4 @@ export * from "./resource";
 export * from "./file";
 export * from "./project-type";
 export * from "./install-packages";
+export * from "./initialize";

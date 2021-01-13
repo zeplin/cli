@@ -9,5 +9,5 @@ export interface FileContext {
     cliOptions: {
         filename?: string;
     };
-    file?: File;
+    file: File;
 }
