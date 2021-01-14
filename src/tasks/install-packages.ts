@@ -29,7 +29,7 @@ const install: TaskStep<InstallPackagesContext> = async (ctx, task): Promise<voi
 
     ctx.installedPackages = packageNamesWithVersions;
 
-    const packageJson = await getPackageJson();
+    let packageJson = await getPackageJson();
 
     const installGlobal = !packageJson;
 
@@ -46,6 +46,10 @@ const install: TaskStep<InstallPackagesContext> = async (ctx, task): Promise<voi
         await installPackages(packageNamesWithVersions, { installGlobal });
         ctx.installedGlobally = installGlobal;
         ctx.isYarn = projectHasYarn();
+
+        if (packageJson) {
+            packageJson = await getPackageJson();
+        }
     }
 
     if (packageJson) {
