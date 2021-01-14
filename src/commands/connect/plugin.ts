@@ -1,6 +1,7 @@
 import chalk from "chalk";
-import path from "path";
 import dedent from "ts-dedent";
+import importFrom from "import-from";
+import path from "path";
 import urljoin from "url-join";
 import {
     ComponentConfigFile, ConnectPluginInstance, Plugin, GitConfig, BitbucketConfig
@@ -28,6 +29,11 @@ interface ConnectPluginConstructor {
 
 const importPlugin = async (pluginName: string): Promise<ConnectPluginConstructor> => {
     try {
+        // Workaround to retrieve plugins for initializer
+        const pluginInCwd = importFrom.silent("node_modules", pluginName);
+        if (pluginInCwd) {
+            return (pluginInCwd as { default: ConnectPluginConstructor }).default;
+        }
         return (await import(pluginName)).default as ConnectPluginConstructor;
     } catch (e) {
         const error = new CLIError(dedent`
