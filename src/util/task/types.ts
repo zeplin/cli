@@ -26,9 +26,12 @@ export type TaskStep<T = TaskContext> = (ctx: T, task: Task<T>) => TaskUITypes<T
 
 export type TaskSkipFunction<T> = (ctx: T) => boolean | TaskUITypes<T> | Promise<boolean | TaskUITypes<T>>;
 
+export type TaskErrorHandler<T> = (err: Error, ctx: T, task: Task<T>) => never | void | Promise<never> | Promise<void>;
+
 export interface TaskConstructor<T> {
     readonly steps: TaskStep<T>[];
     readonly initial?: TaskUITypes<T>;
     readonly skip?: TaskSkipFunction<T>;
     readonly spinnerOptions?: OraOptions;
+    readonly errorHandler?: TaskErrorHandler<T>;
 }

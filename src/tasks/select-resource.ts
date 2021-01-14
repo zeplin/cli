@@ -7,6 +7,7 @@ import { ZeplinApi } from "../api";
 import logger from "../util/logger";
 import { CLIError } from "../errors";
 import { WorkaroundChoice } from "../util/inquirer-helpers";
+import { TaskError } from "../util/task/error";
 
 inquirer.registerPrompt("search-list", inquirerSearchList);
 
@@ -67,8 +68,7 @@ const checkResourceFlags: TaskStep<ResourceContext> = (ctx, task): void => {
             ctx.selectedResource = foundResource;
             task.complete(ctx, ui.skippedSelection);
         } else {
-            task.fail(ctx, ui.noMatchingResource);
-            throw new Error(task.getCurrentText());
+            throw new TaskError(ui.noMatchingResource);
         }
     }
 };

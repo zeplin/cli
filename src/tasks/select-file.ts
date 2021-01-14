@@ -5,6 +5,7 @@ import path from "path";
 import { Task, TaskStep, pauseSpinningAndExecuteTask, transitionTo } from "../util/task";
 import { File, FileContext } from "./context/file";
 import * as ui from "./ui/select-file";
+import { TaskError } from "../util/task/error";
 
 inquirer.registerPrompt("fuzzypath", inquirerFuzzyPath);
 
@@ -29,8 +30,7 @@ const checkResourceFlags: TaskStep<FileContext> = async (ctx, task): Promise<voi
         const absolutePath = path.resolve(ctx.cliOptions.filename);
 
         if (!await fs.pathExists(absolutePath)) {
-            task.fail(ctx, ui.fileNotFound);
-            throw new Error(task.getCurrentText());
+            throw new TaskError(ui.fileNotFound);
         }
 
         ctx.file = createFileMetadata(absolutePath);

@@ -85,7 +85,7 @@ connectCommand.command("initialize")
     .option("--output <output>", "Optional file path to create configuration", ".zeplin/components.json")
     .option("--skip-connect", "Skip connecting after configuration is created", false)
     .option("--skip-local-install", "Skip local installation of packages during installation", false)
-    .action(async options => {
+    .action(commandRunner(async options => {
         const opts: InitializeCommandOptions = {
             output: options.output,
             componentId: options.componentId,
@@ -97,7 +97,7 @@ connectCommand.command("initialize")
             type: options.type
         };
         await initialize(opts);
-    });
+    }));
 
 const loginCommand = program.command("login")
     .description("Login to Zeplin")

@@ -5,6 +5,7 @@ import { TaskStep, Task, transitionTo, pauseSpinningAndExecuteTask } from "../ut
 import { ComponentSection, Component } from "../api/interfaces";
 import { ZeplinApi } from "../api";
 import * as ui from "./ui/select-component";
+import { TaskError } from "../util/task/error";
 
 inquirer.registerPrompt("search-checkbox", inquirerSearchCheckbox);
 
@@ -42,6 +43,10 @@ const retrieveComponents: TaskStep<ResourceContext> = async (ctx): Promise<void>
         const styleguide = await zeplinApi.getStyleguide(ctx.auth.token, selectedResource._id);
         ctx.components = extractComponents(styleguide.componentSections);
     }
+
+    if (!ctx.components || ctx.components.length === 0) {
+        throw new TaskError(ui.foundNoComponents);
+    }
 };
 
 const checkComponentFlag: TaskStep<ResourceContext> = (ctx, task): void => {
@@ -52,8 +57,7 @@ const checkComponentFlag: TaskStep<ResourceContext> = (ctx, task): void => {
             ctx.selectedComponents = [foundComponent];
             task.complete(ctx, ui.skippedSelection);
         } else {
-            task.fail(ctx, ui.noMatchingComponent);
-            throw new Error(task.getCurrentText());
+            throw new TaskError(ui.noMatchingComponent);
         }
     }
 };

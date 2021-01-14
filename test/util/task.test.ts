@@ -1,6 +1,7 @@
 import { PassThrough } from "stream";
 import { Task, transitionTo, Workflow } from "../../src/util/task";
 import { TaskUITypes, TaskContext, TaskUI } from "../../src/util/task/types";
+import { TaskError } from "../../src/util/task/error";
 
 const ui = {
     text: "Initial static text",
@@ -20,6 +21,11 @@ const uiFnWithParams: TaskUITypes<TaskContext> = (ctx): TaskUI<TaskContext> => (
 const anotherUiFnWithParams: TaskUITypes<TaskContext> = (ctx): TaskUI<TaskContext> => ({
     text: `Another rendered text: ${ctx.anotherParam}`,
     subtext: `Another rendered text: ${ctx.anotherParam}`
+});
+
+const failureUiFnWithParams: TaskUITypes<TaskContext> = (ctx): TaskUI<TaskContext> => ({
+    text: `Failed rendered text: ${ctx.param}`,
+    subtext: `Failed rendered text: ${ctx.param}`
 });
 
 const createMockStream = (): {
@@ -216,6 +222,40 @@ describe("Task", () => {
         });
 
         test("step should not be invoked if task is failed on previous steps", async () => {
+            const randomNumber = Math.random();
+
+            const context = {
+                randomNumber
+            };
+
+            const newValue = Math.random();
+
+            const mock = jest.fn();
+            const skippedMock = jest.fn();
+
+            const task = new Task({
+                steps: [(ctx): void => {
+                    ctx.randomNumber = newValue;
+                    mock(newValue);
+                }, (ctx, t): void => {
+                    t.fail(ctx);
+                }, (ctx): void => {
+                    skippedMock(ctx.randomNumber);
+                }],
+                spinnerOptions: {
+                    isSilent: true
+                }
+            });
+
+            const outputContext = await task.run(context);
+
+            expect(task.isFailed()).toBeTruthy();
+            expect(mock).toHaveBeenCalledWith(newValue);
+            expect(skippedMock).not.toHaveBeenCalled();
+            expect(outputContext.randomNumber).toEqual(newValue);
+        });
+
+        test("step should not be invoked if previos step throws", async () => {
             const randomNumber = Math.random();
 
             const context = {
@@ -549,6 +589,241 @@ describe("Task", () => {
 
                 expect(task2.isCompleted()).toBeTruthy();
                 expect(mock).toHaveBeenNthCalledWith(2, `invoked inside a task 2, ${random}`);
+
+                expect(output.toString()).toMatchSnapshot();
+            });
+
+            test("tasks should fail and throw if one of tasks throws", async () => {
+                const { mockedStream, output } = createMockStream();
+
+                const mock = jest.fn();
+                const notCalledMock = jest.fn();
+
+                const random = Math.random();
+
+                const innerError = new Error("inner error");
+                const taskError = new TaskError(failureUiFnWithParams, innerError);
+
+                const task1 = new Task({
+                    steps: [
+                        (ctx): void => {
+                            mock("invoked inside a task 1");
+                            ctx.param = "task 1";
+                            ctx.random = random;
+                        },
+                        transitionTo(uiFnWithParams)
+                    ],
+                    initial: ui,
+                    spinnerOptions: {
+                        stream: mockedStream,
+                        isEnabled: false
+                    }
+                });
+
+                const task2 = new Task({
+                    steps: [
+                        (): void => {
+                            mock(`invoked inside a task 2, ${random}`);
+                            throw taskError;
+                        },
+                        transitionTo(uiFnWithParams)
+                    ],
+                    initial: ui,
+                    spinnerOptions: {
+                        stream: mockedStream,
+                        isEnabled: false
+                    }
+                });
+
+                const task3 = new Task({
+                    steps: [
+                        (ctx): void => {
+                            notCalledMock(`invoked inside a task 3`);
+                            ctx.param = "task 3";
+                        },
+                        transitionTo(uiFnWithParams)
+                    ],
+                    initial: ui,
+                    spinnerOptions: {
+                        stream: mockedStream,
+                        isEnabled: false
+                    }
+                });
+
+                const tasks = new Workflow({
+                    context: {},
+                    tasks: [
+                        task1,
+                        task2,
+                        task3
+                    ]
+                });
+
+                await expect(tasks.run()).rejects.toThrowError(innerError);
+
+                expect(task1.isCompleted()).toBeTruthy();
+                expect(task2.isFailed()).toBeTruthy();
+                expect(task3.isPending()).toBeTruthy();
+
+                expect(mock).toHaveBeenNthCalledWith(1, "invoked inside a task 1");
+                expect(mock).toHaveBeenNthCalledWith(2, `invoked inside a task 2, ${random}`);
+                expect(notCalledMock).not.toHaveBeenCalled();
+
+                expect(output.toString()).toMatchSnapshot();
+            });
+
+            test("tasks should fail and throw if one of tasks throws regular error", async () => {
+                const { mockedStream, output } = createMockStream();
+
+                const mock = jest.fn();
+                const notCalledMock = jest.fn();
+
+                const random = Math.random();
+
+                const error = new Error("Error text");
+
+                const task1 = new Task({
+                    steps: [
+                        (ctx): void => {
+                            mock("invoked inside a task 1");
+                            ctx.param = "task 1";
+                            ctx.random = random;
+                        },
+                        transitionTo(uiFnWithParams)
+                    ],
+                    initial: ui,
+                    spinnerOptions: {
+                        stream: mockedStream,
+                        isEnabled: false
+                    }
+                });
+
+                const task2 = new Task({
+                    steps: [
+                        (): void => {
+                            mock(`invoked inside a task 2, ${random}`);
+                            throw error;
+                        },
+                        transitionTo(uiFnWithParams)
+                    ],
+                    initial: ui,
+                    spinnerOptions: {
+                        stream: mockedStream,
+                        isEnabled: false
+                    }
+                });
+
+                const task3 = new Task({
+                    steps: [
+                        (ctx): void => {
+                            notCalledMock(`invoked inside a task 3`);
+                            ctx.param = "task 3";
+                        },
+                        transitionTo(uiFnWithParams)
+                    ],
+                    initial: ui,
+                    spinnerOptions: {
+                        stream: mockedStream,
+                        isEnabled: false
+                    }
+                });
+
+                const tasks = new Workflow({
+                    context: {},
+                    tasks: [
+                        task1,
+                        task2,
+                        task3
+                    ]
+                });
+
+                await expect(tasks.run()).rejects.toThrowError(error);
+
+                expect(task1.isCompleted()).toBeTruthy();
+                expect(task2.isFailed()).toBeTruthy();
+                expect(task3.isPending()).toBeTruthy();
+
+                expect(mock).toHaveBeenNthCalledWith(1, "invoked inside a task 1");
+                expect(mock).toHaveBeenNthCalledWith(2, `invoked inside a task 2, ${random}`);
+                expect(notCalledMock).not.toHaveBeenCalled();
+
+                expect(output.toString()).toMatchSnapshot();
+            });
+
+            test("tasks should run even if one of tasks throws regular error with no-op failure handler", async () => {
+                const { mockedStream, output } = createMockStream();
+
+                const mock = jest.fn();
+
+                const random = Math.random();
+
+                const error = new Error("Error text");
+
+                const task1 = new Task({
+                    steps: [
+                        (ctx): void => {
+                            mock("invoked inside a task 1");
+                            ctx.param = "task 1";
+                            ctx.random = random;
+                        },
+                        transitionTo(uiFnWithParams)
+                    ],
+                    initial: ui,
+                    spinnerOptions: {
+                        stream: mockedStream,
+                        isEnabled: false
+                    }
+                });
+
+                const task2 = new Task({
+                    steps: [
+                        (): void => {
+                            mock(`invoked inside a task 2, ${random}`);
+                            throw error;
+                        },
+                        transitionTo(uiFnWithParams)
+                    ],
+                    initial: ui,
+                    spinnerOptions: {
+                        stream: mockedStream,
+                        isEnabled: false
+                    },
+                    errorHandler: (): void => {}
+                });
+
+                const task3 = new Task({
+                    steps: [
+                        (ctx): void => {
+                            mock(`invoked inside a task 3`);
+                            ctx.param = "task 3";
+                        },
+                        transitionTo(uiFnWithParams)
+                    ],
+                    initial: ui,
+                    spinnerOptions: {
+                        stream: mockedStream,
+                        isEnabled: false
+                    }
+                });
+
+                const tasks = new Workflow({
+                    context: {},
+                    tasks: [
+                        task1,
+                        task2,
+                        task3
+                    ]
+                });
+
+                await tasks.run();
+
+                expect(task1.isCompleted()).toBeTruthy();
+                expect(task2.isFailed()).toBeTruthy();
+                expect(task3.isCompleted()).toBeTruthy();
+
+                expect(mock).toHaveBeenNthCalledWith(1, "invoked inside a task 1");
+                expect(mock).toHaveBeenNthCalledWith(2, `invoked inside a task 2, ${random}`);
+                expect(mock).toHaveBeenNthCalledWith(3, `invoked inside a task 3`);
 
                 expect(output.toString()).toMatchSnapshot();
             });
