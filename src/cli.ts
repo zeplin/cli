@@ -86,7 +86,17 @@ connectCommand.command("initialize")
     .option("--skip-connect", "Skip connecting after configuration is created", false)
     .option("--skip-local-install", "Skip local installation of packages during installation", false)
     .action(async options => {
-        await initialize(options as InitializeCommandOptions);
+        const opts: InitializeCommandOptions = {
+            output: options.output,
+            componentId: options.componentId,
+            projectId: options.projectId,
+            styleguideId: options.styleguideId,
+            filename: options.filename,
+            skipConnect: options.skipConnect,
+            skipInstall: options.skipInstall,
+            type: options.type
+        };
+        await initialize(opts);
     });
 
 const loginCommand = program.command("login")
