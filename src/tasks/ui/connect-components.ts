@@ -1,7 +1,7 @@
 import { TaskUI } from "../../util/task/types";
 
 export const initial = (): TaskUI => ({
-    text: "Installing packages..."
+    text: "Connecting components..."
 });
 
 export const skipConnect = (): TaskUI => ({
