@@ -8,15 +8,15 @@ import {
     TaskContext,
     TaskStep,
     TaskSkipFunction,
-    TaskUITypes
+    TaskUITypes,
+    TaskErrorHandler
 } from "./types";
+import { TaskError } from "./error";
 
 interface RenderedUI {
     text?: string;
     subtext?: string;
 }
-
-const defaultSkipFn = (): boolean => false;
 
 function renderUI<T>(context: T, ui?: TaskUITypes<T>): RenderedUI {
     const msg = typeof ui === "function" ? ui(context) : ui;
@@ -32,6 +32,13 @@ function renderUI<T>(context: T, ui?: TaskUITypes<T>): RenderedUI {
 
     return {};
 }
+
+const defaultSkipFn = (): boolean => false;
+
+const defaultErrorHandler = (err: Error): never => {
+    const error = TaskError.isTaskError(err) ? (err.cause || err) : err;
+    throw error;
+};
 
 function formatUI(renderedUI?: RenderedUI): string | undefined {
     const { text, subtext } = renderedUI || {};
@@ -57,6 +64,7 @@ export class Task<T = TaskContext> {
     private readonly steps: TaskStep<T>[];
     private readonly skipFn: TaskSkipFunction<T>;
     private readonly spinner: ora.Ora;
+    private readonly errorHandler: TaskErrorHandler<T>;
     private ui: TaskUITypes<T>;
     private renderedUI?: RenderedUI;
     private state = State.PENDING;
@@ -66,6 +74,7 @@ export class Task<T = TaskContext> {
         this.ui = params.initial || "Running task...";
         this.skipFn = params.skip || defaultSkipFn;
         this.spinner = ora(params.spinnerOptions);
+        this.errorHandler = params.errorHandler || defaultErrorHandler;
     }
 
     isPending(): boolean {
@@ -229,10 +238,14 @@ export class Task<T = TaskContext> {
 
             return ctx;
         } catch (e) {
-            if (this.isPending()) {
-                this.fail(ctx);
+            if (TaskError.isTaskError<T>(e)) {
+                e.message = this.renderUIText(ctx, e.ui) || e.message;
             }
-            throw e;
+
+            this.fail(ctx, e.ui);
+            this.errorHandler(e, ctx, this);
+
+            return ctx;
         }
     }
 }

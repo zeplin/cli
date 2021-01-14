@@ -1,5 +1,33 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`Task Multiple Tasks UI tasks should fail and throw if one of tasks throws 1`] = `
+"- Initial static text
+[2m   → Initial static subtext[22m
+[36m⠋[39m Rendered text: task 1
+[2m   → Rendered text: task 1[22m
+[32m✔[39m Rendered text: task 1
+[2m   → Rendered text: task 1[22m
+- Initial static text
+[2m   → Initial static subtext[22m
+[31m✖[39m Failed rendered text: task 1
+[2m   → Failed rendered text: task 1[22m
+"
+`;
+
+exports[`Task Multiple Tasks UI tasks should fail and throw if one of tasks throws regular error 1`] = `
+"- Initial static text
+[2m   → Initial static subtext[22m
+[36m⠋[39m Rendered text: task 1
+[2m   → Rendered text: task 1[22m
+[32m✔[39m Rendered text: task 1
+[2m   → Rendered text: task 1[22m
+- Initial static text
+[2m   → Initial static subtext[22m
+[31m✖[39m Initial static text
+[2m   → Initial static subtext[22m
+"
+`;
+
 exports[`Task Multiple Tasks UI tasks should run consecutively 1`] = `
 "- Initial static text
 [2m   → Initial static subtext[22m
@@ -13,6 +41,26 @@ exports[`Task Multiple Tasks UI tasks should run consecutively 1`] = `
 [2m   → Rendered text: task 2[22m
 [32m✔[39m Rendered text: task 2
 [2m   → Rendered text: task 2[22m
+"
+`;
+
+exports[`Task Multiple Tasks UI tasks should run even if one of tasks throws regular error with no-op failure handler 1`] = `
+"- Initial static text
+[2m   → Initial static subtext[22m
+[36m⠋[39m Rendered text: task 1
+[2m   → Rendered text: task 1[22m
+[32m✔[39m Rendered text: task 1
+[2m   → Rendered text: task 1[22m
+- Initial static text
+[2m   → Initial static subtext[22m
+[31m✖[39m Initial static text
+[2m   → Initial static subtext[22m
+- Initial static text
+[2m   → Initial static subtext[22m
+[36m⠋[39m Rendered text: task 3
+[2m   → Rendered text: task 3[22m
+[32m✔[39m Rendered text: task 3
+[2m   → Rendered text: task 3[22m
 "
 `;
 
