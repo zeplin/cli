@@ -30,18 +30,43 @@ function extractComponents(componentSections: ComponentSection[] = []): ZeplinCo
     return components;
 }
 
+async function getStyleguideComponents(authToken: string, styleguideId: string): Promise<ZeplinComponent[]> {
+    const styleguide = await zeplinApi.getStyleguide(authToken, styleguideId);
+    const components = extractComponents(styleguide.componentSections);
+
+    if (styleguide.ancestors && styleguide.ancestors.length > 0) {
+        const linkedStyleguides = await Promise.all(
+            styleguide.ancestors.map(linkedStid => zeplinApi.getStyleguide(authToken, linkedStid))
+        );
+        linkedStyleguides.forEach(s => components.push(...extractComponents(s.componentSections)));
+    }
+
+    return components;
+}
+
+async function getProjectComponents(authToken: string, projectId: string): Promise<ZeplinComponent[]> {
+    const project = await zeplinApi.getProject(authToken, projectId);
+    const projectComponents = extractComponents(project.componentSections);
+
+    if (project.styleguide) {
+        const linkedStyleguideComponents = await getStyleguideComponents(authToken, project.styleguide);
+        linkedStyleguideComponents.forEach(linkedComponent => projectComponents.push(linkedComponent));
+    }
+
+    return projectComponents;
+}
+
 const validateAuthencation: TaskStep<ResourceContext> = (ctx): void => {
     ctx.authService.validateToken({ requiredScopes: ["read"] });
 };
 
 const retrieveComponents: TaskStep<ResourceContext> = async (ctx): Promise<void> => {
     const { selectedResource } = ctx;
+
     if (selectedResource.type === "Project") {
-        const project = await zeplinApi.getProject(ctx.auth.token, selectedResource._id);
-        ctx.components = extractComponents(project.componentSections);
+        ctx.components = await getProjectComponents(ctx.auth.token, selectedResource._id);
     } else {
-        const styleguide = await zeplinApi.getStyleguide(ctx.auth.token, selectedResource._id);
-        ctx.components = extractComponents(styleguide.componentSections);
+        ctx.components = await getStyleguideComponents(ctx.auth.token, selectedResource._id);
     }
 
     if (!ctx.components || ctx.components.length === 0) {
