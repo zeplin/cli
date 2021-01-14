@@ -72,6 +72,7 @@
     "git-url-parse": "^11.4.3",
     "has-yarn": "^2.1.0",
     "http-status-codes": "^1.4.0",
+    "import-from": "^3.0.0",
     "import-local": "^3.0.2",
     "inquirer": "^7.0.0",
     "inquirer-fuzzy-path": "^2.3.0",
