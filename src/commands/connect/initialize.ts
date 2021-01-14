@@ -27,7 +27,9 @@ export async function initialize(options: InitializeCommandOptions): Promise<voi
         const authService = new AuthenticationService();
         const connectService = new ConnectedComponentsService({ authService });
 
-        const context: InitializeContext = Object.assign(Object.create(null), options, {
+        const context: InitializeContext = Object.assign(Object.create(null), {
+            cliOptions: options
+        }, {
             authService,
             connectService
         });
