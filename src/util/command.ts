@@ -10,7 +10,7 @@ export async function runCommand(
     try {
         const { stdout } = await execa.command(command, opts);
 
-        logger.debug(`Command output: ${command}`);
+        logger.debug(`Command output: ${stdout}`);
         return stdout;
     } catch (e) {
         logger.debug("Command error:", e);
