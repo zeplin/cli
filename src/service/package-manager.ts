@@ -15,11 +15,13 @@ export async function getLatestVersions(packages: string[]): Promise<Record<stri
 export async function installPackages(packages: Record<string, string>, { installGlobal = false } = {}): Promise<void> {
     const yarn = hasYarn();
     const args = [];
-    const command = yarn ? "yarn" : "npm";
+    const npmClient = yarn ? "yarn" : "npm";
 
     if (yarn) {
         if (installGlobal) {
             args.push("global");
+        } else {
+            args.push("--ignore-workspace-root-check");
         }
         args.push("add", "-D");
     } else {
@@ -31,7 +33,7 @@ export async function installPackages(packages: Record<string, string>, { instal
 
     const packagesWithVersions = Object.keys(packages).map(p => `${p}@${packages[p]}`);
 
-    const fullCommand = `${command} ${args.join(" ")} ${packagesWithVersions.join(" ")}`;
+    const command = `${npmClient} ${args.join(" ")} ${packagesWithVersions.join(" ")}`;
 
-    await runCommand(fullCommand);
+    await runCommand(command);
 }
