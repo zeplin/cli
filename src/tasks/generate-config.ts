@@ -14,6 +14,10 @@ const generate: TaskStep<InitializeContext> = async ctx => {
     const config: ComponentConfigFile = Object.create(null);
     const resource = ctx.selectedResource;
 
+    config.plugins = ctx.installedPlugins.map(p => ({
+        name: p
+    }));
+
     if (resource.type === "Project") {
         config.projects = [resource._id];
     } else {
