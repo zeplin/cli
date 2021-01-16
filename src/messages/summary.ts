@@ -5,7 +5,7 @@ import { defaults } from "../config/defaults";
 import { InitializeContext } from "../tasks/context/initialize";
 
 const componentLinksMessage = (ctx: InitializeContext): string => {
-    const appUri = defaults.app.webURL === "app.zeplin.io" ? "zeplin" : "zeplin-test";
+    const appUri = defaults.app.webURL === "https://app.zeplin.io" ? "zpl" : "zpl-test";
     const resourcePath = ctx.selectedResource.type === "Project" ? "projects" : "styleguides";
     const appResourceKey = ctx.selectedResource.type === "Project" ? "pid" : "stid";
     const resourceId = ctx.selectedResource?._id;
@@ -13,7 +13,7 @@ const componentLinksMessage = (ctx: InitializeContext): string => {
 
     return dedent`
         Check out them using the following links:
-            Web: ${chalk.underline(`https://${defaults.app.webURL}/${resourcePath}/${resourceId}/components?coid=${componentId}`)}
+            Web: ${chalk.underline(`${defaults.app.webURL}/${resourcePath}/${resourceId}/components?coid=${componentId}`)}
             App: ${chalk.underline(`${appUri}://components?${appResourceKey}=${componentId}&coid=${componentId}`)}
     `;
 };
