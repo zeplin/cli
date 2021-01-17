@@ -11,6 +11,9 @@ export const defaults = {
         login: {
             noBrowser: false,
             port: 9757
+        },
+        initialize: {
+            filePath: ".zeplin/components.json"
         }
     },
     api: {

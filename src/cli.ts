@@ -82,7 +82,7 @@ connectCommand.command("initialize")
     .option("--component-id <componentId>", "Initializes configuration for this Zeplin component")
     .option("--filename <filename>", "Initializes configuration for this component file")
     .option("--type", "Set project type manually", createCollector(), [])
-    .option("--output <output>", "Optional file path to create configuration", ".zeplin/components.json")
+    .option("--output <output>", "Optional file path to create configuration", defaults.commands.initialize.filePath)
     .option("--skip-connect", "Skip connecting after configuration is created", false)
     .option("--skip-local-install", "Skip local installation of packages during installation", false)
     .action(commandRunner(async options => {

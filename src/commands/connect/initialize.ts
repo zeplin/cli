@@ -18,7 +18,9 @@ import { indent } from "../../util/text";
 import { AuthenticationService } from "../../service";
 import { ConnectedComponentsService } from "./service";
 import logger from "../../util/logger";
-import { summary } from "../../messages/summary";
+import { summary, alreadyInitialized } from "../../messages/initialize";
+import { getComponentConfigFiles } from "./config";
+import { defaults } from "../../config/defaults";
 
 export type InitializeCommandOptions = CliOptions;
 
@@ -34,24 +36,29 @@ export async function initialize(options: InitializeCommandOptions): Promise<voi
             connectService
         });
 
-        const workflow = new Workflow({
-            context,
-            tasks: [
-                authentication,
-                detectProjectType,
-                selectResource,
-                selectComponent,
-                selectFile,
-                detectGit,
-                installPackage,
-                generateConfig,
-                connectComponents
-            ]
-        });
+        const existingConfigFile = getComponentConfigFiles([defaults.commands.initialize.filePath]);
+        if (existingConfigFile) {
+            logger.info(alreadyInitialized());
+        } else {
+            const workflow = new Workflow({
+                context,
+                tasks: [
+                    authentication,
+                    detectProjectType,
+                    selectResource,
+                    selectComponent,
+                    selectFile,
+                    detectGit,
+                    installPackage,
+                    generateConfig,
+                    connectComponents
+                ]
+            });
 
-        await workflow.run();
+            await workflow.run();
 
-        logger.info(summary(context));
+            logger.info(summary(context));
+        }
     } catch (error) {
         error.message = dedent`
             ${chalk.bold`Initializing connected components failed.`}
