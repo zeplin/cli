@@ -185,8 +185,9 @@ export class Task<T = TaskContext> {
     }
 
     /**
-     * Stops the spinner and persists the current text.
+     * Stops the spinner.
      *
+     * Persists the given UI or clears the current spinner.
      * No effect if the spinner is already stopped.
      *
      * Does not change current state of the task.
@@ -197,11 +198,25 @@ export class Task<T = TaskContext> {
      */
     stopSpinner(context: T, ui?: TaskUITypes<T>): void {
         if (this.spinner.isSpinning) {
-            this.spinner.stopAndPersist({
-                symbol: logSymbols.info,
-                text: this.renderUIText(context, ui)
-            });
+            if (ui) {
+                this.spinner.stopAndPersist({
+                    symbol: logSymbols.info,
+                    text: this.renderUIText(context, ui)
+                });
+            } else {
+                this.spinner.stop();
+                this.spinner.clear();
+            }
         }
+    }
+
+    /**
+     * Clears current task spinner
+     *
+     * @returns {void}
+     */
+    clearSpinner(): void {
+        this.spinner.clear();
     }
     /**
      * Returns the current rendered text.

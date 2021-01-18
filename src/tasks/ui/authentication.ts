@@ -35,8 +35,7 @@ export const alreadyAuthenticated = (ctx: AuthenticationContext): TaskUI => ({
 });
 
 export const authenticating = (): TaskUI => ({
-    text: "Could not retrieve authentication info",
-    subtext: "Authenticating..."
+    text: "Authenticating..."
 });
 
 export const authenticated = (ctx: AuthenticationContext): TaskUI => ({
