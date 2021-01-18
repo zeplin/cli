@@ -11,14 +11,17 @@ import {
     generateConfig,
     connectComponents
 } from "../../tasks";
-
 import { CliOptions, InitializeContext } from "../../tasks/context/initialize";
 import { Workflow } from "../../util/task";
 import { indent } from "../../util/text";
 import { AuthenticationService } from "../../service";
 import { ConnectedComponentsService } from "./service";
 import logger from "../../util/logger";
-import { summary } from "../../messages/summary";
+import { initSummary, alreadyInitialized } from "../../messages/initialize";
+import { getComponentConfigFiles } from "./config";
+import { defaults } from "../../config/defaults";
+import { commandRunner } from "../../util/commander";
+import { addComponent } from "./addComponent";
 
 export type InitializeCommandOptions = CliOptions;
 
@@ -34,6 +37,11 @@ export async function initialize(options: InitializeCommandOptions): Promise<voi
             connectService
         });
 
+        const [existingConfigFile] = await getComponentConfigFiles([defaults.commands.initialize.filePath]);
+        if (existingConfigFile) {
+            logger.info(alreadyInitialized());
+            return commandRunner(() => addComponent(options))();
+        }
         const workflow = new Workflow({
             context,
             tasks: [
@@ -51,7 +59,7 @@ export async function initialize(options: InitializeCommandOptions): Promise<voi
 
         await workflow.run();
 
-        logger.info(summary(context));
+        logger.info(initSummary(context));
     } catch (error) {
         error.message = dedent`
             ${chalk.bold`Initializing connected components failed.`}

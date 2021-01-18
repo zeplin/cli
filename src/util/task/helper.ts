@@ -10,13 +10,11 @@ function execute<T>(
     return async (ctx, task): Promise<void> => {
         if (options.stopSpinning) {
             task.stopSpinner(ctx);
-            console.log();
         }
 
         await func(ctx, task);
 
         if (options.stopSpinning) {
-            console.log();
             task.startSpinner(ctx);
         }
     };
