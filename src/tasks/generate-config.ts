@@ -33,7 +33,7 @@ const generate: TaskStep<InitializeContext> = async ctx => {
         config[ctx.git.type] = ctx.git.config;
     }
 
-    await writeFile(ctx.cliOptions.output, config);
+    await writeFile(ctx.cliOptions.configFile, config);
 };
 
 export const generateConfig = new Task<InitializeContext>({

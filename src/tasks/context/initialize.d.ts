@@ -12,9 +12,9 @@ export interface CliOptions {
     projectId?: string;
     styleguideId?: string;
     componentId?: string;
-    filename?: string;
+    componentFilename?: string;
     type?: string[];
-    output: string;
+    configFile: string;
     skipConnect?: boolean;
     skipInstall?: boolean;
 }

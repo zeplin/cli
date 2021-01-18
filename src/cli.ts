@@ -9,6 +9,7 @@ import { defaults } from "./config/defaults";
 import { commandRunner } from "./util/commander";
 import { activateCI, activateVerbose } from "./util/env";
 import logger from "./util/logger";
+import { AddComponentCommandOptions, addComponent } from "./commands/connect/addComponent";
 
 function beforeCommand(): void {
     const un = updateNotifier({
@@ -80,23 +81,43 @@ connectCommand.command("initialize")
     .option("--project-id <projectId>", "Initializes configuration for this project")
     .option("--styleguide-id <styleguideId>", "Initializes configuration for this styleguide")
     .option("--component-id <componentId>", "Initializes configuration for this Zeplin component")
-    .option("--filename <filename>", "Initializes configuration for this component file")
+    .option("--component-filename <componentFilename>", "Initializes configuration for this component file")
     .option("--type", "Set project type manually", createCollector(), [])
-    .option("--output <output>", "Optional file path to create configuration", defaults.commands.initialize.filePath)
+    .option("--file <configFile>", "Optional file path to create configuration", defaults.commands.initialize.filePath)
     .option("--skip-connect", "Skip connecting after configuration is created", false)
     .option("--skip-local-install", "Skip local installation of packages during installation", false)
     .action(commandRunner(async options => {
         const opts: InitializeCommandOptions = {
-            output: options.output,
+            configFile: options.file,
             componentId: options.componentId,
             projectId: options.projectId,
             styleguideId: options.styleguideId,
-            filename: options.filename,
+            componentFilename: options.componentFilename,
             skipConnect: options.skipConnect,
             skipInstall: options.skipInstall,
             type: options.type
         };
         await initialize(opts);
+    }));
+
+connectCommand.command("add-component")
+    .description("Add connected components interactively")
+    .option("--project-id <projectId>", "Initializes configuration for this project")
+    .option("--styleguide-id <styleguideId>", "Initializes configuration for this styleguide")
+    .option("--component-id <componentId>", "Initializes configuration for this Zeplin component")
+    .option("--filename <filename>", "Initializes configuration for this component file")
+    .option("--file <configFile>", "Optional file path to create configuration", defaults.commands.initialize.filePath)
+    .option("--skip-connect", "Skip connecting after configuration is created", false)
+    .action(commandRunner(async options => {
+        const opts: AddComponentCommandOptions = {
+            configFile: options.file,
+            componentId: options.componentId,
+            projectId: options.projectId,
+            styleguideId: options.styleguideId,
+            componentFilename: options.filename,
+            skipConnect: options.skipConnect
+        };
+        await addComponent(opts);
     }));
 
 const loginCommand = program.command("login")

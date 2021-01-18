@@ -58,7 +58,7 @@ const createPluginInstance = async (plugin: Plugin, components: ComponentConfig[
         throw new CLIError(dedent`
                 ${chalk.bold(plugin.name)} does not conform Connected Components plugin interface.
                 Please make sure that the plugin implements the requirements listed on the documentation.
-                https://github.com/zeplin/cli/blob/develop/PLUGIN.md
+                https://github.com/zeplin/cli/blob/master/PLUGIN.md
         `);
     }
 

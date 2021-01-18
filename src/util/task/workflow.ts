@@ -14,7 +14,6 @@ export class Workflow<T = TaskContext> {
         for (const task of this.tasks) {
             // eslint-disable-next-line no-await-in-loop
             await task.run(this.context);
-            console.log(); // Puts an empty line between each task
         }
         return this.context;
     }

@@ -21,7 +21,7 @@ const checkAuthentication: TaskStep<ConnectContext> = (ctx): void => {
 
 const connect: TaskStep<ConnectContext> = async (ctx): Promise<void> => {
     const connectedComponents = await generateConnectedComponents({
-        configFiles: [ctx.cliOptions.output],
+        configFiles: [ctx.cliOptions.configFile],
         plugins: ctx.installedPlugins
     });
 

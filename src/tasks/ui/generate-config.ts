@@ -7,5 +7,5 @@ export const initial = (): TaskUI => ({
 
 export const completed = (ctx: InitializeContext): TaskUI => ({
     text: `Generated configuration file`,
-    subtext: `${ctx.cliOptions.output}`
+    subtext: `${ctx.cliOptions.configFile}`
 });
