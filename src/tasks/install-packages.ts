@@ -4,6 +4,7 @@ import { InstallPackagesContext } from "./context/install-packages";
 import { installPackages, getLatestVersions } from "../service/package-manager";
 import { getPackageJson, writePackageJson, PackageJson } from "../util/js/config";
 import { projectHasYarn } from "../util/package";
+import { sortByKeys } from "../util/object";
 
 const addZeplinScripts = (packageJson: PackageJson): void => {
     packageJson.scripts = {
@@ -36,10 +37,10 @@ const install: TaskStep<InstallPackagesContext> = async (ctx, task): Promise<voi
     if (ctx.cliOptions.skipLocalInstall) {
         ctx.skippedInstallingRequiredPackages = projectTypes.length > 0;
         if (packageJson) {
-            packageJson.devDependencies = {
+            packageJson.devDependencies = sortByKeys({
                 ...packageJson.devDependencies,
                 ...packageNamesWithVersions
-            };
+            });
         }
         task.skip(ctx, ui.skippedInstallation);
     } else {
