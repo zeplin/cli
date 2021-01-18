@@ -45,7 +45,12 @@ export async function addComponent(options: AddComponentCommandOptions): Promise
             connectService
         });
 
-        const [existingConfigFile] = await getComponentConfigFiles([context.cliOptions.configFile]);
+        const [existingConfigFile] = await getComponentConfigFiles([context.cliOptions.configFile])
+            .catch(err => {
+                logger.debug(err);
+                return [];
+            });
+
         if (!existingConfigFile) {
             logger.info(notInitialized());
             if (!(await askForInitialization())) {

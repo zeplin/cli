@@ -37,11 +37,17 @@ export async function initialize(options: InitializeCommandOptions): Promise<voi
             connectService
         });
 
-        const [existingConfigFile] = await getComponentConfigFiles([defaults.commands.initialize.filePath]);
+        const [existingConfigFile] = await getComponentConfigFiles([defaults.commands.initialize.filePath])
+            .catch(err => {
+                logger.debug(err);
+                return [];
+            });
+
         if (existingConfigFile) {
             logger.info(alreadyInitialized());
             return commandRunner(() => addComponent(options))();
         }
+
         const workflow = new Workflow({
             context,
             tasks: [
