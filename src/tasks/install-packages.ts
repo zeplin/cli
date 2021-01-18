@@ -33,7 +33,7 @@ const install: TaskStep<InstallPackagesContext> = async (ctx, task): Promise<voi
 
     const installGlobal = !packageJson;
 
-    if (ctx.cliOptions.skipInstall) {
+    if (ctx.cliOptions.skipLocalInstall) {
         ctx.skippedInstallingRequiredPackages = projectTypes.length > 0;
         if (packageJson) {
             packageJson.devDependencies = {

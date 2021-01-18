@@ -94,7 +94,7 @@ connectCommand.command("initialize")
             styleguideId: options.styleguideId,
             componentFilename: options.componentFilename,
             skipConnect: options.skipConnect,
-            skipInstall: options.skipInstall,
+            skipLocalInstall: options.skipLocalInstall,
             type: options.type
         };
         await initialize(opts);
