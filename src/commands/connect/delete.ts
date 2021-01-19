@@ -22,7 +22,10 @@ const getConnectedBarrels = async (options: ConnectDeleteOptions): Promise<Conne
 
     const componentConfigFiles = await getComponentConfigFiles(configFiles, []);
 
-    return componentConfigFiles as ConnectedBarrels[];
+    return componentConfigFiles.map(ccf => ({
+        projects: ccf.projects || [],
+        styleguides: ccf.styleguides || []
+    }));
 };
 
 export type ConnectDeleteOptions = Pick<ConnectOptions, "configFiles">;
