@@ -83,7 +83,7 @@ const select: TaskStep<ResourceContext> = async (ctx): Promise<void> => {
         message: "Which Zeplin project/styleguide would you like to setup?"
     }]);
 
-    ctx.selectedResource = ctx.resources[selection.value.id];
+    ctx.selectedResource = ctx.resources[selection.value._id];
 };
 
 export const selectResource = new Task<ResourceContext>({
