@@ -7,6 +7,10 @@
   "bin": {
     "zeplin": "bin/cli.js"
   },
+  "files": [
+    "dist",
+    "bin"
+  ],
   "scripts": {
     "test": "jest",
     "build:dev": "tsc --sourceMap",
