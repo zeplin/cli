@@ -246,6 +246,7 @@ const connectComponentConfig = async (
         path: component.path,
         name: component.name,
         zeplinNames: component.zeplinNames,
+        zeplinIds: component.zeplinIds,
         urlPaths,
         data
     };

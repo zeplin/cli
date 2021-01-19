@@ -17,12 +17,13 @@ const linkConfigSchema = Joi.object({
 
 const componentConfigSchema = Joi.object({
     path: Joi.string(),
-    zeplinNames: Joi.array().items(Joi.string()).min(1),
+    zeplinNames: Joi.array().items(Joi.string()).optional(),
+    zeplinIds: Joi.array().items(Joi.string()).optional(),
     name: Joi.string().optional(),
     styleguidist: Joi.object({
         name: Joi.string()
     }).optional()
-});
+}).or("zeplinNames", "zeplinIds");
 
 const gitConfigSchema = Joi.object({
     repository: Joi.string(),

@@ -26,7 +26,7 @@ const generate: TaskStep<InitializeContext> = async ctx => {
 
     config.components = [{
         path: ctx.file.path,
-        zeplinNames: ctx.selectedComponents.map(c => c.name)
+        zeplinIds: ctx.selectedComponents.map(c => c._id)
     }];
 
     if (ctx.git) {

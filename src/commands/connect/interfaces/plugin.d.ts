@@ -95,7 +95,9 @@ export interface ComponentConfigBase {
     /** Path to the file, relative to project folder. */
     path: string;
     /** Zeplin component names related to this component file */
-    zeplinNames: string[];
+    zeplinNames?: string[];
+    /** Zeplin component source IDs related to this component file */
+    zeplinIds?: string[];
     /** Name for the component */
     name?: string;
     /** Styleguidist name for the component (Optional) */

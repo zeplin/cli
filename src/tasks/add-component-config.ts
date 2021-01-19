@@ -39,10 +39,18 @@ const addComponent: TaskStep<AddComponentContext> = async (ctx, task) => {
 
     const existingComponents = config.components || [];
 
-    const componentExists = !!(existingComponents.map(x => x.zeplinNames)
-        .find(a => ctx.selectedComponents.find(sc => a.includes(sc.name))));
+    const componentNameExists = !!(existingComponents.map(ec => ec.zeplinNames)
+        .find(existingZeplinName =>
+            ctx.selectedComponents.find(sc => existingZeplinName?.includes(sc.name))
+        ));
 
-    if (componentExists && !(await confirmAddExistingComponent(ctx, task))) {
+    const componentIdExists = !!(existingComponents.map(ec => ec.zeplinIds)
+        .find(existingZeplinId =>
+            ctx.selectedComponents.find(sc => existingZeplinId?.includes(sc.name))
+        ));
+
+    if ((componentNameExists || componentIdExists) &&
+        !(await confirmAddExistingComponent(ctx, task))) {
         throw new TaskError(ui.existingComponent);
     }
 
@@ -50,7 +58,7 @@ const addComponent: TaskStep<AddComponentContext> = async (ctx, task) => {
         ...existingComponents,
         {
             path: ctx.file.path,
-            zeplinNames: ctx.selectedComponents.map(c => c.name)
+            zeplinIds: ctx.selectedComponents.map(c => c._id)
         }
     ];
 

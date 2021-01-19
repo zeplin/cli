@@ -11,7 +11,8 @@ export interface Data {
 /** @internal */
 export interface ConnectedComponent {
     path: string;
-    zeplinNames: string[];
+    zeplinNames?: string[];
+    zeplinIds?: string[];
     name?: string;
     urlPaths?: Link[];
     data?: Data[];
