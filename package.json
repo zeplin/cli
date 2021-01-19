@@ -9,6 +9,7 @@
   },
   "scripts": {
     "test": "jest",
+    "build:dev": "tsc --sourceMap",
     "build": "tsc && npm run prepare-api",
     "build:clean": "rm -rf dist/ && npm run build",
     "lint": "eslint --ext .js,.ts .",
