@@ -20,6 +20,13 @@ export const detecting = (): TaskUI => ({
     text: "Detecting project type..."
 });
 
-export const completed = (ctx: ProjectTypeContext): TaskUI => ({
-    text: `Detected ${projectTypesText(ctx)}`
-});
+export const completed = (ctx: ProjectTypeContext): TaskUI => {
+    if (!ctx.projectTypes || ctx.projectTypes.length === 0) {
+        return {
+            text: "Could not detect project type",
+            subtext: "You may use --type parameter to enforce project type"
+        };
+    }
+    return { text: `Detected ${projectTypesText(ctx)}` };
+};
+
