@@ -100,7 +100,7 @@ connectCommand.command("initialize")
         await initialize(opts);
     }));
 
-connectCommand.command("add-component")
+connectCommand.command("add-components")
     .description("Add connected components interactively")
     .option("--project-id <projectId>", "Initializes configuration for this project")
     .option("--styleguide-id <styleguideId>", "Initializes configuration for this styleguide")
