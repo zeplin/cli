@@ -6,6 +6,10 @@ const asyncFilter = async <T, U>(arr: Array<T>, predicate: predicate<T, U>): Pro
     return arr.filter((_v, index) => results[index]);
 };
 
+const sortByField = <T>(arr: Array<T>, key: keyof T): Array<T> =>
+    arr.sort((a, b) => ((a[key] > b[key]) ? 1 : -1));
+
 export {
-    asyncFilter
+    asyncFilter,
+    sortByField
 };

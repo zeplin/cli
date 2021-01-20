@@ -6,6 +6,7 @@ import { ComponentSection, Component } from "../api/interfaces";
 import { ZeplinApi } from "../api";
 import * as ui from "./ui/select-component";
 import { TaskError } from "../util/task/error";
+import { sortByField } from "../util/array";
 
 inquirer.registerPrompt("search-checkbox", inquirerSearchCheckbox);
 
@@ -88,11 +89,13 @@ const checkComponentFlag: TaskStep<ResourceContext> = (ctx, task): void => {
 };
 
 const select: TaskStep<ResourceContext> = async (ctx): Promise<void> => {
-    const { choices } = await inquirer.prompt([{
+    const choices = sortByField(ctx.components.map(c => ({ name: c.name, value: c })), "name");
+
+    const { selectedComponents } = await inquirer.prompt([{
         type: "search-checkbox",
-        name: "choices",
+        name: "selectedComponents",
         pageSize: 5,
-        choices: ctx.components.map(c => ({ name: c.name, value: c })),
+        choices,
         message: "Which components would you like to connect?",
         validate: (answer): boolean | string => {
             if (answer.length < 1) {
@@ -102,7 +105,7 @@ const select: TaskStep<ResourceContext> = async (ctx): Promise<void> => {
         }
     }]);
 
-    ctx.selectedComponents = choices;
+    ctx.selectedComponents = selectedComponents;
 };
 
 export const selectComponent = new Task<ResourceContext>({

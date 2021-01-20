@@ -8,6 +8,7 @@ import logger from "../util/logger";
 import { CLIError } from "../errors";
 import { WorkaroundChoice } from "../util/inquirer-helpers";
 import { TaskError } from "../util/task/error";
+import { sortByField } from "../util/array";
 
 inquirer.registerPrompt("search-list", inquirerSearchList);
 
@@ -74,7 +75,8 @@ const checkResourceFlags: TaskStep<ResourceContext> = (ctx, task): void => {
 };
 
 const select: TaskStep<ResourceContext> = async (ctx): Promise<void> => {
-    const choices = Object.values(ctx.resources).map(b => createChoice(b));
+    const choices = sortByField(Object.values(ctx.resources).map(b => createChoice(b)), "name");
+
     const { selection } = await inquirer.prompt([{
         type: "search-list",
         name: "selection",
