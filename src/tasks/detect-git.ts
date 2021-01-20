@@ -75,6 +75,7 @@ const detect: TaskStep<DetectGitContext> = async (ctx, task) => {
                     };
                 }
                 ctx.git = { type, config };
+                return;
             }
         }
     } catch (e) {
