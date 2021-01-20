@@ -21,14 +21,16 @@ export async function installPackages(packages: Record<string, string>, { instal
         if (installGlobal) {
             args.push("global");
         } else {
-            args.push("--ignore-workspace-root-check");
+            args.push("--ignore-workspace-root-check", "--save-dev");
         }
-        args.push("add", "-D");
+        args.push("add");
     } else {
+        args.push("install");
         if (installGlobal) {
-            args.push("-g");
+            args.push("--global");
+        } else {
+            args.push("--save-dev");
         }
-        args.push("install", "-D");
     }
 
     const packagesWithVersions = Object.keys(packages).map(p => `${p}@${packages[p]}`);
