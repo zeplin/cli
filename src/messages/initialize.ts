@@ -41,11 +41,9 @@ const skipMessage = (ctx: InitializeContext): string => {
     return connectSkipMessage(ctx);
 };
 
-export const alreadyInitialized = (): string =>
-    "⚠️ Found an existing connected components configuration. Falling back to add-component command";
+export const alreadyInitialized = "⚠️  Found an existing connected components configuration. Falling back to add-component command";
 
-export const notInitialized = (): string =>
-    "⚠️ It seems the project has no connected components configuration.";
+export const notInitialized = "⚠️  It seems the project has no connected components configuration.";
 
 export const userSelectedNotToInitialize = (): string => dedent`
         Operation aborted.
@@ -72,3 +70,15 @@ export const addSummary = (context: AddComponentContext): string => dedent`
 
         ${context.skippedConnect ? connectSkipMessage(context) : componentLinksMessage(context)}
     `;
+
+export const existingComponentPrompt = "Do you want to add an existing component into the configuration?";
+
+export const initializationPrompt = "Do you want to initialize connected components now?";
+
+export const selectComponentPrompt = "Which components would you like to connect?";
+
+export const chooseAtLeastOneComponentErrorMessage = "You must choose at least one Zeplin component.";
+
+export const selectResourcePrompt = "Which Zeplin project/styleguide would you like to setup?";
+
+export const selectComponentFilePrompt = "Select the component file:";

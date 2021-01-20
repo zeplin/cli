@@ -7,6 +7,7 @@ import { ZeplinApi } from "../api";
 import * as ui from "./ui/select-component";
 import { TaskError } from "../util/task/error";
 import { sortByField } from "../util/array";
+import { selectComponentPrompt, chooseAtLeastOneComponentErrorMessage } from "../messages";
 
 inquirer.registerPrompt("search-checkbox", inquirerSearchCheckbox);
 
@@ -96,10 +97,10 @@ const select: TaskStep<ResourceContext> = async (ctx): Promise<void> => {
         name: "selectedComponents",
         pageSize: 5,
         choices,
-        message: "Which components would you like to connect?",
+        message: selectComponentPrompt,
         validate: (answer): boolean | string => {
             if (answer.length < 1) {
-                return "You must choose at least one Zeplin component.";
+                return chooseAtLeastOneComponentErrorMessage;
             }
             return true;
         }

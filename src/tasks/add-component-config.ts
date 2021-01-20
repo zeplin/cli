@@ -4,6 +4,7 @@ import { Task, TaskStep, transitionTo } from "../util/task";
 import { TaskError } from "../util/task/error";
 import { AddComponentContext } from "./context/add-component";
 import * as ui from "./ui/add-component-config";
+import { existingComponentPrompt } from "../messages";
 
 const confirmAddExistingComponent =
     async (ctx: AddComponentContext, task: Task<AddComponentContext>): Promise<boolean> => {
@@ -11,7 +12,7 @@ const confirmAddExistingComponent =
 
         const { confirmation } = await inquirer.prompt([{
             type: "confirm",
-            message: "Do you want to add an existing component into the configuration?",
+            message: existingComponentPrompt,
             default: false,
             name: "confirmation"
         }]);

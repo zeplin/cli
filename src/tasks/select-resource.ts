@@ -9,6 +9,7 @@ import { CLIError } from "../errors";
 import { WorkaroundChoice } from "../util/inquirer-helpers";
 import { TaskError } from "../util/task/error";
 import { sortByField } from "../util/array";
+import { selectResourcePrompt } from "../messages";
 
 inquirer.registerPrompt("search-list", inquirerSearchList);
 
@@ -82,7 +83,7 @@ const select: TaskStep<ResourceContext> = async (ctx): Promise<void> => {
         name: "selection",
         pageSize: 5,
         choices,
-        message: "Which Zeplin project/styleguide would you like to setup?"
+        message: selectResourcePrompt
     }]);
 
     ctx.selectedResource = ctx.resources[selection.value._id];

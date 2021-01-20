@@ -15,7 +15,7 @@ import { indent } from "../../util/text";
 import { AuthenticationService } from "../../service";
 import { ConnectedComponentsService } from "./service";
 import logger from "../../util/logger";
-import { notInitialized, userSelectedNotToInitialize, addSummary } from "../../messages/initialize";
+import { notInitialized, userSelectedNotToInitialize, addSummary, initializationPrompt } from "../../messages";
 import { getComponentConfigFiles } from "./config";
 import { initialize } from "..";
 import { commandRunner } from "../../util/commander";
@@ -23,7 +23,7 @@ import { commandRunner } from "../../util/commander";
 const askForInitialization = async (): Promise<boolean> => {
     const { confirmation } = await inquirer.prompt([{
         type: "confirm",
-        message: "Do you want to initialize now?",
+        message: initializationPrompt,
         default: false,
         name: "confirmation"
     }]);
@@ -52,7 +52,7 @@ export async function addComponent(options: AddComponentCommandOptions): Promise
             });
 
         if (!existingConfigFile) {
-            logger.info(notInitialized());
+            logger.info(notInitialized);
             if (!(await askForInitialization())) {
                 logger.info(userSelectedNotToInitialize());
                 return;

@@ -44,7 +44,7 @@ export async function initialize(options: InitializeCommandOptions): Promise<voi
             });
 
         if (existingConfigFile) {
-            logger.info(alreadyInitialized());
+            logger.info(alreadyInitialized);
             return commandRunner(() => addComponent(options))();
         }
 

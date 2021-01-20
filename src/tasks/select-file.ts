@@ -6,6 +6,7 @@ import { Task, TaskStep, pauseSpinningAndExecuteTask, transitionTo } from "../ut
 import { File, FileContext } from "./context/file";
 import * as ui from "./ui/select-file";
 import { TaskError } from "../util/task/error";
+import { selectComponentFilePrompt } from "../messages";
 
 inquirer.registerPrompt("fuzzypath", inquirerFuzzyPath);
 
@@ -45,7 +46,7 @@ const select: TaskStep<FileContext> = async (ctx): Promise<void> => {
         name: "selection",
         itemType: "file",
         rootPath: ".",
-        message: "Select the component file:",
+        message: selectComponentFilePrompt,
         excludePath: (p: string): boolean => {
             for (const excludedPath of excludedPaths) {
                 if (p.startsWith(excludedPath)) {
