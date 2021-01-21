@@ -47,7 +47,7 @@ const addComponent: TaskStep<AddComponentContext> = async (ctx, task) => {
 
     const componentIdExists = !!(existingComponents.map(ec => ec.zeplinIds)
         .find(existingZeplinId =>
-            ctx.selectedComponents.find(sc => existingZeplinId?.includes(sc.name))
+            ctx.selectedComponents.find(sc => existingZeplinId?.includes(sc._id))
         ));
 
     if ((componentNameExists || componentIdExists) &&
