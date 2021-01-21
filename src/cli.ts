@@ -85,7 +85,7 @@ connectCommand.command("initialize")
     .option("--type <type>", "Set project type manually", createCollector(), [])
     .option("--file <configFile>", "Optional file path to create configuration", defaults.commands.initialize.filePath)
     .option("--skip-connect", "Skip connecting after configuration is created", false)
-    .option("--skip-local-install", "Skip local installation of packages during installation", false)
+    .option("--skip-install", "Skip installation of packages during installation", false)
     .action(commandRunner(async options => {
         const opts: InitializeCommandOptions = {
             configFile: options.file,
@@ -94,7 +94,7 @@ connectCommand.command("initialize")
             styleguideId: options.styleguideId,
             componentFilename: options.componentFilename,
             skipConnect: options.skipConnect,
-            skipLocalInstall: options.skipLocalInstall,
+            skipInstall: options.skipInstall,
             type: options.type
         };
         await initialize(opts);

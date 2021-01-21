@@ -7,7 +7,7 @@ export const initial = (): TaskUI => ({
 
 export const skippedInstallation = (ctx: InstallPackagesContext): TaskUI => ({
     text: `Skipped installing Zeplin CLI packages`,
-    subtext: ctx.cliOptions.skipLocalInstall ? "Dependencies added into package.json" : undefined
+    subtext: ctx.cliOptions.skipInstall ? "Dependencies added into package.json" : undefined
 });
 
 export const installingPlugins = (): TaskUI => ({

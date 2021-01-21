@@ -20,7 +20,7 @@ const detect: TaskStep<ConnectContext> = async (ctx): Promise<void> => {
     })}`);
 
     ctx.installedPlugins = installedPlugins;
-    ctx.installedGlobally = installedGlobally;
+    ctx.installGlobally = installedGlobally;
 };
 
 export const detectEnvironment = new Task<ConnectContext>({

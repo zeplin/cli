@@ -2,12 +2,11 @@ import { SupportedProjectType } from "../../service/project-type/project-types";
 
 export interface InstallPackagesContext {
     cliOptions: {
-        skipLocalInstall: boolean;
+        skipInstall: boolean;
     };
     projectTypes: SupportedProjectType[];
     installedPackages: Record<string, string>;
     installedPlugins: string[];
-    installedGlobally: boolean;
-    skippedInstallingRequiredPackages: boolean;
+    installGlobally: boolean;
     isYarn: boolean;
 }

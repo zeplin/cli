@@ -7,7 +7,7 @@ import {
 import { CliOptions as InitializeCliOptions } from "./initialize";
 import { ComponentConfigContext } from "./component-config";
 
-export type CliOptions = Omit<InitializeCliOptions, "type" | "skipLocalInstall">;
+export type CliOptions = Omit<InitializeCliOptions, "type" | "skipInstall">;
 
 export type AddComponentContext = ComponentConfigContext &
     AuthenticationContext &

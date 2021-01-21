@@ -36,21 +36,20 @@ const install: TaskStep<InstallPackagesContext> = async (ctx, task): Promise<voi
     logger.debug(`Current package.json: ${stringify(packageJson)}`);
 
     const installGlobal = !packageJson;
-
-    if (!installGlobal && ctx.cliOptions.skipLocalInstall) {
-        ctx.skippedInstallingRequiredPackages = projectTypes.length > 0;
+    ctx.installGlobally = installGlobal;
+    if (ctx.cliOptions.skipInstall) {
         if (packageJson) {
             packageJson.devDependencies = sortByKeys({
                 ...packageJson.devDependencies,
                 ...packageNamesWithVersions
             });
         }
-        logger.debug("Skipped local package installation");
+        logger.debug("Skipped package installation");
         task.skip(ctx, ui.skippedInstallation);
     } else {
         logger.debug(`Installing packages ${stringify({ installGlobal, packageNamesWithVersions })}`);
         await installPackages(packageNamesWithVersions, { installGlobal });
-        ctx.installedGlobally = installGlobal;
+
         ctx.isYarn = projectHasYarn();
 
         if (packageJson) {

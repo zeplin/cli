@@ -8,13 +8,13 @@ import logger from "../util/logger";
 
 const checkConnectIsAllowed: TaskStep<ConnectContext> = (ctx, task): void => {
     if (ctx.cliOptions.skipConnect) {
-        logger.debug("Connect skipped due to --skipConnect flag");
+        logger.debug("Connect skipped due to --skip-connect flag");
         ctx.skippedConnect = true;
         task.skip(ctx, ui.skipConnect);
     }
 
-    if (ctx.skippedInstallingRequiredPackages) {
-        logger.debug("Connect skipped due to --skip-local-install and there are required plugins");
+    if (ctx.cliOptions.skipInstall) {
+        logger.debug("Connect skipped due to --skip-install flag");
         ctx.skippedConnect = true;
         task.skip(ctx, ui.requiredPackagesAreNotInstalled);
     }
@@ -25,7 +25,7 @@ const checkAuthentication: TaskStep<ConnectContext> = (ctx): void => {
 };
 
 const connect: TaskStep<ConnectContext> = async (ctx): Promise<void> => {
-    if (ctx.installedGlobally && ctx.installedPlugins.length > 0) {
+    if (ctx.installGlobally && ctx.installedPlugins.length > 0) {
         logger.debug("Running connect by spawning the CLI");
         await runCommand(`zeplin connect --file ${ctx.cliOptions.configFile}`,
             {

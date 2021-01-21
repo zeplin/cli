@@ -16,7 +16,7 @@ export interface CliOptions {
     type?: string[];
     configFile: string;
     skipConnect?: boolean;
-    skipLocalInstall?: boolean;
+    skipInstall?: boolean;
 }
 
 export type InitializeContext = AuthenticationContext &

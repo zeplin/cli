@@ -10,6 +10,5 @@ export type ConnectContext = AuthenticationContext
             configFile: string;
         };
         connectService: ConnectedComponentsService;
-        skippedInstallingRequiredPackages: boolean;
         skippedConnect: boolean;
     };

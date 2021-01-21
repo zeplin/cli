@@ -20,9 +20,15 @@ const componentLinksMessage = (ctx: InitializeContext | AddComponentContext): st
 };
 
 const connectCommandMessage = (ctx: InitializeContext | AddComponentContext): string =>
-    `${ctx.installedGlobally ? "zeplin connect" : `${ctx.isYarn ? "yarn" : "npm run"} zeplin-connect`}`;
+    `${ctx.installGlobally ? "zeplin connect" : `${ctx.isYarn ? "yarn" : "npm run"} zeplin-connect`}`;
 
-const installPackagesMessage = (context: InitializeContext): string => `${context.isYarn ? "yarn" : "npm"} install`;
+const installPackagesMessage = (context: InitializeContext): string => {
+    if (context.installGlobally) {
+        return `${context.isYarn ? "yarn global add" : "npm -g install"} @zeplin/cli ${context.installedPlugins.join(" ")}`;
+    }
+
+    return `${context.isYarn ? "yarn" : "npm"} install`;
+};
 
 const connectSkipMessage = (ctx: InitializeContext | AddComponentContext): string => dedent`
         ${chalk.inverse(`Connecting to Zeplin is skipped. Use the following commands to connect components:`)}
@@ -30,7 +36,7 @@ const connectSkipMessage = (ctx: InitializeContext | AddComponentContext): strin
     `;
 
 const skipMessage = (ctx: InitializeContext): string => {
-    if (ctx.skippedInstallingRequiredPackages) {
+    if (ctx.cliOptions.skipInstall) {
         return dedent`
             ${chalk.inverse("Package installation is skipped.")}
             You should install all dependencies and then connect components using the following commands:
