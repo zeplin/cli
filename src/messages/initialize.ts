@@ -5,6 +5,9 @@ import { defaults } from "../config/defaults";
 import { InitializeContext } from "../tasks/context/initialize";
 import { AddComponentContext } from "../tasks/context/add-component";
 
+const connectCommandMessage = (ctx: InitializeContext | AddComponentContext): string =>
+    `${ctx.installGlobally ? "zeplin connect" : `${ctx.isYarn ? "yarn" : "npm run"} zeplin-connect`}`;
+
 const componentLinksMessage = (ctx: InitializeContext | AddComponentContext): string => {
     const appUri = defaults.app.webURL === "https://app.zeplin.io" ? "zpl" : "zpl-test";
     const resourcePath = ctx.selectedResource.type === "Project" ? "projects" : "styleguides";
@@ -16,11 +19,11 @@ const componentLinksMessage = (ctx: InitializeContext | AddComponentContext): st
         Check out the component using the following links:
             Web: ${chalk.underline(`${defaults.app.webURL}/${resourcePath}/${resourceId}/components?coid=${componentId}`)}
             App: ${chalk.underline(`${appUri}://components?${appResourceKey}=${resourceId}&coid=${componentId}`)}
+
+        Free free to make changes in ${chalk.underline(ctx.cliOptions.configFile)} and use the following command to update Connected Components!
+            ${connectCommandMessage(ctx)}
     `;
 };
-
-const connectCommandMessage = (ctx: InitializeContext | AddComponentContext): string =>
-    `${ctx.installGlobally ? "zeplin connect" : `${ctx.isYarn ? "yarn" : "npm run"} zeplin-connect`}`;
 
 const installPackagesMessage = (context: InitializeContext): string => {
     if (context.installGlobally) {
@@ -62,9 +65,6 @@ export const initSummary = (context: InitializeContext): string => dedent`
         ${chalk.underline(path.resolve(`${context.cliOptions?.configFile}`))}
 
         ${context.skippedConnect ? skipMessage(context) : componentLinksMessage(context)}
-
-        Free free to update the configuration file and use the following command to connect components!
-            ${connectCommandMessage(context)}
 
         You can use the following command to add another component interactively:
             ${connectCommandMessage(context)} add-component
