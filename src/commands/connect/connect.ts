@@ -16,7 +16,7 @@ const getComponentFilePaths = (connectedBarrels: ConnectedBarrelComponents[]): s
     ).reduce((a, b) => [...a, ...b], []);
 
 const generateConnectedComponents = async (
-    options: Pick<ConnectOptions, "configFiles" | "plugins">
+    options: Partial<Pick<ConnectOptions, "configFiles" | "plugins">>
 ): Promise<ConnectedBarrelComponents[]> => {
     const {
         configFiles,

@@ -147,7 +147,7 @@ const discoverDefaultConfigFile = async (configRootDir: string): Promise<Compone
 };
 
 const getComponentConfigFiles = async (
-    configFilePaths: string[], globalPlugins: string[] = [], configRootDir = process.cwd()
+    configFilePaths: string[] = [], globalPlugins: string[] = [], configRootDir = process.cwd()
 ): Promise<ComponentConfigFile[]> => {
     try {
         let configFiles: ComponentConfigFile[];

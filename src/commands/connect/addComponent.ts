@@ -7,7 +7,8 @@ import {
     selectComponent,
     selectFile,
     selectResource,
-    connectComponents
+    connectComponents,
+    detectEnvironment
 } from "../../tasks";
 import { CliOptions, AddComponentContext } from "../../tasks/context/add-component";
 import { Workflow } from "../../util/task";
@@ -70,6 +71,7 @@ export async function addComponent(options: AddComponentCommandOptions): Promise
                 selectResource,
                 selectComponent,
                 selectFile,
+                detectEnvironment,
                 addComponentConfig,
                 connectComponents
             ]

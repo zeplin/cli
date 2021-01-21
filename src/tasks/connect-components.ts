@@ -2,6 +2,8 @@ import { Task, transitionTo, TaskStep } from "../util/task";
 import * as ui from "./ui/connect-components";
 import { ConnectContext } from "./context/connect";
 import { generateConnectedComponents } from "../commands";
+import { runCommand } from "../util/command";
+import { removeNpxFromPath } from "../util/npx";
 
 const checkConnectIsAllowed: TaskStep<ConnectContext> = (ctx, task): void => {
     if (ctx.cliOptions.skipConnect) {
@@ -20,12 +22,19 @@ const checkAuthentication: TaskStep<ConnectContext> = (ctx): void => {
 };
 
 const connect: TaskStep<ConnectContext> = async (ctx): Promise<void> => {
-    const connectedComponents = await generateConnectedComponents({
-        configFiles: [ctx.cliOptions.configFile],
-        plugins: ctx.installedPlugins
-    });
+    if (ctx.installedGlobally && ctx.installedPlugins.length > 0) {
+        await runCommand(`zeplin connect --file ${ctx.cliOptions.configFile}`,
+            {
+                shell: true,
+                env: Object.assign(process.env, { PATH: removeNpxFromPath(process.env.PATH) })
+            });
+    } else {
+        const connectedComponents = await generateConnectedComponents({
+            configFiles: [ctx.cliOptions.configFile]
+        });
 
-    await ctx.connectService.uploadConnectedBarrels(connectedComponents);
+        await ctx.connectService.uploadConnectedBarrels(connectedComponents);
+    }
 };
 
 export const connectComponents = new Task<ConnectContext>({
