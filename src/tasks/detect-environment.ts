@@ -21,6 +21,7 @@ const detect: TaskStep<ConnectContext> = async (ctx): Promise<void> => {
 
     ctx.installedPlugins = installedPlugins;
     ctx.installGlobally = installedGlobally;
+    ctx.packageJson = packageJson;
 };
 
 export const detectEnvironment = new Task<ConnectContext>({

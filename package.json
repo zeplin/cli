@@ -48,6 +48,7 @@
     "@types/jsonwebtoken": "^8.3.4",
     "@types/node": "^12.7.5",
     "@types/parse-git-config": "^3.0.0",
+    "@types/semver": "^7.3.4",
     "@types/strip-comments": "^2.0.0",
     "@types/update-notifier": "^4.1.0",
     "@types/url-join": "^4.0.0",
@@ -64,6 +65,7 @@
   },
   "dependencies": {
     "@hapi/joi": "^17.1.1",
+    "argparse": "^1.0.10",
     "axios": "^0.21.1",
     "chalk": "^3.0.0",
     "chokidar": "^3.3.1",
@@ -91,6 +93,7 @@
     "open": "^7.3.0",
     "ora": "^5.1.0",
     "parse-git-config": "^3.0.0",
+    "semver": "^5.7.1",
     "strip-ansi": "^6.0.0",
     "strip-comments": "^2.0.1",
     "ts-dedent": "^1.1.0",

@@ -61,6 +61,7 @@ const install: TaskStep<InstallPackagesContext> = async (ctx, task): Promise<voi
         addZeplinScripts(packageJson);
         logger.debug(`Updating package.json: ${stringify({ packageJson })}`);
         await writePackageJson(packageJson);
+        ctx.packageJson = packageJson;
     }
 };
 

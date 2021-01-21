@@ -11,5 +11,5 @@ export async function detectProjectTypes(): Promise<SupportedProjectType[]> {
         bowerJson
     };
 
-    return asyncFilter(supportedProjectTypes, spt => spt.matcher.match(context));
+    return asyncFilter(supportedProjectTypes, spt => spt.matcher(context));
 }

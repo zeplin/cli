@@ -1,4 +1,5 @@
 import { SupportedProjectType } from "../../service/project-type/project-types";
+import { PackageJson } from "../../util/js/config";
 
 export interface InstallPackagesContext {
     cliOptions: {
@@ -9,4 +10,5 @@ export interface InstallPackagesContext {
     installedPlugins: string[];
     installGlobally: boolean;
     isYarn: boolean;
+    packageJson: PackageJson | null;
 }
