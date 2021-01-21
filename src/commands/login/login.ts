@@ -6,7 +6,7 @@ import logger from "../../util/logger";
 
 import * as envUtil from "../../util/env";
 import * as authFileUtil from "../../util/auth-file";
-import { AuthenticationService } from "../../service/index";
+import { AuthenticationService, AUTH_METHOD } from "../../service/index";
 
 export interface LoginOptions {
     noBrowser: boolean;
@@ -30,11 +30,19 @@ export async function login(options: LoginOptions): Promise<void> {
             if (answer.choice !== "y") {
                 return;
             }
+
+            const authService = new AuthenticationService({
+                token: existingToken,
+                method: AUTH_METHOD.LOCAL_AUTH_FILE
+            });
+
+            await authService.promptForLogin({
+                ignoreSaveTokenErrors: false,
+                noBrowser: options.noBrowser,
+                forceRenewal: true
+            });
+
+            logger.info(chalk.bold("\n🦄 Successfully authenticated."));
         }
-
-        const authService = new AuthenticationService();
-        await authService.promptForLogin({ ignoreSaveTokenErrors: false, noBrowser: options.noBrowser });
-
-        logger.info(chalk.bold("\n🦄 Successfully authenticated."));
     }
 }

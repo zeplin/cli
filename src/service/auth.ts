@@ -10,6 +10,7 @@ import * as envUtil from "../util/env";
 import logger from "../util/logger";
 import { LoginServer } from "../server";
 import { defaults } from "../config/defaults";
+import { isAuthenticationError } from "../util/error";
 
 function notEmptyValidator(errorMessage: string) {
     return (input: string): boolean | string => (input && input.length > 0 ? true : errorMessage);
@@ -67,6 +68,10 @@ export class AuthenticationService {
     zeplinApi = new ZeplinApi();
     loginServer = new LoginServer(defaults.app.authRedirectPath);
 
+    constructor(authentication?: Authentication) {
+        this.authentication = authentication;
+    }
+
     async authenticate({
         requiredScopes = [], noBrowser = false
     }: {
@@ -108,11 +113,28 @@ export class AuthenticationService {
         return validate(this.authentication, requiredScopes);
     }
 
+    async revokeToken(): Promise<void> {
+        if (this.authentication) {
+            logger.debug("Revoking existing auth token");
+            try {
+                await this.zeplinApi.revokeToken(this.authentication.token);
+            } catch (err) {
+                if (!isAuthenticationError(err)) {
+                    throw err;
+                }
+            }
+        }
+    }
+
     async promptForLogin({
-        requiredScopes = [], ignoreSaveTokenErrors = true, noBrowser = false
+        requiredScopes = [], ignoreSaveTokenErrors = true, noBrowser = false, forceRenewal = false
     }: {
-        requiredScopes?: string[]; ignoreSaveTokenErrors?: boolean; noBrowser?: boolean;
+        requiredScopes?: string[]; ignoreSaveTokenErrors?: boolean; noBrowser?: boolean; forceRenewal?: boolean;
     } = {}): Promise<Authentication> {
+        if (forceRenewal && this.authentication) {
+            await this.revokeToken();
+        }
+
         logger.info("\nLogin into Zeplin…");
 
         if (!noBrowser) {
@@ -145,7 +167,7 @@ export class AuthenticationService {
         const authUrl = new URL("/oauth/authorize", defaults.app.webURL);
 
         authUrl.searchParams.append("client_id", defaults.api.clientId);
-        authUrl.searchParams.append("scope", "read+write+delete");
+        authUrl.searchParams.append("scope", "read write delete");
         authUrl.searchParams.append("redirect_uri", defaults.app.webAuthRedirectURL);
 
         await open(authUrl.toString());

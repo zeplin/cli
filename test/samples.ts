@@ -95,7 +95,7 @@ export const generateTokenAxiosRequest = {
     params: {
         client_id: defaults.api.clientId,
         response_type: "token",
-        scope: "write delete"
+        scope: "read write delete"
     },
     headers: { "Zeplin-Token": loginResponse.token },
     maxRedirects: 0
