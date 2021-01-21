@@ -41,9 +41,9 @@ const skipMessage = (ctx: InitializeContext): string => {
     return connectSkipMessage(ctx);
 };
 
-export const alreadyInitialized = "⚠️  Found an existing connected components configuration. Falling back to add-component command";
+export const alreadyInitialized = "⚠️  Found an existing Connected Components configuration. Falling back to add-component command.";
 
-export const notInitialized = "⚠️  It seems the project has no connected components configuration.";
+export const notInitialized = "⚠️  Looks like this project has no Connected Components configuration.";
 
 export const userSelectedNotToInitialize = (): string => dedent`
         Operation aborted.
@@ -57,7 +57,7 @@ export const initSummary = (context: InitializeContext): string => dedent`
 
         ${context.skippedConnect ? skipMessage(context) : componentLinksMessage(context)}
 
-        Free free to update the configuration file and use the following command connect components!
+        Free free to update the configuration file and use the following command to connect components!
             ${connectCommandMessage(context)}
 
         You can use the following command to add another component interactively:
@@ -73,7 +73,7 @@ export const addSummary = (context: AddComponentContext): string => dedent`
 
 export const existingComponentPrompt = "Do you want to add an existing component into the configuration?";
 
-export const initializationPrompt = "Do you want to initialize connected components now?";
+export const initializationPrompt = "Do you want to initialize Connected Components now?";
 
 export const selectComponentPrompt = "Which components would you like to connect?";
 

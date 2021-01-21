@@ -76,7 +76,7 @@ const startDevServer = async (
                 watcher.add(componentFiles);
             } catch (error) {
                 logger.error(chalk.red(dedent`
-                    Could not update connected components.
+                    Could not update Connected Components.
                     ${error}
                 `));
             }
@@ -89,7 +89,7 @@ const startDevServer = async (
 const service = new ConnectedComponentsService();
 
 const upload = async (connectedBarrels: ConnectedBarrelComponents[]): Promise<void> => {
-    logger.info("Connecting all connected components into Zeplin…");
+    logger.info("Connecting all Connected Components into Zeplin…");
 
     await service.uploadConnectedBarrels(connectedBarrels);
 

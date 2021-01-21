@@ -77,7 +77,7 @@ connectCommand.command("delete")
     }));
 
 connectCommand.command("initialize")
-    .description("Initialize connected components interactively")
+    .description("Initialize Connected Components interactively")
     .option("--project-id <projectId>", "Initializes configuration for this project")
     .option("--styleguide-id <styleguideId>", "Initializes configuration for this styleguide")
     .option("--component-id <componentId>", "Initializes configuration for this Zeplin component")
@@ -101,7 +101,7 @@ connectCommand.command("initialize")
     }));
 
 connectCommand.command("add-components")
-    .description("Add connected components interactively")
+    .description("Add Connected Components interactively")
     .option("--project-id <projectId>", "Initializes configuration for this project")
     .option("--styleguide-id <styleguideId>", "Initializes configuration for this styleguide")
     .option("--component-id <componentId>", "Initializes configuration for this Zeplin component")

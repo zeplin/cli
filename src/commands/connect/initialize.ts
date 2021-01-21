@@ -68,7 +68,7 @@ export async function initialize(options: InitializeCommandOptions): Promise<voi
         logger.info(initSummary(context));
     } catch (error) {
         error.message = dedent`
-            ${chalk.bold`Initializing connected components failed.`}
+            ${chalk.bold`Initializing Connected Components failed.`}
 
             ${chalk.redBright(indent(error.message))}
         `;

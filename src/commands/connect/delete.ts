@@ -10,7 +10,7 @@ import { ConnectedComponentsService } from "./service";
 const service = new ConnectedComponentsService();
 
 const deleteConnectedBarrels = async (connectedBarrels: ConnectedBarrels[]): Promise<void> => {
-    logger.info("Deleting connected components from Zeplin…");
+    logger.info("Deleting Connected Components from Zeplin…");
 
     await service.deleteConnectedBarrels(connectedBarrels);
 
@@ -37,7 +37,7 @@ export async function connectDelete(options: ConnectDeleteOptions): Promise<void
         await deleteConnectedBarrels(barrels);
     } catch (error) {
         error.message = dedent`
-            ${chalk.bold`Deleting connected components from Zeplin components failed.`}
+            ${chalk.bold`Deleting Connected Components from Zeplin components failed.`}
 
             ${chalk.redBright(indent(error.message))}
         `;
