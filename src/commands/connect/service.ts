@@ -4,10 +4,8 @@ import { isCI } from "../../util/env";
 import { ZeplinApi } from "../../api";
 import { AuthenticationService } from "../../service/auth";
 import { ConnectedBarrelComponents, ConnectedBarrels } from "./interfaces/api";
-import { APIError, AuthError } from "../../errors";
 import logger from "../../util/logger";
-
-const isAuthenticationError = (err: Error): boolean => (APIError.isUnauthorized(err) || AuthError.isAuthError(err));
+import { isAuthenticationError } from "../../util/error";
 
 export class ConnectedComponentsService {
     zeplinApi: ZeplinApi;
@@ -25,8 +23,9 @@ export class ConnectedComponentsService {
     }
 
     async uploadConnectedBarrels(connectedBarrelComponents: ConnectedBarrelComponents[]): Promise<void> {
+        const requiredScopes = ["write"];
         try {
-            const { token } = await this.authService.authenticate({ requiredScopes: ["write"] });
+            const { token } = await this.authService.authenticate({ requiredScopes });
 
             await this.upload(token, connectedBarrelComponents);
         } catch (error) {
@@ -37,7 +36,7 @@ export class ConnectedComponentsService {
                     Please update ${chalk.dim`ZEPLIN_ACCESS_TOKEN`} environment variable.`;
                 } else {
                     logger.info(error.message);
-                    const { token } = await this.authService.promptForLogin();
+                    const { token } = await this.authService.promptForLogin({ requiredScopes, forceRenewal: true });
 
                     await this.upload(token, connectedBarrelComponents);
                     return;
@@ -48,8 +47,9 @@ export class ConnectedComponentsService {
     }
 
     async deleteConnectedBarrels(connectedComponents: ConnectedBarrels[]): Promise<void> {
+        const requiredScopes = ["delete"];
         try {
-            const { token } = await this.authService.authenticate({ requiredScopes: ["delete"] });
+            const { token } = await this.authService.authenticate({ requiredScopes });
 
             await this.delete(token, connectedComponents);
         } catch (error) {
@@ -60,7 +60,7 @@ export class ConnectedComponentsService {
                     Please update ${chalk.dim`ZEPLIN_ACCESS_TOKEN`} environment variable.`;
                 } else {
                     logger.info(error.message);
-                    const { token } = await this.authService.promptForLogin();
+                    const { token } = await this.authService.promptForLogin({ requiredScopes, forceRenewal: true });
 
                     await this.delete(token, connectedComponents);
                     return;

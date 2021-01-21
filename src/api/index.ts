@@ -16,6 +16,7 @@ import { URLSearchParams } from "url";
 
 const LOGIN_URL = "/users/login";
 const AUTHORIZE_URL = "/oauth/authorize";
+const REVOKE_URL = "/oauth/revoke";
 
 export type BarrelType = "projects" | "styleguides";
 
@@ -50,7 +51,7 @@ export class ZeplinApi {
                 params: {
                     client_id: defaults.api.clientId,
                     response_type: "token",
-                    scope: "write delete"
+                    scope: "read write delete"
                 },
                 headers: { "Zeplin-Token": zeplinToken },
                 maxRedirects: 0,
@@ -62,6 +63,19 @@ export class ZeplinApi {
             const responseParams = new URLSearchParams(responseQueryParams);
 
             return responseParams.get("access_token") as string;
+        } catch (error) {
+            if (error.isAxiosError) {
+                throw new APIError(error.response);
+            }
+            throw new CLIError(error.message);
+        }
+    }
+
+    async revokeToken(authToken: string): Promise<void> {
+        try {
+            await this.axios.post(REVOKE_URL, {}, {
+                headers: { "Zeplin-Access-Token": authToken }
+            });
         } catch (error) {
             if (error.isAxiosError) {
                 throw new APIError(error.response);

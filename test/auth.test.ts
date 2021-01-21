@@ -383,5 +383,24 @@ describe("AuthenticationService", () => {
                 .rejects
                 .toThrowError(error);
         });
+
+        it("revokes existing token if forceRenewal is true when already authenticated", async () => {
+            const authenticationService = new AuthenticationService();
+
+            mocked(inquirer.prompt).mockResolvedValue(samples.loginRequest);
+            mocked(authenticationService.zeplinApi.login).mockResolvedValue(samples.loginResponse);
+            mocked(authenticationService.zeplinApi.generateToken).mockResolvedValue(samples.validJwt);
+
+            await authenticationService.promptForLogin({ noBrowser: true });
+
+            await expect(authenticationService.promptForLogin({ noBrowser: true, forceRenewal: true }))
+                .resolves
+                .toStrictEqual({
+                    token: samples.validJwt,
+                    method: AUTH_METHOD.LOGIN_WITH_PROMPT
+                });
+
+            expect(authenticationService.zeplinApi.revokeToken).toHaveBeenCalledWith(samples.validJwt);
+        });
     });
 });
