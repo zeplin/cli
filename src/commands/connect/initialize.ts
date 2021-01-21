@@ -13,7 +13,7 @@ import {
 } from "../../tasks";
 import { CliOptions, InitializeContext } from "../../tasks/context/initialize";
 import { Workflow } from "../../util/task";
-import { indent } from "../../util/text";
+import { indent, stringify } from "../../util/text";
 import { AuthenticationService } from "../../service";
 import { ConnectedComponentsService } from "./service";
 import logger from "../../util/logger";
@@ -27,6 +27,8 @@ export type InitializeCommandOptions = CliOptions;
 
 export async function initialize(options: InitializeCommandOptions): Promise<void> {
     try {
+        logger.debug(`initialize options: ${stringify(options)}`);
+
         const authService = new AuthenticationService();
         const connectService = new ConnectedComponentsService({ authService });
 

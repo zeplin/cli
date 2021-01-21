@@ -5,6 +5,8 @@ import { installPackages, getLatestVersions } from "../service/package-manager";
 import { getPackageJson, writePackageJson, PackageJson } from "../util/js/config";
 import { projectHasYarn } from "../util/package";
 import { sortByKeys } from "../util/object";
+import logger from "../util/logger";
+import { stringify } from "../util/text";
 
 const addZeplinScripts = (packageJson: PackageJson): void => {
     packageJson.scripts = {
@@ -31,10 +33,11 @@ const install: TaskStep<InstallPackagesContext> = async (ctx, task): Promise<voi
     ctx.installedPackages = packageNamesWithVersions;
 
     let packageJson = await getPackageJson();
+    logger.debug(`Current package.json: ${stringify(packageJson)}`);
 
     const installGlobal = !packageJson;
 
-    if (ctx.cliOptions.skipLocalInstall) {
+    if (!installGlobal && ctx.cliOptions.skipLocalInstall) {
         ctx.skippedInstallingRequiredPackages = projectTypes.length > 0;
         if (packageJson) {
             packageJson.devDependencies = sortByKeys({
@@ -42,8 +45,10 @@ const install: TaskStep<InstallPackagesContext> = async (ctx, task): Promise<voi
                 ...packageNamesWithVersions
             });
         }
+        logger.debug("Skipped local package installation");
         task.skip(ctx, ui.skippedInstallation);
     } else {
+        logger.debug(`Installing packages ${stringify({ installGlobal, packageNamesWithVersions })}`);
         await installPackages(packageNamesWithVersions, { installGlobal });
         ctx.installedGlobally = installGlobal;
         ctx.isYarn = projectHasYarn();
@@ -55,6 +60,7 @@ const install: TaskStep<InstallPackagesContext> = async (ctx, task): Promise<voi
 
     if (packageJson) {
         addZeplinScripts(packageJson);
+        logger.debug(`Updating package.json: ${stringify({ packageJson })}`);
         await writePackageJson(packageJson);
     }
 };

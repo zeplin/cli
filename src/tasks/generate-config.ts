@@ -4,6 +4,8 @@ import { InitializeContext } from "./context/initialize";
 import { mkdir, writeJsonIntoFile } from "../util/file";
 import path from "path";
 import { ComponentConfigFile } from "../commands/connect/interfaces/config";
+import logger from "../util/logger";
+import { stringify } from "../util/text";
 
 const writeFile = async (filePath: string, config: ComponentConfigFile): Promise<void> => {
     await mkdir(path.dirname(filePath));
@@ -33,6 +35,7 @@ const generate: TaskStep<InitializeContext> = async ctx => {
         config[ctx.git.type] = ctx.git.config;
     }
 
+    logger.debug(`Generated config file: ${stringify(config)}`);
     await writeFile(ctx.cliOptions.configFile, config);
 };
 

@@ -5,6 +5,7 @@ import * as ui from "./ui/detect-git";
 import { DetectGitContext } from "./context/detect-git";
 import { BitbucketConfig } from "../commands/connect/interfaces/config";
 import logger from "../util/logger";
+import { stringify } from "../util/text";
 
 const GITHUB_SOURCE = "github.com";
 const GITLAB_SOURCE = "gitlab.com";
@@ -63,6 +64,15 @@ const detect: TaskStep<DetectGitContext> = async (ctx, task) => {
 
             const type = gitSourceTypes[source];
             let config;
+
+            logger.debug(`Git configuration: ${stringify({
+                owner,
+                repository,
+                source,
+                host,
+                protocol,
+                type
+            })}`);
 
             if (type) {
                 if (source === BITBUCKET_SERVER_SOURCE) {

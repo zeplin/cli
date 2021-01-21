@@ -8,6 +8,8 @@ import * as ui from "./ui/select-component";
 import { TaskError } from "../util/task/error";
 import { sortByField } from "../util/array";
 import { selectComponentPrompt, chooseAtLeastOneComponentErrorMessage } from "../messages";
+import logger from "../util/logger";
+import { stringify } from "../util/text";
 
 inquirer.registerPrompt("search-checkbox", inquirerSearchCheckbox);
 
@@ -81,6 +83,7 @@ const checkComponentFlag: TaskStep<ResourceContext> = (ctx, task): void => {
         const foundComponent = Object.values(ctx.components).find(b => b._id === ctx.cliOptions.componentId);
 
         if (foundComponent) {
+            logger.debug(`Found component via params: ${stringify(foundComponent)}`);
             ctx.selectedComponents = [foundComponent];
             task.complete(ctx, ui.skippedSelection);
         } else {

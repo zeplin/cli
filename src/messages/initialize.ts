@@ -45,7 +45,7 @@ export const alreadyInitialized = "⚠️  Found an existing Connected Component
 
 export const notInitialized = "⚠️  Looks like this project has no Connected Components configuration.";
 
-export const userSelectedNotToInitialize = (): string => dedent`
+export const userSelectedNotToInitialize = dedent`
         Operation aborted.
         Check the documentation for initialization and add-component details:
         https://github.com/zeplin/cli/blob/master/README.md"

@@ -10,6 +10,7 @@ import { WorkaroundChoice } from "../util/inquirer-helpers";
 import { TaskError } from "../util/task/error";
 import { sortByField } from "../util/array";
 import { selectResourcePrompt } from "../messages";
+import { stringify } from "../util/text";
 
 inquirer.registerPrompt("search-list", inquirerSearchList);
 
@@ -67,6 +68,7 @@ const checkResourceFlags: TaskStep<ResourceContext> = (ctx, task): void => {
         const foundResource = Object.values(ctx.resources).find(b => b._id === resourceId);
 
         if (foundResource) {
+            logger.debug(`Found resource via params: ${stringify(foundResource)}`);
             ctx.selectedResource = foundResource;
             task.complete(ctx, ui.skippedSelection);
         } else {

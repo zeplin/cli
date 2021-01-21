@@ -5,6 +5,8 @@ import { TaskError } from "../util/task/error";
 import { AddComponentContext } from "./context/add-component";
 import * as ui from "./ui/add-component-config";
 import { existingComponentPrompt } from "../messages";
+import logger from "../util/logger";
+import { stringify } from "../util/text";
 
 const confirmAddExistingComponent =
     async (ctx: AddComponentContext, task: Task<AddComponentContext>): Promise<boolean> => {
@@ -23,8 +25,15 @@ const confirmAddExistingComponent =
     };
 
 const addComponent: TaskStep<AddComponentContext> = async (ctx, task) => {
-    const config = ctx.configFile;
-    const resource = ctx.selectedResource;
+    const {
+        configFile: config,
+        selectedResource: resource,
+        selectedComponents
+    } = ctx;
+
+    logger.debug(`Add component config context: ${stringify({
+        config, resource, selectedComponents
+    })}`);
 
     if (resource.type === "Project") {
         if (config.projects && !config.projects.includes(resource._id)) {
@@ -42,12 +51,12 @@ const addComponent: TaskStep<AddComponentContext> = async (ctx, task) => {
 
     const componentNameExists = !!(existingComponents.map(ec => ec.zeplinNames)
         .find(existingZeplinName =>
-            ctx.selectedComponents.find(sc => existingZeplinName?.includes(sc.name))
+            selectedComponents.find(sc => existingZeplinName?.includes(sc.name))
         ));
 
     const componentIdExists = !!(existingComponents.map(ec => ec.zeplinIds)
         .find(existingZeplinId =>
-            ctx.selectedComponents.find(sc => existingZeplinId?.includes(sc._id))
+            selectedComponents.find(sc => existingZeplinId?.includes(sc._id))
         ));
 
     if ((componentNameExists || componentIdExists) &&
@@ -59,9 +68,11 @@ const addComponent: TaskStep<AddComponentContext> = async (ctx, task) => {
         ...existingComponents,
         {
             path: ctx.file.path,
-            zeplinIds: ctx.selectedComponents.map(c => c._id)
+            zeplinIds: selectedComponents.map(c => c._id)
         }
     ];
+
+    logger.debug(`Updated config: ${stringify({ config })}`);
 
     await writeJsonIntoFile(ctx.cliOptions.configFile, config);
 };

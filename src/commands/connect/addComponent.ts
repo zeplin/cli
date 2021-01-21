@@ -12,7 +12,7 @@ import {
 } from "../../tasks";
 import { CliOptions, AddComponentContext } from "../../tasks/context/add-component";
 import { Workflow } from "../../util/task";
-import { indent } from "../../util/text";
+import { indent, stringify } from "../../util/text";
 import { AuthenticationService } from "../../service";
 import { ConnectedComponentsService } from "./service";
 import logger from "../../util/logger";
@@ -36,6 +36,8 @@ export type AddComponentCommandOptions = CliOptions;
 
 export async function addComponent(options: AddComponentCommandOptions): Promise<void> {
     try {
+        logger.debug(`add-commponents options: ${stringify(options)}`);
+
         const authService = new AuthenticationService();
         const connectService = new ConnectedComponentsService({ authService });
 
@@ -55,7 +57,7 @@ export async function addComponent(options: AddComponentCommandOptions): Promise
         if (!existingConfigFile) {
             logger.info(notInitialized);
             if (!(await askForInitialization())) {
-                logger.info(userSelectedNotToInitialize());
+                logger.info(userSelectedNotToInitialize);
                 return;
             }
 
