@@ -99,7 +99,9 @@ const configExplorerOptions = {
 
             return JSON.parse(stripped);
         }
-    }
+    },
+    // Caching causes add-components command to exclude the added component in the update request
+    cache: false
 };
 
 const configExplorer = cosmiconfig("@zeplin/cli", configExplorerOptions);
