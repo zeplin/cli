@@ -16,9 +16,20 @@ const generate: TaskStep<InitializeContext> = async ctx => {
     const config: ComponentConfigFile = Object.create(null);
     const resource = ctx.selectedResource;
 
-    config.plugins = ctx.installedPlugins.map(p => ({
-        name: p
-    }));
+    config.plugins = await Promise.all(
+        ctx.installedPlugins.map(async name => {
+            const projectType = ctx.projectTypes.find(pt =>
+                pt.installPackages && pt.installPackages.includes(name)
+            );
+
+            if (projectType?.configurator) {
+                const pluginConfig = await projectType.configurator(ctx.packageJson);
+                return { name, config: pluginConfig };
+            }
+
+            return { name };
+        })
+    );
 
     if (resource.type === "Project") {
         config.projects = [resource._id];

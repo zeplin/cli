@@ -1,6 +1,8 @@
 import { jsDependencyMatcherFactory } from "./matchers/js-dependency";
 import { supportedStorybookFrameworks } from "./storybook";
-import { Matcher } from "./matchers";
+import { ProjectMatcher } from "./matchers";
+import { Configurator } from "./configurators";
+import { storybookConfiguratorFactory } from "./configurators/storybook";
 
 export enum ProjectType {
     REACT = "react",
@@ -14,8 +16,9 @@ export enum ProjectType {
 
 export interface SupportedProjectType {
     type: ProjectType;
-    matcher: Matcher;
+    matcher: ProjectMatcher;
     installPackages?: string[];
+    configurator?: Configurator;
 }
 
 export const supportedProjectTypes: SupportedProjectType[] = [
@@ -52,7 +55,8 @@ export const supportedProjectTypes: SupportedProjectType[] = [
         matcher: jsDependencyMatcherFactory(supportedStorybookFrameworks),
         installPackages: [
             "@zeplin/cli-connect-storybook-plugin"
-        ]
+        ],
+        configurator: storybookConfiguratorFactory()
     }
 ];
 
