@@ -1,6 +1,7 @@
 import chalk from "chalk";
-import path from "path";
 import dedent from "ts-dedent";
+import importFrom from "import-from";
+import path from "path";
 import urljoin from "url-join";
 import {
     ComponentConfigFile, ConnectPluginInstance, Plugin, GitConfig, BitbucketConfig
@@ -28,6 +29,11 @@ interface ConnectPluginConstructor {
 
 const importPlugin = async (pluginName: string): Promise<ConnectPluginConstructor> => {
     try {
+        // Workaround to retrieve plugins for initializer
+        const pluginInCwd = importFrom.silent("node_modules", pluginName);
+        if (pluginInCwd) {
+            return (pluginInCwd as { default: ConnectPluginConstructor }).default;
+        }
         return (await import(pluginName)).default as ConnectPluginConstructor;
     } catch (e) {
         const error = new CLIError(dedent`
@@ -40,7 +46,7 @@ const importPlugin = async (pluginName: string): Promise<ConnectPluginConstructo
     }
 };
 
-const createPluginInstance = async (plugin: Plugin): Promise<ConnectPluginInstance> => {
+const createPluginInstance = async (plugin: Plugin, components: ComponentConfig[]): Promise<ConnectPluginInstance> => {
     const PluginClass = await importPlugin(plugin.name);
     const pluginInstance = new PluginClass();
 
@@ -52,7 +58,7 @@ const createPluginInstance = async (plugin: Plugin): Promise<ConnectPluginInstan
         throw new CLIError(dedent`
                 ${chalk.bold(plugin.name)} does not conform Connected Components plugin interface.
                 Please make sure that the plugin implements the requirements listed on the documentation.
-                https://github.com/zeplin/cli/blob/develop/PLUGIN.md
+                https://github.com/zeplin/cli/blob/master/PLUGIN.md
         `);
     }
 
@@ -60,14 +66,17 @@ const createPluginInstance = async (plugin: Plugin): Promise<ConnectPluginInstan
 
     if (typeof pluginInstance.init === "function") {
         logger.debug(`${plugin.name} has init method. Initializing with ${JSON.stringify(plugin.config)}`);
-        await pluginInstance.init({ config: plugin.config });
+        await pluginInstance.init({ config: plugin.config, components, logger });
     }
 
     return pluginInstance;
 };
 
-const initializePlugins = async (plugins: Plugin[]): Promise<ConnectPluginInstance[]> => {
-    const imports = plugins.map(plugin => createPluginInstance(plugin));
+const initializePlugins = async (
+    plugins: Plugin[],
+    components: ComponentConfig[]
+): Promise<ConnectPluginInstance[]> => {
+    const imports = plugins.map(plugin => createPluginInstance(plugin, components));
 
     const pluginInstances = await Promise.all(imports);
     return pluginInstances;
@@ -237,6 +246,7 @@ const connectComponentConfig = async (
         path: component.path,
         name: component.name,
         zeplinNames: component.zeplinNames,
+        zeplinIds: component.zeplinIds,
         urlPaths,
         data
     };
@@ -245,10 +255,12 @@ const connectComponentConfig = async (
 const connectComponentConfigFile = async (
     componentConfigFile: ComponentConfigFile
 ): Promise<ConnectedBarrelComponents> => {
-    const plugins = await initializePlugins(componentConfigFile.plugins || []);
+    const { components } = componentConfigFile;
+
+    const plugins = await initializePlugins(componentConfigFile.plugins || [], components);
 
     const connectedComponents = await Promise.all(
-        componentConfigFile.components.map(component =>
+        components.map(component =>
             connectComponentConfig(
                 component,
                 componentConfigFile,

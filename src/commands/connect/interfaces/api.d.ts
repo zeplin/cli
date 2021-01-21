@@ -11,7 +11,8 @@ export interface Data {
 /** @internal */
 export interface ConnectedComponent {
     path: string;
-    zeplinNames: string[];
+    zeplinNames?: string[];
+    zeplinIds?: string[];
     name?: string;
     urlPaths?: Link[];
     data?: Data[];
@@ -27,4 +28,10 @@ export interface ConnectedBarrelComponents {
     projects: string[];
     styleguides: string[];
     connectedComponents: ConnectedComponent[];
+}
+
+/** @internal */
+export interface ConnectedBarrels {
+    projects: string[];
+    styleguides: string[];
 }

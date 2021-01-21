@@ -1,0 +1,130 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ConfigProcessor when config file options are passed and at least one is invalid fails 1`] = `"Oops! Looks like test/resources/config/invalid/.zeplin/components.json has some problems: \\"components\\" must be an array"`;
+
+exports[`ConfigProcessor when config file options are passed and they are valid parses the config files 1`] = `
+Array [
+  Object {
+    "components": Array [
+      Object {
+        "path": "src/Sample1.jsx",
+        "zeplinNames": Array [
+          "screen1",
+        ],
+      },
+      Object {
+        "path": "src/Sample2.jsx",
+        "zeplinNames": Array [
+          "screen2",
+        ],
+      },
+    ],
+    "plugins": Array [],
+    "projects": Array [
+      "pid",
+    ],
+  },
+  Object {
+    "components": Array [
+      Object {
+        "path": "src/Sample1.jsx",
+        "zeplinNames": Array [
+          "screen1",
+        ],
+      },
+      Object {
+        "path": "src/Sample2.jsx",
+        "zeplinNames": Array [
+          "screen2",
+        ],
+      },
+    ],
+    "plugins": Array [],
+    "projects": Array [
+      "pid",
+    ],
+  },
+]
+`;
+
+exports[`ConfigProcessor when no config file option is passed and discovered config file is invalid fails 1`] = `"Oops! Looks like test/resources/config/invalid/.zeplin/components.json has some problems: \\"components\\" must be an array"`;
+
+exports[`ConfigProcessor when no config file option is passed and json config file is discovered parses the config 1`] = `
+Array [
+  Object {
+    "components": Array [
+      Object {
+        "path": "src/Sample1.jsx",
+        "zeplinNames": Array [
+          "screen1",
+        ],
+      },
+      Object {
+        "path": "src/Sample2.jsx",
+        "zeplinNames": Array [
+          "screen2",
+        ],
+      },
+    ],
+    "plugins": Array [],
+    "projects": Array [
+      "pid",
+    ],
+  },
+]
+`;
+
+exports[`ConfigProcessor when no config file option is passed and json with comments config file is discovered parses the config 1`] = `
+Array [
+  Object {
+    "components": Array [
+      Object {
+        "path": "src/Sample1.jsx",
+        "zeplinNames": Array [
+          "screen1",
+        ],
+      },
+      Object {
+        "path": "src/Sample2.jsx",
+        "zeplinNames": Array [
+          "screen2",
+        ],
+      },
+    ],
+    "plugins": Array [],
+    "projects": Array [
+      "pid",
+    ],
+  },
+]
+`;
+
+exports[`ConfigProcessor when no config file option is passed and no default config file is discovered fails 1`] = `
+"Missing configuration file!
+Please refer to [4mhttps://zpl.io/connected-components[24m to create a configuration file."
+`;
+
+exports[`ConfigProcessor when no config file option is passed and yaml config file is discovered parses the config 1`] = `
+Array [
+  Object {
+    "components": Array [
+      Object {
+        "path": "src/Sample1.jsx",
+        "zeplinNames": Array [
+          "screen1",
+        ],
+      },
+      Object {
+        "path": "src/Sample2.jsx",
+        "zeplinNames": Array [
+          "screen2",
+        ],
+      },
+    ],
+    "plugins": Array [],
+    "projects": Array [
+      "pid",
+    ],
+  },
+]
+`;

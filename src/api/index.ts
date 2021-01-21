@@ -1,7 +1,14 @@
 import Axios, { AxiosInstance } from "axios";
 import { defaults } from "../config/defaults";
 import { interceptors } from "./interceptors";
-import { LoginRequest, LoginResponse } from "./interfaces";
+import {
+    LoginRequest,
+    LoginResponse,
+    ProjectsResponse,
+    ProjectResponse,
+    StyleguidesResponse,
+    StyleguideResponse
+} from "./interfaces";
 import { APIError, CLIError } from "../errors";
 import { ConnectedComponentList } from "../commands/connect/interfaces/api";
 import { MOVED_TEMPORARILY } from "http-status-codes";
@@ -43,7 +50,7 @@ export class ZeplinApi {
                 params: {
                     client_id: defaults.api.clientId,
                     response_type: "token",
-                    scope: "write"
+                    scope: "write delete"
                 },
                 headers: { "Zeplin-Token": zeplinToken },
                 maxRedirects: 0,
@@ -78,6 +85,95 @@ export class ZeplinApi {
                     headers: { "Zeplin-Access-Token": authToken }
                 }
             );
+        } catch (error) {
+            if (error.isAxiosError) {
+                throw new APIError(error.response);
+            }
+            throw new CLIError(error.message);
+        }
+    }
+
+    async deleteConnectedComponents(
+        authToken: string,
+        params: { barrelId: string; barrelType: BarrelType }
+    ): Promise<void> {
+        try {
+            const { barrelId, barrelType } = params;
+
+            await this.axios.delete(
+                `/public/cli/${barrelType}/${barrelId}/connectedcomponents`,
+                {
+                    headers: { "Zeplin-Access-Token": authToken }
+                }
+            );
+        } catch (error) {
+            if (error.isAxiosError) {
+                throw new APIError(error.response);
+            }
+            throw new CLIError(error.message);
+        }
+    }
+
+    async getProjects(authToken: string): Promise<ProjectsResponse> {
+        try {
+            const response = await this.axios.get(
+                `/public/cli/projects`,
+                {
+                    headers: { "Zeplin-Access-Token": authToken }
+                }
+            );
+            return response.data;
+        } catch (error) {
+            if (error.isAxiosError) {
+                throw new APIError(error.response);
+            }
+            throw new CLIError(error.message);
+        }
+    }
+
+    async getProject(authToken: string, projectId: string): Promise<ProjectResponse> {
+        try {
+            const response = await this.axios.get(
+                `/public/cli/projects/${projectId}`,
+                {
+                    headers: { "Zeplin-Access-Token": authToken }
+                }
+            );
+            return response.data;
+        } catch (error) {
+            if (error.isAxiosError) {
+                throw new APIError(error.response);
+            }
+            throw new CLIError(error.message);
+        }
+    }
+
+    async getStyleguides(authToken: string): Promise<StyleguidesResponse> {
+        try {
+            const response = await this.axios.get(
+                `/public/cli/styleguides`,
+                {
+                    headers: { "Zeplin-Access-Token": authToken }
+                }
+            );
+            return response.data;
+        } catch (error) {
+            if (error.isAxiosError) {
+                throw new APIError(error.response);
+            }
+            throw new CLIError(error.message);
+        }
+    }
+
+    async getStyleguide(authToken: string, styleguideId: string): Promise<StyleguideResponse> {
+        try {
+            const response = await this.axios.get(
+                `/public/cli/styleguides/${styleguideId}`,
+                {
+                    headers: { "Zeplin-Access-Token": authToken }
+                }
+            );
+            return response.data;
         } catch (error) {
             if (error.isAxiosError) {
                 throw new APIError(error.response);

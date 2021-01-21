@@ -1,0 +1,154 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Task Multiple Tasks UI tasks should fail and throw if one of tasks throws 1`] = `
+"- Initial static text
+[2m   → Initial static subtext[22m
+[36m⠋[39m Rendered text: task 1
+[2m   → Rendered text: task 1[22m
+[32m✔[39m Rendered text: task 1
+[2m   → Rendered text: task 1[22m
+- Initial static text
+[2m   → Initial static subtext[22m
+[31m✖[39m Failed rendered text: task 1
+[2m   → Failed rendered text: task 1[22m
+"
+`;
+
+exports[`Task Multiple Tasks UI tasks should fail and throw if one of tasks throws regular error 1`] = `
+"- Initial static text
+[2m   → Initial static subtext[22m
+[36m⠋[39m Rendered text: task 1
+[2m   → Rendered text: task 1[22m
+[32m✔[39m Rendered text: task 1
+[2m   → Rendered text: task 1[22m
+- Initial static text
+[2m   → Initial static subtext[22m
+[31m✖[39m Initial static text
+[2m   → Initial static subtext[22m
+"
+`;
+
+exports[`Task Multiple Tasks UI tasks should run consecutively 1`] = `
+"- Initial static text
+[2m   → Initial static subtext[22m
+[36m⠋[39m Rendered text: task 1
+[2m   → Rendered text: task 1[22m
+[32m✔[39m Rendered text: task 1
+[2m   → Rendered text: task 1[22m
+- Initial static text
+[2m   → Initial static subtext[22m
+[36m⠋[39m Rendered text: task 2
+[2m   → Rendered text: task 2[22m
+[32m✔[39m Rendered text: task 2
+[2m   → Rendered text: task 2[22m
+"
+`;
+
+exports[`Task Multiple Tasks UI tasks should run even if one of tasks throws regular error with no-op failure handler 1`] = `
+"- Initial static text
+[2m   → Initial static subtext[22m
+[36m⠋[39m Rendered text: task 1
+[2m   → Rendered text: task 1[22m
+[32m✔[39m Rendered text: task 1
+[2m   → Rendered text: task 1[22m
+- Initial static text
+[2m   → Initial static subtext[22m
+[31m✖[39m Initial static text
+[2m   → Initial static subtext[22m
+- Initial static text
+[2m   → Initial static subtext[22m
+[36m⠋[39m Rendered text: task 3
+[2m   → Rendered text: task 3[22m
+[32m✔[39m Rendered text: task 3
+[2m   → Rendered text: task 3[22m
+"
+`;
+
+exports[`Task UI no steps task should only render function initial UI 1`] = `
+"- Initial static text
+[2m   → Initial static text[22m
+[32m✔[39m Initial static text
+[2m   → Initial static text[22m
+"
+`;
+
+exports[`Task UI no steps task should only render function initial UI with params 1`] = `
+"- Rendered text: should render this param
+[2m   → Rendered text: should render this param[22m
+[32m✔[39m Rendered text: should render this param
+[2m   → Rendered text: should render this param[22m
+"
+`;
+
+exports[`Task UI no steps task should only render static initial UI 1`] = `
+"- Initial static text
+[2m   → Initial static subtext[22m
+[32m✔[39m Initial static text
+[2m   → Initial static subtext[22m
+"
+`;
+
+exports[`Task UI with steps task should not update UI if not explicitly called 1`] = `
+"- Initial static text
+[2m   → Initial static subtext[22m
+[32m✔[39m Initial static text
+[2m   → Initial static subtext[22m
+"
+`;
+
+exports[`Task UI with steps task should update UI if complete is called with another UI 1`] = `
+"- Initial static text
+[2m   → Initial static subtext[22m
+[32m✔[39m Rendered text: should render this param
+[2m   → Rendered text: should render this param[22m
+"
+`;
+
+exports[`Task UI with steps task should update UI if fail is called with another UI 1`] = `
+"- Initial static text
+[2m   → Initial static subtext[22m
+[31m✖[39m Rendered text: should render this param
+[2m   → Rendered text: should render this param[22m
+"
+`;
+
+exports[`Task UI with steps task should update UI if render is called in a step 1`] = `
+"- Initial static text
+[2m   → Initial static subtext[22m
+[36m⠋[39m Rendered text: should render this param
+[2m   → Rendered text: should render this param[22m
+[32m✔[39m Rendered text: should render this param
+[2m   → Rendered text: should render this param[22m
+"
+`;
+
+exports[`Task UI with steps task should update UI if skip is called with another UI 1`] = `
+"- Initial static text
+[2m   → Initial static subtext[22m
+[34mℹ[39m Rendered text: should render this param
+[2m   → Rendered text: should render this param[22m
+"
+`;
+
+exports[`Task UI with steps task should update UI with step's returned value 1`] = `
+"- Initial static text
+[2m   → Initial static subtext[22m
+[36m⠋[39m step 1 UI output
+[36m⠙[39m step 2 UI output
+[32m✔[39m step 2 UI output
+"
+`;
+
+exports[`Task UI with steps task should update UI with transitionTo 1`] = `
+"- Initial static text
+[2m   → Initial static subtext[22m
+[36m⠋[39m Rendered text: should render this param
+[2m   → Rendered text: should render this param[22m
+[36m⠙[39m Another rendered text: should render this another param
+[2m   → Another rendered text: should render this another param[22m
+[36m⠹[39m Another rendered text: should render this another param 2
+[2m   → Another rendered text: should render this another param 2[22m
+[32m✔[39m Another rendered text: should render this another param 2
+[2m   → Another rendered text: should render this another param 2[22m
+"
+`;

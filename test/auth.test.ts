@@ -1,13 +1,20 @@
+import { ChildProcess } from "child_process";
 import inquirer from "inquirer";
 import { mocked } from "ts-jest/utils";
+import open from "open";
 import { readAuthToken, saveAuthToken } from "../src/util/auth-file";
-import { AuthenticationService } from "../src/service/auth";
+import { AuthenticationService, AUTH_METHOD } from "../src/service/auth";
 import { AuthError } from "../src/errors";
 import * as envUtil from "../src/util/env";
 import * as samples from "./samples";
+import { mockResolvedWithValue } from "./util";
+import dedent from "ts-dedent";
+import PromptUI from "inquirer/lib/ui/prompt";
 
 jest.mock("inquirer");
+jest.mock("open");
 jest.mock("../src/api");
+jest.mock("../src/server");
 jest.mock("../src/util/env");
 jest.mock("../src/util/auth-file");
 
@@ -18,66 +25,186 @@ describe("AuthenticationService", () => {
 
     describe("authenticate()", () => {
         describe("Token is retrieved from login flow.", () => {
-            it("returns JWT when login flow is successful.", async () => {
-                const authenticationService = new AuthenticationService();
+            describe("Browser login is skipped.", () => {
+                it("returns JWT when login flow is successful.", async () => {
+                    const authenticationService = new AuthenticationService();
 
-                mocked(envUtil.isCI).mockReturnValueOnce(false);
-                mocked(readAuthToken).mockResolvedValueOnce("");
-                mocked(inquirer.prompt).mockResolvedValueOnce(samples.loginRequest);
-                mocked(authenticationService.zeplinApi.login).mockResolvedValueOnce(samples.loginResponse);
-                mocked(authenticationService.zeplinApi.generateToken).mockResolvedValueOnce(samples.validJwt);
+                    mocked(envUtil.isCI).mockReturnValueOnce(false);
+                    mocked(readAuthToken).mockResolvedValueOnce("");
+                    mocked(inquirer.prompt).mockResolvedValueOnce(samples.loginRequest);
+                    mocked(authenticationService.zeplinApi.login).mockResolvedValueOnce(samples.loginResponse);
+                    mocked(authenticationService.zeplinApi.generateToken).mockResolvedValueOnce(samples.validJwt);
 
-                await expect(authenticationService.authenticate())
-                    .resolves
-                    .toBe(samples.validJwt);
+                    await expect(authenticationService.authenticate({ noBrowser: true }))
+                        .resolves
+                        .toStrictEqual({
+                            token: samples.validJwt,
+                            method: AUTH_METHOD.LOGIN_WITH_PROMPT
+                        });
 
-                expect(readAuthToken).toHaveBeenCalled();
-                expect(inquirer.prompt).toHaveBeenCalled();
-                expect(authenticationService.zeplinApi.login).toHaveBeenCalledWith(samples.loginRequest);
-                expect(authenticationService.zeplinApi.generateToken).toHaveBeenCalledWith(samples.loginResponse.token);
-                expect(saveAuthToken).toHaveBeenCalledWith(samples.validJwt);
+                    expect(readAuthToken).toHaveBeenCalled();
+                    expect(inquirer.prompt).toHaveBeenCalled();
+                    expect(authenticationService.zeplinApi.login).toHaveBeenCalledWith(samples.loginRequest);
+                    expect(authenticationService.zeplinApi.generateToken)
+                        .toHaveBeenCalledWith(samples.loginResponse.token);
+                    expect(saveAuthToken).toHaveBeenCalledWith(samples.validJwt);
+                });
+
+                it("validates JWT when login flow is successful.", async () => {
+                    const authenticationService = new AuthenticationService();
+
+                    mocked(envUtil.isCI).mockReturnValueOnce(false);
+                    mocked(readAuthToken).mockResolvedValueOnce("");
+                    mocked(inquirer.prompt).mockResolvedValueOnce(samples.loginRequest);
+                    mocked(authenticationService.zeplinApi.login).mockResolvedValueOnce(samples.loginResponse);
+                    mocked(authenticationService.zeplinApi.generateToken).mockResolvedValueOnce(samples.validJwt);
+
+                    await authenticationService.authenticate({ noBrowser: true });
+
+                    expect(authenticationService.validateToken())
+                        .toStrictEqual({
+                            token: samples.validJwt,
+                            method: AUTH_METHOD.LOGIN_WITH_PROMPT
+                        });
+
+                    expect(readAuthToken).toHaveBeenCalledTimes(1);
+                    expect(inquirer.prompt).toHaveBeenCalledTimes(1);
+                    expect(authenticationService.zeplinApi.login).toHaveBeenCalledTimes(1);
+                    expect(authenticationService.zeplinApi.generateToken).toHaveBeenCalledTimes(1);
+                    expect(saveAuthToken).toHaveBeenCalledTimes(1);
+                });
+
+                it("throws error when login API throws error.", async () => {
+                    const authenticationService = new AuthenticationService();
+
+                    const apiError = new Error("When beggars die there are no comets seen.");
+
+                    mocked(envUtil.isCI).mockReturnValueOnce(false);
+                    mocked(readAuthToken).mockResolvedValueOnce("");
+                    mocked(inquirer.prompt).mockResolvedValueOnce(samples.loginRequest);
+                    mocked(authenticationService.zeplinApi.login).mockRejectedValueOnce(apiError);
+                    mocked(authenticationService.zeplinApi.generateToken).mockResolvedValueOnce(samples.validJwt);
+
+                    await expect(authenticationService.authenticate({ noBrowser: true }))
+                        .rejects
+                        .toThrow(apiError);
+
+                    expect(readAuthToken).toHaveBeenCalled();
+                    expect(inquirer.prompt).toHaveBeenCalled();
+                    expect(authenticationService.zeplinApi.generateToken).not.toHaveBeenCalled();
+                    expect(saveAuthToken).not.toHaveBeenCalled();
+                });
+
+                it("throws error when generateToken API throws error.", async () => {
+                    const authenticationService = new AuthenticationService();
+
+                    const apiError = new Error("The heavens themselves blaze forth the death of princes.");
+
+                    mocked(envUtil.isCI).mockReturnValueOnce(false);
+                    mocked(readAuthToken).mockResolvedValueOnce("");
+                    mocked(inquirer.prompt).mockResolvedValueOnce(samples.loginRequest);
+                    mocked(authenticationService.zeplinApi.login).mockResolvedValueOnce(samples.loginResponse);
+                    mocked(authenticationService.zeplinApi.generateToken).mockRejectedValueOnce(apiError);
+
+                    await expect(authenticationService.authenticate({ noBrowser: true }))
+                        .rejects
+                        .toThrow(apiError);
+
+                    expect(readAuthToken).toHaveBeenCalled();
+                    expect(inquirer.prompt).toHaveBeenCalled();
+                    expect(authenticationService.zeplinApi.login).toHaveBeenCalledWith(samples.loginRequest);
+                    expect(saveAuthToken).not.toHaveBeenCalled();
+                });
             });
 
-            it("throws error when login API throws error.", async () => {
-                const authenticationService = new AuthenticationService();
+            describe("Browser login is not skipped.", () => {
+                it("returns JWT when browser login flow is successful.", async () => {
+                    const authenticationService = new AuthenticationService();
 
-                const apiError = new Error("When beggars die there are no comets seen.");
+                    mocked(envUtil.isCI).mockReturnValueOnce(false);
+                    mocked(readAuthToken).mockResolvedValueOnce("");
+                    mocked(open).mockResolvedValueOnce(jest.fn() as unknown as ChildProcess);
+                    mocked(inquirer.prompt)
+                        .mockReturnValueOnce(new Promise((): void => {}) as Promise<unknown> & { ui: PromptUI });
+                    mocked(authenticationService.loginServer.waitForToken).mockResolvedValueOnce(samples.validJwt);
 
-                mocked(envUtil.isCI).mockReturnValueOnce(false);
-                mocked(readAuthToken).mockResolvedValueOnce("");
-                mocked(inquirer.prompt).mockResolvedValueOnce(samples.loginRequest);
-                mocked(authenticationService.zeplinApi.login).mockRejectedValueOnce(apiError);
-                mocked(authenticationService.zeplinApi.generateToken).mockResolvedValueOnce(samples.validJwt);
+                    await expect(authenticationService.authenticate())
+                        .resolves
+                        .toStrictEqual({
+                            token: samples.validJwt,
+                            method: AUTH_METHOD.LOGIN_WITH_BROWSER
+                        });
 
-                await expect(authenticationService.authenticate())
-                    .rejects
-                    .toThrow(apiError);
+                    expect(readAuthToken).toHaveBeenCalled();
+                    expect(open).toHaveBeenCalled();
+                    expect(authenticationService.zeplinApi.login).not.toHaveBeenCalled();
+                    expect(authenticationService.zeplinApi.generateToken).not.toHaveBeenCalled();
+                    await mockResolvedWithValue(
+                        mocked(authenticationService.loginServer.waitForToken),
+                        samples.validJwt
+                    );
+                    expect(saveAuthToken).toHaveBeenCalledWith(samples.validJwt);
+                });
 
-                expect(readAuthToken).toHaveBeenCalled();
-                expect(inquirer.prompt).toHaveBeenCalled();
-                expect(authenticationService.zeplinApi.generateToken).not.toHaveBeenCalled();
-                expect(saveAuthToken).not.toHaveBeenCalled();
-            });
+                it("validates JWT when browser login flow is successful.", async () => {
+                    const authenticationService = new AuthenticationService();
 
-            it("throws error when generateToken API throws error.", async () => {
-                const authenticationService = new AuthenticationService();
+                    mocked(envUtil.isCI).mockReturnValueOnce(false);
+                    mocked(readAuthToken).mockResolvedValueOnce("");
+                    mocked(open).mockResolvedValueOnce(jest.fn() as unknown as ChildProcess);
+                    mocked(inquirer.prompt)
+                        .mockReturnValueOnce(new Promise((): void => {}) as Promise<unknown> & { ui: PromptUI });
+                    mocked(authenticationService.loginServer.waitForToken).mockResolvedValueOnce(samples.validJwt);
 
-                const apiError = new Error("The heavens themselves blaze forth the death of princes.");
+                    await authenticationService.authenticate();
 
-                mocked(envUtil.isCI).mockReturnValueOnce(false);
-                mocked(readAuthToken).mockResolvedValueOnce("");
-                mocked(inquirer.prompt).mockResolvedValueOnce(samples.loginRequest);
-                mocked(authenticationService.zeplinApi.login).mockResolvedValueOnce(samples.loginResponse);
-                mocked(authenticationService.zeplinApi.generateToken).mockRejectedValueOnce(apiError);
+                    expect(authenticationService.validateToken())
+                        .toStrictEqual({
+                            token: samples.validJwt,
+                            method: AUTH_METHOD.LOGIN_WITH_BROWSER
+                        });
 
-                await expect(authenticationService.authenticate())
-                    .rejects
-                    .toThrow(apiError);
+                    expect(readAuthToken).toHaveBeenCalledTimes(1);
+                    expect(open).toHaveBeenCalledTimes(1);
+                    expect(authenticationService.zeplinApi.login).not.toHaveBeenCalled();
+                    expect(authenticationService.zeplinApi.generateToken).not.toHaveBeenCalled();
+                    await mockResolvedWithValue(
+                        mocked(authenticationService.loginServer.waitForToken),
+                        samples.validJwt
+                    );
+                    expect(saveAuthToken).toHaveBeenCalledTimes(1);
+                });
 
-                expect(readAuthToken).toHaveBeenCalled();
-                expect(inquirer.prompt).toHaveBeenCalled();
-                expect(authenticationService.zeplinApi.login).toHaveBeenCalledWith(samples.loginRequest);
-                expect(saveAuthToken).not.toHaveBeenCalled();
+                it("returns JWT when browser login flow is unsuccessful but prompt login is successful.", async () => {
+                    const authenticationService = new AuthenticationService();
+
+                    mocked(envUtil.isCI).mockReturnValueOnce(false);
+                    mocked(readAuthToken).mockResolvedValueOnce("");
+                    mocked(open).mockResolvedValueOnce(jest.fn() as unknown as ChildProcess);
+                    mocked(authenticationService.loginServer.waitForToken).mockResolvedValueOnce(undefined);
+                    mocked(inquirer.prompt).mockResolvedValueOnce(samples.loginRequest);
+                    mocked(authenticationService.zeplinApi.login).mockResolvedValueOnce(samples.loginResponse);
+                    mocked(authenticationService.zeplinApi.generateToken).mockResolvedValueOnce(samples.validJwt);
+
+                    await expect(authenticationService.authenticate())
+                        .resolves
+                        .toStrictEqual({
+                            token: samples.validJwt,
+                            method: AUTH_METHOD.LOGIN_WITH_PROMPT
+                        });
+
+                    expect(readAuthToken).toHaveBeenCalled();
+                    expect(open).toHaveBeenCalled();
+                    await mockResolvedWithValue(
+                        mocked(authenticationService.zeplinApi.generateToken),
+                        samples.validJwt
+                    );
+                    await mockResolvedWithValue(
+                        mocked(authenticationService.loginServer.waitForToken),
+                        undefined
+                    );
+                    expect(saveAuthToken).toHaveBeenCalledWith(samples.validJwt);
+                });
             });
         });
 
@@ -89,13 +216,49 @@ describe("AuthenticationService", () => {
 
                 await expect(authenticationService.authenticate())
                     .resolves
-                    .toBe(samples.validJwt);
+                    .toStrictEqual({
+                        token: samples.validJwt,
+                        method: AUTH_METHOD.ENVIRONMENT_VARIABLE
+                    });
 
                 expect(readAuthToken).not.toHaveBeenCalled();
                 expect(inquirer.prompt).not.toHaveBeenCalled();
                 expect(authenticationService.zeplinApi.login).not.toHaveBeenCalled();
                 expect(authenticationService.zeplinApi.generateToken).not.toHaveBeenCalled();
                 expect(saveAuthToken).not.toHaveBeenCalled();
+            });
+
+            it("returns JWT when token has the required scopes", async () => {
+                const authenticationService = new AuthenticationService();
+
+                mocked(envUtil.getAccessTokenFromEnv).mockReturnValueOnce(samples.validJwt);
+
+                await expect(authenticationService.authenticate({ requiredScopes: ["write", "delete"] }))
+                    .resolves
+                    .toStrictEqual({
+                        token: samples.validJwt,
+                        method: AUTH_METHOD.ENVIRONMENT_VARIABLE
+                    });
+
+                expect(readAuthToken).not.toHaveBeenCalled();
+                expect(inquirer.prompt).not.toHaveBeenCalled();
+                expect(authenticationService.zeplinApi.login).not.toHaveBeenCalled();
+                expect(authenticationService.zeplinApi.generateToken).not.toHaveBeenCalled();
+                expect(saveAuthToken).not.toHaveBeenCalled();
+            });
+
+            it("validates JWT when token has the required scopes", async () => {
+                const authenticationService = new AuthenticationService();
+
+                mocked(envUtil.getAccessTokenFromEnv).mockReturnValueOnce(samples.validJwt);
+
+                await authenticationService.authenticate({ requiredScopes: ["write", "delete"] });
+
+                expect(authenticationService.validateToken({ requiredScopes: ["write", "delete"] }))
+                    .toStrictEqual({
+                        token: samples.validJwt,
+                        method: AUTH_METHOD.ENVIRONMENT_VARIABLE
+                    });
             });
 
             it("throws 'Invalid authentication token.' when token is invalid.", async () => {
@@ -117,6 +280,17 @@ describe("AuthenticationService", () => {
                     .rejects
                     .toThrowError(new AuthError("Audience is not set in authentication token."));
             });
+
+            it(dedent`throws 'Access token has missing privileges, please login again to re-create access token.'
+            when token does not have the required delete scope`, async () => {
+                const authenticationService = new AuthenticationService();
+
+                mocked(envUtil.getAccessTokenFromEnv).mockReturnValueOnce(samples.validJwtWithoutDeleteScope);
+
+                await expect(authenticationService.authenticate({ requiredScopes: ["delete"] }))
+                    .rejects
+                    .toThrowError(new AuthError("Access token has missing privileges, please login again to re-create access token."));
+            });
         });
 
         describe("Token is retrieved from auth file.", () => {
@@ -127,7 +301,10 @@ describe("AuthenticationService", () => {
 
                 await expect(authenticationService.authenticate())
                     .resolves
-                    .toBe(samples.validJwt);
+                    .toStrictEqual({
+                        token: samples.validJwt,
+                        method: AUTH_METHOD.LOCAL_AUTH_FILE
+                    });
 
                 expect(readAuthToken).toHaveBeenCalled();
                 expect(inquirer.prompt).not.toHaveBeenCalled();
@@ -184,9 +361,12 @@ describe("AuthenticationService", () => {
             mocked(authenticationService.zeplinApi.login).mockResolvedValueOnce(samples.loginResponse);
             mocked(authenticationService.zeplinApi.generateToken).mockResolvedValueOnce(samples.validJwt);
 
-            await expect(authenticationService.promptForLogin())
+            await expect(authenticationService.promptForLogin({ noBrowser: true }))
                 .resolves
-                .toBe(samples.validJwt);
+                .toStrictEqual({
+                    token: samples.validJwt,
+                    method: AUTH_METHOD.LOGIN_WITH_PROMPT
+                });
         });
 
         it("throws error when couldn't save token if ignoreSaveTokenErrors is false", async () => {
@@ -199,7 +379,7 @@ describe("AuthenticationService", () => {
             mocked(authenticationService.zeplinApi.login).mockResolvedValueOnce(samples.loginResponse);
             mocked(authenticationService.zeplinApi.generateToken).mockResolvedValueOnce(samples.validJwt);
 
-            await expect(authenticationService.promptForLogin({ ignoreSaveTokenErrors: false }))
+            await expect(authenticationService.promptForLogin({ ignoreSaveTokenErrors: false, noBrowser: true }))
                 .rejects
                 .toThrowError(error);
         });

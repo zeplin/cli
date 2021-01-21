@@ -1,0 +1,16 @@
+{
+    "plugins": [],
+    "projects": [
+        "pid"
+    ],
+    "components": [
+        {
+            "path": "src/Sample1.jsx",
+            "zeplinNames": ["screen1"]
+        },
+        {
+            "path": "src/Sample2.jsx",
+            "zeplinNames": ["screen2"]
+        }
+    ]
+}
