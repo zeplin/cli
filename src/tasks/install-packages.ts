@@ -19,7 +19,9 @@ const addZeplinScripts = (packageJson: PackageJson): void => {
 const install: TaskStep<InstallPackagesContext> = async (ctx, task): Promise<void> => {
     const projectTypes = ctx.projectTypes || [];
 
-    const plugins = projectTypes.reduce((p, c) => p.concat(c.installPackages || []), [] as string[]);
+    const plugins = Array.from(new Set<string>(
+        projectTypes.reduce((p, c) => p.concat(c.installPackages || []), [] as string[])
+    ));
 
     ctx.installedPlugins = plugins;
 
