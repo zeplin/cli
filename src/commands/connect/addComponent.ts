@@ -18,7 +18,7 @@ import { ConnectedComponentsService } from "./service";
 import logger from "../../util/logger";
 import { notInitialized, userSelectedNotToInitialize, addSummary, initializationPrompt } from "../../messages";
 import { getComponentConfigFiles } from "./config";
-import { initialize } from "..";
+import { initialize } from "./initialize";
 import { commandRunner } from "../../util/commander";
 
 const askForInitialization = async (): Promise<boolean> => {
