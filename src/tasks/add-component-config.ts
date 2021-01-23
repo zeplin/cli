@@ -59,18 +59,34 @@ const addComponent: TaskStep<AddComponentContext> = async (ctx, task) => {
             selectedComponents.find(sc => existingZeplinId?.includes(sc._id))
         ));
 
+    const componentWithSameFile = existingComponents.find(ec => ec.path === ctx.file.path);
+
     if ((componentNameExists || componentIdExists) &&
         !(await confirmAddExistingComponent(ctx, task))) {
         throw new TaskError(ui.existingComponent);
     }
 
-    config.components = [
-        ...existingComponents,
-        {
+    const selectedComponentIds = selectedComponents.map(c => c._id);
+
+    if (componentWithSameFile) {
+        const existingZeplinIds = componentWithSameFile.zeplinIds || [];
+
+        componentWithSameFile.zeplinIds = Array.from(new Set<string>([
+            ...existingZeplinIds,
+            ...selectedComponentIds
+        ]));
+        logger.debug(`Added new component ID into existing component entry ${stringify(componentWithSameFile)}`);
+    } else {
+        const newComponent = {
             path: ctx.file.path,
-            zeplinIds: selectedComponents.map(c => c._id)
-        }
-    ];
+            zeplinIds: selectedComponentIds
+        };
+        config.components = [
+            ...existingComponents,
+            newComponent
+        ];
+        logger.debug(`Added new component entry ${stringify(newComponent)}`);
+    }
 
     logger.debug(`Updated config: ${stringify({ config })}`);
 
