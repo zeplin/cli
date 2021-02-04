@@ -67,7 +67,7 @@ export const initSummary = (context: InitializeContext): string => dedent`
         ${context.skippedConnect ? skipMessage(context) : componentLinksMessage(context)}
 
         You can use the following command to add another component interactively:
-            ${connectCommandMessage(context)} add-component
+            ${connectCommandMessage(context)} add-components
     `;
 
 export const addSummary = (context: AddComponentContext): string => dedent`
