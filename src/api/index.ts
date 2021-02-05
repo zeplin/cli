@@ -179,13 +179,26 @@ export class ZeplinApi {
         }
     }
 
-    async getStyleguide(authToken: string, styleguideId: string): Promise<StyleguideResponse> {
+    async getStyleguide(
+        authToken: string,
+        styleguideId: string,
+        params: {
+            linkedProjectId?: string;
+            linkedStyleguideId?: string;
+        } = {}): Promise<StyleguideResponse> {
         try {
+            const headers: Record<string, string> = { "Zeplin-Access-Token": authToken };
+            if (params) {
+                if (params.linkedProjectId) {
+                    headers["zeplin-project-id"] = params.linkedProjectId;
+                } else if (params.linkedStyleguideId) {
+                    headers["zeplin-styleguide-id"] = params.linkedStyleguideId;
+                }
+            }
+
             const response = await this.axios.get(
                 `/public/cli/styleguides/${styleguideId}`,
-                {
-                    headers: { "Zeplin-Access-Token": authToken }
-                }
+                { headers }
             );
             return response.data;
         } catch (error) {
