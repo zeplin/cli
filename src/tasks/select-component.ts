@@ -34,13 +34,21 @@ function extractComponents(componentSections: ComponentSection[] = []): ZeplinCo
     return components;
 }
 
-async function getStyleguideComponents(authToken: string, styleguideId: string): Promise<ZeplinComponent[]> {
-    const styleguide = await zeplinApi.getStyleguide(authToken, styleguideId);
+async function getStyleguideComponents(
+    authToken: string,
+    styleguideId: string,
+    params?: {
+        linkedProjectId?: string;
+    }): Promise<ZeplinComponent[]> {
+    const styleguide = await zeplinApi.getStyleguide(authToken, styleguideId, params);
     const components = extractComponents(styleguide.componentSections);
 
     if (styleguide.ancestors && styleguide.ancestors.length > 0) {
+        const linkedResource = params || { linkedStyleguideId: styleguideId };
         const linkedStyleguides = await Promise.all(
-            styleguide.ancestors.map(linkedStid => zeplinApi.getStyleguide(authToken, linkedStid))
+            styleguide.ancestors.map(linkedStid =>
+                zeplinApi.getStyleguide(authToken, linkedStid, linkedResource)
+            )
         );
         linkedStyleguides.forEach(s => components.push(...extractComponents(s.componentSections)));
     }
@@ -53,7 +61,11 @@ async function getProjectComponents(authToken: string, projectId: string): Promi
     const projectComponents = extractComponents(project.componentSections);
 
     if (project.styleguide) {
-        const linkedStyleguideComponents = await getStyleguideComponents(authToken, project.styleguide);
+        const linkedStyleguideComponents = await getStyleguideComponents(
+            authToken,
+            project.styleguide,
+            { linkedProjectId: projectId }
+        );
         linkedStyleguideComponents.forEach(linkedComponent => projectComponents.push(linkedComponent));
     }
 

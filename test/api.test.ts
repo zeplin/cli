@@ -396,6 +396,66 @@ describe("ZeplinApi", () => {
             );
         });
 
+        it("resolves when HTTP request with parent styleguide succeeds", async () => {
+            const zeplinApi = new ZeplinApi();
+
+            mocked(Axios.get).mockResolvedValueOnce({ data: samples.getStyleguideResponse });
+
+            const styleguideId = samples.getStyleguideResponse._id;
+
+            const parentStyleguideId = "540b91990ffebc59619fa195";
+
+            await expect(
+                zeplinApi.getStyleguide(
+                    samples.validJwt,
+                    styleguideId,
+                    {
+                        linkedStyleguideId: parentStyleguideId
+                    }
+                )
+            ).resolves.toBe(samples.getStyleguideResponse);
+
+            expect(Axios.get).toHaveBeenCalledWith(
+                `/public/cli/styleguides/${styleguideId}`,
+                {
+                    headers: {
+                        "Zeplin-Access-Token": samples.validJwt,
+                        "zeplin-styleguide-id": parentStyleguideId
+                    }
+                }
+            );
+        });
+
+        it("resolves when HTTP request with parent project succeeds", async () => {
+            const zeplinApi = new ZeplinApi();
+
+            mocked(Axios.get).mockResolvedValueOnce({ data: samples.getStyleguideResponse });
+
+            const styleguideId = samples.getStyleguideResponse._id;
+
+            const parentProjectId = "540b91990ffebc59619fa195";
+
+            await expect(
+                zeplinApi.getStyleguide(
+                    samples.validJwt,
+                    styleguideId,
+                    {
+                        linkedProjectId: parentProjectId
+                    }
+                )
+            ).resolves.toBe(samples.getStyleguideResponse);
+
+            expect(Axios.get).toHaveBeenCalledWith(
+                `/public/cli/styleguides/${styleguideId}`,
+                {
+                    headers: {
+                        "Zeplin-Access-Token": samples.validJwt,
+                        "zeplin-project-id": parentProjectId
+                    }
+                }
+            );
+        });
+
         it("throws APIError when HTTP request fails", async () => {
             const zeplinApi = new ZeplinApi();
 
