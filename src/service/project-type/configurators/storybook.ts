@@ -1,6 +1,6 @@
 import { supportedStorybookFrameworks } from "../storybook";
 import { gt, minVersion, SemVer } from "semver";
-import { ArgumentParser } from "argparse";
+import { Command } from "commander";
 import logger from "../../../util/logger";
 import { getDependencyVersion } from "../../../util/js/dependency";
 import { Configurator } from ".";
@@ -22,20 +22,33 @@ export function storybookConfiguratorFactory(): Configurator {
             }
 
             if (packageJson.scripts) {
-                const argparser = new ArgumentParser({ prog: "start-storybook", addHelp: false });
-                argparser.addArgument(["-h", "--host"]);
-                argparser.addArgument(["-p", "--port"]);
-                argparser.addArgument(["--https"], { type: Boolean });
+                const program = new Command()
+                    .option("-p, --port <port>")
+                    .option("-h, --host <host>")
+                    .option("--https")
+                    .allowUnknownOption();
 
-                const foundScript = Object.entries(packageJson.scripts).find(([, v]) => v.startsWith("start-storybook"));
+                const foundScript = Object.entries(packageJson.scripts)
+                    .find(([, v]) => v.indexOf("start-storybook") !== -1);
+
                 if (foundScript) {
                     const [scriptName, scriptValue] = foundScript;
+
                     logger.debug(`Found storybook script "${scriptName}": "${scriptValue}"`);
-                    const scriptArgs = scriptValue.split(" ").map(a => a.trim());
-                    const [{ host, port, https }] = argparser.parseKnownArgs(scriptArgs);
-                    const protocol = https ? "https" : "http";
-                    config.url = `${protocol}://${host || defaultHost}:${port || defaultPort}/`;
-                    config.startScript = scriptName;
+
+                    const sbCommand = (scriptValue.split("&&")
+                        .reduce((prev, curr) => prev.concat(curr.split("||")), [] as string[])
+                        .find(v => v.trim().startsWith("start-storybook"))) || "";
+
+                    if (sbCommand) {
+                        const sbArgs = sbCommand.split(" ").map(a => a.trim());
+
+                        const { host, port, https } = program.parse(sbArgs, { from: "user" });
+
+                        const protocol = https ? "https" : "http";
+                        config.url = `${protocol}://${host || defaultHost}:${port || defaultPort}/`;
+                        config.startScript = scriptName;
+                    }
                 }
             }
         }
