@@ -106,6 +106,8 @@ const processLink = (link: Link): Link => {
     if (!ALLOWED_LINK_TYPES.includes(link.type)) {
         link.type = LinkType.custom;
     }
+
+    link.url = encodeURI(link.url);
     return link;
 };
 
