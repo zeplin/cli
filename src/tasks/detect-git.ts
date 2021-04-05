@@ -10,6 +10,7 @@ const detect: TaskStep<DetectGitContext> = async (ctx, task) => {
         const git = await gitService.detectGit();
         if (git) {
             ctx.git = git;
+            return;
         }
     } catch (e) {
         logger.debug("Error occurred while detecting git config", e);
