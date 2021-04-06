@@ -21,9 +21,9 @@ async function getLatestVersionUsingNpm(packageName: string): Promise<string> {
     }
 }
 
-function getLatestVersion(packageName: string): Promise<string> {
+async function getLatestVersion(packageName: string): Promise<string> {
     try {
-        return latestVersion(packageName);
+        return await latestVersion(packageName);
     } catch (err) {
         logger.debug(err);
         return getLatestVersionUsingNpm(packageName);
