@@ -16,7 +16,7 @@ async function getLatestVersionUsingNpm(packageName: string): Promise<string> {
 
         return latestStable;
     } catch (err) {
-        logger.debug(err);
+        logger.debug(err.stack);
         throw new CLIError("Could not get latest version");
     }
 }
@@ -25,7 +25,7 @@ async function getLatestVersion(packageName: string): Promise<string> {
     try {
         return await latestVersion(packageName);
     } catch (err) {
-        logger.debug(err);
+        logger.debug(`Error occurrent on latest-version package: ${err.stack}`);
         return getLatestVersionUsingNpm(packageName);
     }
 }

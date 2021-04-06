@@ -41,7 +41,7 @@ export async function initialize(options: InitializeCommandOptions): Promise<voi
 
         const [existingConfigFile] = await getComponentConfigFiles([defaults.commands.initialize.filePath])
             .catch(err => {
-                logger.debug(err);
+                logger.debug(err.stack);
                 return [];
             });
 

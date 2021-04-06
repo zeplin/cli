@@ -50,7 +50,7 @@ export async function addComponent(options: AddComponentCommandOptions): Promise
 
         const [existingConfigFile] = await getComponentConfigFiles([context.cliOptions.configFile])
             .catch(err => {
-                logger.debug(err);
+                logger.debug(err.stack);
                 return [];
             });
 

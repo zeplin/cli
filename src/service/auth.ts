@@ -190,13 +190,13 @@ export class AuthenticationService {
             this.loginServer.waitForToken({ port: defaults.commands.login.port })
                 .then(token => token)
                 .catch(err => {
-                    logger.error(err);
+                    logger.error(err.message);
                     this.loginServer.stop();
                 }),
             // Wait for paste prompt
             prompt
                 .then((answer: { token: string }) => answer.token)
-                .catch(err => { logger.error(err); })
+                .catch(err => { logger.error(err.message); })
         ]);
 
         // Cleanup
