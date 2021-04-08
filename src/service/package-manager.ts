@@ -49,7 +49,7 @@ export async function installPackages(packages: Record<string, string>, { instal
         if (installGlobal) {
             args.push("global");
         } else {
-            args.push("--ignore-workspace-root-check", "--save-dev");
+            args.push("--ignore-workspace-root-check", "--dev");
         }
         args.push("add");
     } else {
