@@ -37,7 +37,7 @@ describe("ConnectedComponentsService", () => {
                         .toHaveBeenCalledWith(
                             samples.validJwt,
                             { barrelId, barrelType },
-                            { connectedComponents: sample.connectedComponents }
+                            { items: sample.items }
                         );
                 };
 
@@ -73,7 +73,7 @@ describe("ConnectedComponentsService", () => {
                         .toHaveBeenCalledWith(
                             samples.validJwt,
                             { barrelId, barrelType },
-                            { connectedComponents: sample.connectedComponents }
+                            { items: sample.items }
                         );
                 };
 
@@ -152,7 +152,7 @@ describe("ConnectedComponentsService", () => {
                         .toHaveBeenCalledWith(
                             samples.validJwt,
                             { barrelId, barrelType },
-                            { connectedComponents: sample.connectedComponents }
+                            { items: sample.items }
                         );
                 };
 

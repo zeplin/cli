@@ -117,7 +117,7 @@ describe("ZeplinApi", () => {
             const { barrelType, barrelId } = samples.uploadParams;
 
             expect(Axios.put).toHaveBeenCalledWith(
-                `/public/cli/${barrelType}/${barrelId}/connectedcomponents`,
+                `/public/cli/v2/${barrelType}/${barrelId}/connectedcomponents`,
                 samples.connectedComponentList,
                 { headers: { "Zeplin-Access-Token": samples.validJwt } }
             );
@@ -139,7 +139,7 @@ describe("ZeplinApi", () => {
             const { barrelType, barrelId } = samples.uploadParams;
 
             expect(Axios.put).toHaveBeenCalledWith(
-                `/public/cli/${barrelType}/${barrelId}/connectedcomponents`,
+                `/public/cli/v2/${barrelType}/${barrelId}/connectedcomponents`,
                 samples.connectedComponentList,
                 { headers: { "Zeplin-Access-Token": samples.validJwt } }
             );
@@ -162,7 +162,7 @@ describe("ZeplinApi", () => {
             const { barrelType, barrelId } = samples.uploadParams;
 
             expect(Axios.put).toHaveBeenCalledWith(
-                `/public/cli/${barrelType}/${barrelId}/connectedcomponents`,
+                `/public/cli/v2/${barrelType}/${barrelId}/connectedcomponents`,
                 samples.connectedComponentList,
                 { headers: { "Zeplin-Access-Token": samples.validJwt } }
             );
@@ -181,7 +181,7 @@ describe("ZeplinApi", () => {
             const { barrelType, barrelId } = samples.deleteParams;
 
             expect(Axios.delete).toHaveBeenCalledWith(
-                `/public/cli/${barrelType}/${barrelId}/connectedcomponents`,
+                `/public/cli/v2/${barrelType}/${barrelId}/connectedcomponents`,
                 { headers: { "Zeplin-Access-Token": samples.validJwt } }
             );
         });
@@ -201,7 +201,7 @@ describe("ZeplinApi", () => {
             const { barrelType, barrelId } = samples.uploadParams;
 
             expect(Axios.delete).toHaveBeenCalledWith(
-                `/public/cli/${barrelType}/${barrelId}/connectedcomponents`,
+                `/public/cli/v2/${barrelType}/${barrelId}/connectedcomponents`,
                 { headers: { "Zeplin-Access-Token": samples.validJwt } }
             );
         });
@@ -222,7 +222,7 @@ describe("ZeplinApi", () => {
             const { barrelType, barrelId } = samples.deleteParams;
 
             expect(Axios.delete).toHaveBeenCalledWith(
-                `/public/cli/${barrelType}/${barrelId}/connectedcomponents`,
+                `/public/cli/v2/${barrelType}/${barrelId}/connectedcomponents`,
                 { headers: { "Zeplin-Access-Token": samples.validJwt } }
             );
         });

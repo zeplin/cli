@@ -5,7 +5,7 @@ import { OK } from "http-status-codes";
 import { Socket } from "net";
 import { CLIError } from "../../../errors";
 import logger from "../../../util/logger";
-import { ConnectedBarrelComponents, ConnectedComponent } from "../interfaces/api";
+import { ConnectedBarrelComponents, ConnectedComponentItem } from "../interfaces/api";
 
 export class ConnectDevServer {
     connectedBarrels: ConnectedBarrelComponents[] = [];
@@ -17,12 +17,12 @@ export class ConnectDevServer {
         this.connectedBarrels = connectedBarrels;
     }
 
-    getConnectedComponents(barrelId: string): ConnectedComponent[] | null {
+    getConnectedComponents(barrelId: string): ConnectedComponentItem[] | null {
         const found = this.connectedBarrels.find(connectedBarrel =>
             connectedBarrel.projects.find(pid => pid === barrelId) ||
             connectedBarrel.styleguides.find(stid => stid === barrelId));
 
-        return found ? found.connectedComponents : null;
+        return found ? found.items : null;
     }
 
     updateConnectedBarrels(connectedBarrels: ConnectedBarrelComponents[]): void {

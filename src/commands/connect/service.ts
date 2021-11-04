@@ -80,7 +80,7 @@ export class ConnectedComponentsService {
                 await this.zeplinApi.uploadConnectedComponents(
                     authToken,
                     { barrelId: pid, barrelType: "projects" },
-                    { connectedComponents: connectedBarrelComponent.connectedComponents }
+                    { items: connectedBarrelComponent.items }
                 );
             }));
 
@@ -88,7 +88,7 @@ export class ConnectedComponentsService {
                 await this.zeplinApi.uploadConnectedComponents(
                     authToken,
                     { barrelId: stid, barrelType: "styleguides" },
-                    { connectedComponents: connectedBarrelComponent.connectedComponents }
+                    { items: connectedBarrelComponent.items }
                 );
             }));
         }));

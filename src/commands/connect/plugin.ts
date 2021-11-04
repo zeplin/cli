@@ -6,9 +6,9 @@ import urljoin from "url-join";
 import {
     ComponentConfigFile, ConnectPluginInstance, Plugin, GitConfig, BitbucketConfig
 } from "./interfaces/config";
-import { ConnectedComponent, ConnectedBarrelComponents, Data } from "./interfaces/api";
+import { ConnectedComponentItem, ConnectedBarrelComponents } from "./interfaces/api";
 import {
-    ComponentData, ComponentConfig, CustomUrlConfig, Link, LinkType
+    ComponentConfig, CustomUrlConfig, Link, LinkType
 } from "./interfaces/plugin";
 import { CLIError } from "../../errors";
 import { defaults } from "../../config/defaults";
@@ -80,26 +80,6 @@ const initializePlugins = async (
 
     const pluginInstances = await Promise.all(imports);
     return pluginInstances;
-};
-
-const convertToData = (plugin: string, componentData: ComponentData): Data => {
-    const copyComponentData = { ...componentData };
-
-    if (typeof copyComponentData.description === "undefined" || copyComponentData.description.trim() === "") {
-        delete copyComponentData.description;
-    }
-
-    if (typeof copyComponentData.snippet === "undefined" || copyComponentData.snippet.trim() === "") {
-        delete copyComponentData.snippet;
-        delete copyComponentData.lang;
-    }
-
-    delete copyComponentData.links;
-
-    return {
-        plugin,
-        ...copyComponentData
-    };
 };
 
 const processLink = (link: Link): Link => {
@@ -191,13 +171,50 @@ const createRepoLinks = (componentPath: string, componentConfigFile: ComponentCo
     return repoLinks;
 };
 
+interface CodeAndDescription {
+    code?: {
+        snippet: string;
+        lang?: string;
+    };
+    description?: string;
+}
+
+type ComponentConfigToConnectedComponentItemProps = {
+    component: ComponentConfig;
+    links: Link[];
+} & CodeAndDescription;
+
+const componentConfigToConnectedComponentItems = ({
+    component,
+    links,
+    description,
+    code
+}: ComponentConfigToConnectedComponentItemProps): ConnectedComponentItem[] => [
+    ...(component.zeplinNames || []).map(pattern => ({
+        pattern,
+        name: component.name,
+        description,
+        filePath: component.path,
+        code,
+        links
+    })),
+    ...(component.zeplinIds || []).map(componentId => ({
+        componentId,
+        name: component.name,
+        description,
+        filePath: component.path,
+        code,
+        links
+    }))
+];
+
 const connectComponentConfig = async (
     component: ComponentConfig,
     componentConfigFile: ComponentConfigFile,
     plugins: ConnectPluginInstance[]
-): Promise<ConnectedComponent> => {
-    const data: Data[] = [];
-    const urlPaths: Link[] = [];
+): Promise<ConnectedComponentItem[]> => {
+    const codeAndDescriptions: CodeAndDescription[] = [];
+    const links: Link[] = [];
 
     // Execute all plugins
     const pluginPromises = plugins.map(async plugin => {
@@ -206,10 +223,18 @@ const connectComponentConfig = async (
                 logger.debug(`${plugin.name} supports ${component.path}. Processing…`);
                 const componentData = await plugin.process(component);
 
-                data.push(convertToData(plugin.name, componentData));
+                if (componentData.snippet) {
+                    codeAndDescriptions.push({
+                        code: {
+                            snippet: componentData.snippet,
+                            lang: componentData.lang
+                        },
+                        description: componentData.description
+                    });
+                }
 
                 componentData.links?.forEach(link =>
-                    urlPaths.push(processLink(link))
+                    links.push(processLink(link))
                 );
 
                 logger.debug(`${plugin.name} processed ${component.path}: ${componentData}`);
@@ -233,25 +258,26 @@ const connectComponentConfig = async (
         // TODO: remove styleguidist specific configuration from CLI core
         if (type === "styleguidist" && component.styleguidist) {
             const encodedKind = encodeURIComponent(component.styleguidist.name);
-            urlPaths.push({ name, type: LinkType.styleguidist, url: urljoin(url, `#${encodedKind}`) });
+            links.push({ name, type: LinkType.styleguidist, url: urljoin(url, `#${encodedKind}`) });
         } else if (component[type]) {
             const customUrlPath = (component[type] as CustomUrlConfig).urlPath;
             if (customUrlPath) {
-                urlPaths.push({ name, type: LinkType.custom, url: urljoin(url, customUrlPath) });
+                links.push({ name, type: LinkType.custom, url: urljoin(url, customUrlPath) });
             }
         }
     });
 
-    urlPaths.push(...createRepoLinks(component.path, componentConfigFile));
+    links.push(...createRepoLinks(component.path, componentConfigFile));
 
-    return {
-        path: component.path,
-        name: component.name,
-        zeplinNames: component.zeplinNames,
-        zeplinIds: component.zeplinIds,
-        urlPaths,
-        data
-    };
+    if (codeAndDescriptions.length === 0) {
+        codeAndDescriptions.push({});
+    }
+
+    return codeAndDescriptions.map(codeAndDescription => componentConfigToConnectedComponentItems({
+        component,
+        links,
+        ...codeAndDescription
+    })).reduce((acc, curr) => acc.concat(curr), []);
 };
 
 const connectComponentConfigFile = async (
@@ -261,7 +287,7 @@ const connectComponentConfigFile = async (
 
     const plugins = await initializePlugins(componentConfigFile.plugins || [], components);
 
-    const connectedComponents = await Promise.all(
+    const items = (await Promise.all(
         components.map(component =>
             connectComponentConfig(
                 component,
@@ -269,12 +295,12 @@ const connectComponentConfigFile = async (
                 plugins
             )
         )
-    );
+    )).reduce((acc, curr) => acc.concat(curr), []);
 
     return {
         projects: componentConfigFile.projects || [],
         styleguides: componentConfigFile.styleguides || [],
-        connectedComponents
+        items
     };
 };
 

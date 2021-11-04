@@ -12,7 +12,8 @@ import { ConnectedComponentsService } from "./service";
 
 const getComponentFilePaths = (connectedBarrels: ConnectedBarrelComponents[]): string[] =>
     connectedBarrels.map(f =>
-        f.connectedComponents.map(c => path.resolve(c.path))
+        f.items.map(c => (c.filePath ? path.resolve(c.filePath) : undefined))
+            .filter((value): value is string => value !== undefined)
     ).reduce((a, b) => [...a, ...b], []);
 
 const generateConnectedComponents = async (
