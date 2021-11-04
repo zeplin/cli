@@ -9,12 +9,16 @@ import { ConnectedBarrelComponents } from "./interfaces/api";
 import { connectComponentConfigFiles } from "./plugin";
 import { ConnectDevServer } from "./server";
 import { ConnectedComponentsService } from "./service";
+import { isDefined } from "../../util/object";
+import { flat } from "../../util/array";
 
-const getComponentFilePaths = (connectedBarrels: ConnectedBarrelComponents[]): string[] =>
-    connectedBarrels.map(f =>
-        f.items.map(c => (c.filePath ? path.resolve(c.filePath) : undefined))
-            .filter((value): value is string => value !== undefined)
-    ).reduce((a, b) => [...a, ...b], []);
+const getComponentFilePaths = (connectedBarrels: ConnectedBarrelComponents[]): string[] => (
+    flat(
+        connectedBarrels.map(f =>
+            f.items.map(c => (c.filePath ? path.resolve(c.filePath) : undefined)).filter(isDefined)
+        )
+    )
+);
 
 const generateConnectedComponents = async (
     options: Partial<Pick<ConnectOptions, "configFiles" | "plugins">>

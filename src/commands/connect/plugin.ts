@@ -15,6 +15,8 @@ import { defaults } from "../../config/defaults";
 import logger from "../../util/logger";
 import { isRunningFromGlobal } from "../../util/package";
 import { getInstallCommand } from "../../util/text";
+import { flat } from "../../util/array";
+import { isDefined } from "../../util/object";
 
 const ALLOWED_LINK_TYPES = [
     LinkType.styleguidist,
@@ -224,7 +226,7 @@ const createLinksFromConfigFile = (
         }
     }
     return undefined;
-}).filter((item): item is Link => item !== undefined);
+}).filter(isDefined);
 
 type ProcessResponse = {
     links: Link[];
@@ -302,11 +304,13 @@ const connectComponentConfig = async (
         codeAndDescriptions.push({});
     }
 
-    return codeAndDescriptions.map(codeAndDescription => componentConfigToConnectedComponentItems({
-        component,
-        links,
-        ...codeAndDescription
-    })).reduce((acc, curr) => acc.concat(curr), []);
+    return flat(
+        codeAndDescriptions.map(codeAndDescription => componentConfigToConnectedComponentItems({
+            component,
+            links,
+            ...codeAndDescription
+        }))
+    );
 };
 
 const connectComponentConfigFile = async (
@@ -316,7 +320,7 @@ const connectComponentConfigFile = async (
 
     const plugins = await initializePlugins(componentConfigFile.plugins || [], components);
 
-    const items = (await Promise.all(
+    const items = flat(await Promise.all(
         components.map(component =>
             connectComponentConfig(
                 component,
@@ -324,7 +328,7 @@ const connectComponentConfigFile = async (
                 plugins
             )
         )
-    )).reduce((acc, curr) => acc.concat(curr), []);
+    ));
 
     return {
         projects: componentConfigFile.projects || [],
