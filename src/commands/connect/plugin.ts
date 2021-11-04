@@ -208,66 +208,95 @@ const componentConfigToConnectedComponentItems = ({
     }))
 ];
 
+const createLinksFromConfigFile = (
+    component: ComponentConfig,
+    componentConfigFile: ComponentConfigFile
+): Link[] => (componentConfigFile.links || []).map(({ name, type, url }): Link | undefined => {
+    // TODO: remove styleguidist specific configuration from CLI core
+    if (type === "styleguidist" && component.styleguidist) {
+        const encodedKind = encodeURIComponent(component.styleguidist.name);
+        return { name, type: LinkType.styleguidist, url: urljoin(url, `#${encodedKind}`) };
+    }
+    if (component[type]) {
+        const customUrlPath = (component[type] as CustomUrlConfig).urlPath;
+        if (customUrlPath) {
+            return { name, type: LinkType.custom, url: urljoin(url, customUrlPath) };
+        }
+    }
+    return undefined;
+}).filter((item): item is Link => item !== undefined);
+
+type ProcessResponse = {
+    links: Link[];
+} | {
+    code?: {
+        lang?: string;
+        snippet: string;
+    };
+    description?: string;
+    links?: Link[];
+}
+
+const processPlugin = async (
+    plugin: ConnectPluginInstance,
+    component: ComponentConfig
+): Promise<ProcessResponse | undefined> => {
+    try {
+        if (!plugin.supports(component)) {
+            logger.debug(`${plugin.name} does not support ${component.path}.`);
+            return {};
+        }
+        logger.debug(`${plugin.name} supports ${component.path}. Processing…`);
+        const componentData = await plugin.process(component);
+        logger.debug(`${plugin.name} processed ${component.path}: ${componentData}`);
+
+        return {
+            code: (
+                componentData.snippet
+                    ? {
+                        snippet: componentData.snippet,
+                        lang: componentData.lang
+                    }
+                    : undefined
+            ),
+            description: componentData.description,
+            links: (componentData.links || []).map(processLink)
+        };
+    } catch (err) {
+        throw new CLIError(dedent`
+                Error occurred while processing ${chalk.bold(component.path)} with ${chalk.bold(plugin.name)}:
+
+                ${err.message}
+            `, err.stack);
+    }
+};
+
 const connectComponentConfig = async (
     component: ComponentConfig,
     componentConfigFile: ComponentConfigFile,
     plugins: ConnectPluginInstance[]
 ): Promise<ConnectedComponentItem[]> => {
-    const codeAndDescriptions: CodeAndDescription[] = [];
-    const links: Link[] = [];
-
     // Execute all plugins
-    const pluginPromises = plugins.map(async plugin => {
-        try {
-            if (plugin.supports(component)) {
-                logger.debug(`${plugin.name} supports ${component.path}. Processing…`);
-                const componentData = await plugin.process(component);
+    const pluginResponses = (await Promise.all(plugins.map(plugin => processPlugin(plugin, component))))
+        .filter((item): item is ProcessResponse => item !== undefined);
 
-                if (componentData.snippet) {
-                    codeAndDescriptions.push({
-                        code: {
-                            snippet: componentData.snippet,
-                            lang: componentData.lang
-                        },
-                        description: componentData.description
-                    });
-                }
-
-                componentData.links?.forEach(link =>
-                    links.push(processLink(link))
-                );
-
-                logger.debug(`${plugin.name} processed ${component.path}: ${componentData}`);
-            } else {
-                logger.debug(`${plugin.name} does not support ${component.path}.`);
+    const links: Link[] = [
+        ...createLinksFromConfigFile(component, componentConfigFile),
+        ...createRepoLinks(component.path, componentConfigFile),
+        ...pluginResponses.reduce((acc, response) => {
+            if (response.links) {
+                return [...acc, ...response.links];
             }
-        } catch (err) {
-            throw new CLIError(dedent`
-                Error occurred while processing ${chalk.bold(component.path)} with ${chalk.bold(plugin.name)}:
+            return acc;
+        }, [] as Link[])
+    ];
 
-                ${err.message}
-            `, err.stack);
+    const codeAndDescriptions: CodeAndDescription[] = pluginResponses.reduce((acc, response) => {
+        if ("code" in response) {
+            return [...acc, { code: response.code, description: response.description }];
         }
-    });
-
-    await Promise.all(pluginPromises);
-
-    componentConfigFile.links?.forEach(link => {
-        const { name, type, url } = link;
-
-        // TODO: remove styleguidist specific configuration from CLI core
-        if (type === "styleguidist" && component.styleguidist) {
-            const encodedKind = encodeURIComponent(component.styleguidist.name);
-            links.push({ name, type: LinkType.styleguidist, url: urljoin(url, `#${encodedKind}`) });
-        } else if (component[type]) {
-            const customUrlPath = (component[type] as CustomUrlConfig).urlPath;
-            if (customUrlPath) {
-                links.push({ name, type: LinkType.custom, url: urljoin(url, customUrlPath) });
-            }
-        }
-    });
-
-    links.push(...createRepoLinks(component.path, componentConfigFile));
+        return acc;
+    }, [] as CodeAndDescription[]);
 
     if (codeAndDescriptions.length === 0) {
         codeAndDescriptions.push({});
