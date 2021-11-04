@@ -8,6 +8,7 @@ export type ConnectContext = AuthenticationContext
         cliOptions: {
             skipConnect: boolean;
             configFile: string;
+            force: boolean;
         };
         connectService: ConnectedComponentsService;
         skippedConnect: boolean;

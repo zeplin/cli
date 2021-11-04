@@ -38,7 +38,7 @@ const connect: TaskStep<ConnectContext> = async (ctx): Promise<void> => {
             configFiles: [ctx.cliOptions.configFile]
         });
 
-        await ctx.connectService.uploadConnectedBarrels(connectedComponents);
+        await ctx.connectService.uploadConnectedBarrels(connectedComponents, { force: ctx.cliOptions.force });
     }
 };
 

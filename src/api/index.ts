@@ -87,7 +87,8 @@ export class ZeplinApi {
     async uploadConnectedComponents(
         authToken: string,
         params: { barrelId: string; barrelType: BarrelType },
-        body: ConnectedComponents
+        body: ConnectedComponents,
+        queryParams: { forceOverwrite: boolean }
     ): Promise<void> {
         try {
             const { barrelId, barrelType } = params;
@@ -96,7 +97,8 @@ export class ZeplinApi {
                 `/public/cli/v2/${barrelType}/${barrelId}/connectedcomponents`,
                 body,
                 {
-                    headers: { "Zeplin-Access-Token": authToken }
+                    headers: { "Zeplin-Access-Token": authToken },
+                    params: queryParams
                 }
             );
         } catch (error) {

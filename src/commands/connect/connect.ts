@@ -89,10 +89,10 @@ const startDevServer = async (
 
 const service = new ConnectedComponentsService();
 
-const upload = async (connectedBarrels: ConnectedBarrelComponents[]): Promise<void> => {
+const upload = async (connectedBarrels: ConnectedBarrelComponents[], { force }: ConnectOptions): Promise<void> => {
     logger.info("Connecting all Connected Components into Zeplin…");
 
-    await service.uploadConnectedBarrels(connectedBarrels);
+    await service.uploadConnectedBarrels(connectedBarrels, { force });
 
     logger.info("🦄 Components successfully connected to components in Zeplin.");
 };
@@ -106,7 +106,7 @@ async function connect(options: ConnectOptions): Promise<void> {
         if (options.devMode) {
             await startDevServer(options, connectedBarrels);
         } else {
-            await upload(connectedBarrels);
+            await upload(connectedBarrels, options);
         }
     } catch (error) {
         error.message = dedent`
@@ -124,6 +124,7 @@ export interface ConnectOptions {
     devModePort: number;
     devModeWatch: boolean;
     plugins: string[];
+    force: boolean;
 }
 
 export {

@@ -53,13 +53,15 @@ const connectCommand = program.command("connect")
     .option("-d, --dev", "Activate development mode", defaults.commands.connect.devMode)
     .option("--no-watch", "Disable watch files on development mode", defaults.commands.connect.devModeWatch)
     .option("-p, --plugin <plugin>", "npm package name of a Zeplin CLI connect plugin", createCollector(), [])
+    .option("-f, --force", "Forces overwriting possible changes from Zeplin apps", false)
     .action(commandRunner(async options => {
         const connectOptions: ConnectOptions = {
             configFiles: options.file,
             devMode: options.dev,
             devModePort: defaults.commands.connect.port,
             devModeWatch: options.watch,
-            plugins: options.plugin
+            plugins: options.plugin,
+            force: options.force
         };
 
         await connect(connectOptions);
@@ -86,6 +88,7 @@ connectCommand.command("initialize")
     .option("--file <configFile>", "Optional file path to create configuration", defaults.commands.initialize.filePath)
     .option("--skip-connect", "Skip connecting after configuration is created", false)
     .option("--skip-install", "Skip installation of packages during installation", false)
+    .option("-f, --force", "Forces overwriting possible changes from Zeplin apps", false)
     .action(commandRunner(async options => {
         const opts: InitializeCommandOptions = {
             configFile: options.file,
@@ -95,7 +98,8 @@ connectCommand.command("initialize")
             componentFilename: options.componentFilename,
             skipConnect: options.skipConnect,
             skipInstall: options.skipInstall,
-            type: options.type
+            type: options.type,
+            force: options.force
         };
         await initialize(opts);
     }));
@@ -108,6 +112,7 @@ connectCommand.command("add-components")
     .option("--filename <filename>", "Initializes configuration for this component file")
     .option("--file <configFile>", "Optional file path to create configuration", defaults.commands.initialize.filePath)
     .option("--skip-connect", "Skip connecting after configuration is created", false)
+    .option("-f, --force", "Forces overwriting possible changes from Zeplin apps", false)
     .action(commandRunner(async options => {
         const opts: AddComponentCommandOptions = {
             configFile: options.file,
@@ -115,7 +120,8 @@ connectCommand.command("add-components")
             projectId: options.projectId,
             styleguideId: options.styleguideId,
             componentFilename: options.filename,
-            skipConnect: options.skipConnect
+            skipConnect: options.skipConnect,
+            force: options.force
         };
         await addComponent(opts);
     }));

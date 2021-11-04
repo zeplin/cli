@@ -22,12 +22,15 @@ export class ConnectedComponentsService {
         this.authService = authService || new AuthenticationService();
     }
 
-    async uploadConnectedBarrels(connectedBarrelComponents: ConnectedBarrelComponents[]): Promise<void> {
+    async uploadConnectedBarrels(
+        connectedBarrelComponents: ConnectedBarrelComponents[],
+        options: { force: boolean }
+    ): Promise<void> {
         const requiredScopes = ["write"];
         try {
             const { token } = await this.authService.authenticate({ requiredScopes });
 
-            await this.upload(token, connectedBarrelComponents);
+            await this.upload(token, connectedBarrelComponents, options);
         } catch (error) {
             if (isAuthenticationError(error)) {
                 if (isCI()) {
@@ -38,7 +41,7 @@ export class ConnectedComponentsService {
                     logger.info(error.message);
                     const { token } = await this.authService.promptForLogin({ requiredScopes, forceRenewal: true });
 
-                    await this.upload(token, connectedBarrelComponents);
+                    await this.upload(token, connectedBarrelComponents, options);
                     return;
                 }
             }
@@ -72,7 +75,8 @@ export class ConnectedComponentsService {
 
     private async upload(
         authToken: string,
-        connectedBarrelComponents: ConnectedBarrelComponents[]
+        connectedBarrelComponents: ConnectedBarrelComponents[],
+        { force }: { force: boolean }
     ): Promise<void> {
         await Promise.all(connectedBarrelComponents.map(async connectedBarrelComponent => {
             // TODO upload progress on console
@@ -80,7 +84,8 @@ export class ConnectedComponentsService {
                 await this.zeplinApi.uploadConnectedComponents(
                     authToken,
                     { barrelId: pid, barrelType: "projects" },
-                    { items: connectedBarrelComponent.items }
+                    { items: connectedBarrelComponent.items },
+                    { forceOverwrite: force }
                 );
             }));
 
@@ -88,7 +93,8 @@ export class ConnectedComponentsService {
                 await this.zeplinApi.uploadConnectedComponents(
                     authToken,
                     { barrelId: stid, barrelType: "styleguides" },
-                    { items: connectedBarrelComponent.items }
+                    { items: connectedBarrelComponent.items },
+                    { forceOverwrite: force }
                 );
             }));
         }));
