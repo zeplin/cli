@@ -280,7 +280,7 @@ const connectComponentConfig = async (
 ): Promise<ConnectedComponentItem[]> => {
     // Execute all plugins
     const pluginResponses = (await Promise.all(plugins.map(plugin => processPlugin(plugin, component))))
-        .filter((item): item is ProcessResponse => item !== undefined);
+        .filter(isDefined);
 
     const links: Link[] = [
         ...createLinksFromConfigFile(component, componentConfigFile),
