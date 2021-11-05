@@ -16,6 +16,10 @@ function notEmptyValidator(errorMessage: string) {
     return (input: string): boolean | string => (input && input.length > 0 ? true : errorMessage);
 }
 
+function redactPersonalAccessToken(personalAccessToken: string): string {
+    return personalAccessToken.replace(/\.[^.]*$/, ".REDACTED");
+}
+
 type JWT = { [key: string]: string | number | boolean };
 
 const validate = (authentication: Authentication | undefined, requiredScopes?: string[]): Authentication => {
@@ -85,7 +89,7 @@ export class AuthenticationService {
             const tokenFromEnv = envUtil.getAccessTokenFromEnv();
 
             if (tokenFromEnv) {
-                logger.debug(`Found access token from ZEPLIN_ACCESS_TOKEN env var. value: ${tokenFromEnv}`);
+                logger.debug(`Found access token from ZEPLIN_ACCESS_TOKEN env var. value: ${redactPersonalAccessToken(tokenFromEnv)}`);
                 this.authentication = {
                     token: tokenFromEnv,
                     method: AUTH_METHOD.ENVIRONMENT_VARIABLE
@@ -93,7 +97,7 @@ export class AuthenticationService {
             } else if (!envUtil.isCI()) {
                 const tokenFromFile = await authFileUtil.readAuthToken();
                 if (tokenFromFile) {
-                    logger.debug(`Found access token from auth file. value: ${tokenFromFile}`);
+                    logger.debug(`Found access token from auth file. value: ${redactPersonalAccessToken(tokenFromFile)}`);
                     this.authentication = {
                         token: tokenFromFile,
                         method: AUTH_METHOD.LOCAL_AUTH_FILE
