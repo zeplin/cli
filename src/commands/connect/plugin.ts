@@ -135,10 +135,6 @@ const createBitbucketLink = (
     if (isCloud) {
         const prefix = defaults.bitbucket.cloudPrefix;
         preparedUrl = urljoin(url, user, repository, prefix, branch, basePath, ...filePath);
-    } else if (!project && !user) {
-        // Backward compatibility
-        // TODO: remove this block after a while
-        preparedUrl = urljoin(url, repository, branch, basePath, ...filePath);
     } else {
         const owner = project
             ? { path: "projects", name: project }
