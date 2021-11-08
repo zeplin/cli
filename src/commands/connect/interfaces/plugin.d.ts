@@ -3,7 +3,7 @@ import { PrismLang } from "./prism";
 /**
  * @public
  */
-interface LeveledLogMethod {
+export interface LeveledLogMethod {
     (message: string): void;
     (message: string, meta: unknown): void;
     (message: string, ...meta: any[]): void;
@@ -46,7 +46,6 @@ export interface Link {
  * @public
  */
 export const enum LinkType {
-    styleguidist = "styleguidist",
     storybook = "storybook",
     github = "github",
     gitlab = "gitlab",
@@ -68,13 +67,6 @@ export interface ComponentData {
     snippet?: string;
     /** {@inheritdoc Link} */
     links?: Link[];
-}
-
-/**
- * @public
- */
-export interface StyleguidistComponentConfig {
-    name: string;
 }
 
 /**
@@ -100,8 +92,6 @@ export interface ComponentConfigBase {
     zeplinIds?: string[];
     /** Name for the component */
     name?: string;
-    /** Styleguidist name for the component (Optional) */
-    styleguidist?: StyleguidistComponentConfig;
 }
 
 /**
