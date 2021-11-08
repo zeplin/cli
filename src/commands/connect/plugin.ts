@@ -18,12 +18,6 @@ import { getInstallCommand } from "../../util/text";
 import { flat } from "../../util/array";
 import { isDefined } from "../../util/object";
 
-const ALLOWED_LINK_TYPES = [
-    LinkType.storybook,
-    LinkType.github,
-    LinkType.custom
-];
-
 interface ConnectPluginConstructor {
     new(): ConnectPluginInstance;
 }
@@ -84,7 +78,7 @@ const initializePlugins = async (
 };
 
 const processLink = (link: Link): Link => {
-    if (!ALLOWED_LINK_TYPES.includes(link.type)) {
+    if (!Object.values(LinkType).includes(link.type)) {
         link.type = LinkType.custom;
     }
 

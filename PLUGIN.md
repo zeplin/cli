@@ -8,7 +8,7 @@ To extend the `connect` command, you can build a plugin for your own needs. Plug
 
 ### Implementation
 
-1. Create a class that implements the [ConnectPlugin](./src/commands/connect/interfaces/plugin.d.ts) interface.
+1. Create a class that implements the [ConnectPlugin](./src/commands/connect/interfaces/plugin.ts) interface.
     - See [interface documentation](./docs/cli.connectplugin.md) for details.
     - To get type definitions for plugin development install `@zeplin/cli` package as a development dependency.
 
@@ -33,7 +33,7 @@ To extend the `connect` command, you can build a plugin for your own needs. Plug
 
 ### Examples
 
-Here's a boilerplate for a class that implements the [ConnectPlugin](./src/commands/connect/interfaces/plugin.d.ts) interface.
+Here's a boilerplate for a class that implements the [ConnectPlugin](./src/commands/connect/interfaces/plugin.ts) interface.
 
 ```typescript
 import { ConnectPlugin, ComponentConfig, ComponentData, PrismLang } from "@zeplin/cli";
