@@ -19,7 +19,6 @@ import { flat } from "../../util/array";
 import { isDefined } from "../../util/object";
 
 const ALLOWED_LINK_TYPES = [
-    LinkType.styleguidist,
     LinkType.storybook,
     LinkType.github,
     LinkType.custom
@@ -209,12 +208,7 @@ const componentConfigToConnectedComponentItems = ({
 const createLinksFromConfigFile = (
     component: ComponentConfig,
     componentConfigFile: ComponentConfigFile
-): Link[] => (componentConfigFile.links || []).map(({ name, type, url }): Link | undefined => {
-    // TODO: remove styleguidist specific configuration from CLI core
-    if (type === "styleguidist" && component.styleguidist) {
-        const encodedKind = encodeURIComponent(component.styleguidist.name);
-        return { name, type: LinkType.styleguidist, url: urljoin(url, `#${encodedKind}`) };
-    }
+): Link[] => (componentConfigFile.links || []).map(({ name, type, url }) => {
     if (component[type]) {
         const customUrlPath = (component[type] as CustomUrlConfig).urlPath;
         if (customUrlPath) {
