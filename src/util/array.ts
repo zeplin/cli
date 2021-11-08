@@ -9,7 +9,10 @@ const asyncFilter = async <T, U>(arr: Array<T>, predicate: predicate<T, U>): Pro
 const sortByField = <T>(arr: Array<T>, key: keyof T): Array<T> =>
     arr.sort((a, b) => ((a[key] > b[key]) ? 1 : -1));
 
+const flat = <T>(arr: Array<Array<T>>): Array<T> => arr.reduce((acc, val) => acc.concat(val), []);
+
 export {
     asyncFilter,
-    sortByField
+    sortByField,
+    flat
 };

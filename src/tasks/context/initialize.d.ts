@@ -17,6 +17,7 @@ export interface CliOptions {
     configFile: string;
     skipConnect?: boolean;
     skipInstall?: boolean;
+    force: boolean;
 }
 
 export type InitializeContext = AuthenticationContext &

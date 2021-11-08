@@ -1,33 +1,30 @@
 import { Link } from "./plugin";
 
 /** @internal */
-export interface Data {
-    plugin: string;
-    lang?: string;
-    description?: string;
-    snippet?: string;
-}
+export type ConnectedComponentItem = (
+    ({ componentId: string } | { pattern: string })
+    & {
+        name?: string;
+        description?: string;
+        filePath?: string;
+        code?: {
+            snippet: string;
+            lang?: string;
+        };
+        links?: Link[];
+    }
+);
 
 /** @internal */
-export interface ConnectedComponent {
-    path: string;
-    zeplinNames?: string[];
-    zeplinIds?: string[];
-    name?: string;
-    urlPaths?: Link[];
-    data?: Data[];
-}
-
-/** @internal */
-export interface ConnectedComponentList {
-    connectedComponents: ConnectedComponent[];
+export interface ConnectedComponents {
+    items: ConnectedComponentItem[];
 }
 
 /** @internal */
 export interface ConnectedBarrelComponents {
     projects: string[];
     styleguides: string[];
-    connectedComponents: ConnectedComponent[];
+    items: ConnectedComponentItem[];
 }
 
 /** @internal */

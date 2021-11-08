@@ -9,11 +9,16 @@ import { ConnectedBarrelComponents } from "./interfaces/api";
 import { connectComponentConfigFiles } from "./plugin";
 import { ConnectDevServer } from "./server";
 import { ConnectedComponentsService } from "./service";
+import { isDefined } from "../../util/object";
+import { flat } from "../../util/array";
 
-const getComponentFilePaths = (connectedBarrels: ConnectedBarrelComponents[]): string[] =>
-    connectedBarrels.map(f =>
-        f.connectedComponents.map(c => path.resolve(c.path))
-    ).reduce((a, b) => [...a, ...b], []);
+const getComponentFilePaths = (connectedBarrels: ConnectedBarrelComponents[]): string[] => (
+    flat(
+        connectedBarrels.map(f =>
+            f.items.map(c => (c.filePath ? path.resolve(c.filePath) : undefined)).filter(isDefined)
+        )
+    )
+);
 
 const generateConnectedComponents = async (
     options: Partial<Pick<ConnectOptions, "configFiles" | "plugins">>
@@ -88,10 +93,10 @@ const startDevServer = async (
 
 const service = new ConnectedComponentsService();
 
-const upload = async (connectedBarrels: ConnectedBarrelComponents[]): Promise<void> => {
+const upload = async (connectedBarrels: ConnectedBarrelComponents[], { force }: ConnectOptions): Promise<void> => {
     logger.info("Connecting all Connected Components into Zeplin…");
 
-    await service.uploadConnectedBarrels(connectedBarrels);
+    await service.uploadConnectedBarrels(connectedBarrels, { force });
 
     logger.info("🦄 Components successfully connected to components in Zeplin.");
 };
@@ -105,7 +110,7 @@ async function connect(options: ConnectOptions): Promise<void> {
         if (options.devMode) {
             await startDevServer(options, connectedBarrels);
         } else {
-            await upload(connectedBarrels);
+            await upload(connectedBarrels, options);
         }
     } catch (error) {
         error.message = dedent`
@@ -123,6 +128,7 @@ export interface ConnectOptions {
     devModePort: number;
     devModeWatch: boolean;
     plugins: string[];
+    force: boolean;
 }
 
 export {

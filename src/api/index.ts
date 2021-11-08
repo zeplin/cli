@@ -10,7 +10,7 @@ import {
     StyleguideResponse
 } from "./interfaces";
 import { APIError, CLIError } from "../errors";
-import { ConnectedComponentList } from "../commands/connect/interfaces/api";
+import { ConnectedComponents } from "../commands/connect/interfaces/api";
 import { MOVED_TEMPORARILY } from "http-status-codes";
 import { URLSearchParams } from "url";
 
@@ -87,16 +87,18 @@ export class ZeplinApi {
     async uploadConnectedComponents(
         authToken: string,
         params: { barrelId: string; barrelType: BarrelType },
-        body: ConnectedComponentList
+        body: ConnectedComponents,
+        queryParams: { forceOverwrite: boolean }
     ): Promise<void> {
         try {
             const { barrelId, barrelType } = params;
 
             await this.axios.put(
-                `/public/cli/${barrelType}/${barrelId}/connectedcomponents`,
+                `/public/cli/v2/${barrelType}/${barrelId}/connectedcomponents`,
                 body,
                 {
-                    headers: { "Zeplin-Access-Token": authToken }
+                    headers: { "Zeplin-Access-Token": authToken },
+                    params: queryParams
                 }
             );
         } catch (error) {
@@ -115,7 +117,7 @@ export class ZeplinApi {
             const { barrelId, barrelType } = params;
 
             await this.axios.delete(
-                `/public/cli/${barrelType}/${barrelId}/connectedcomponents`,
+                `/public/cli/v2/${barrelType}/${barrelId}/connectedcomponents`,
                 {
                     headers: { "Zeplin-Access-Token": authToken }
                 }

@@ -8,6 +8,7 @@ import logger from "../util/logger";
 import { stringify } from "../util/text";
 import { SupportedProjectType } from "../service/project-type/project-types";
 import { PackageJson } from "../util/js/config";
+import { isDefined } from "../util/object";
 
 const writeFile = async (filePath: string, config: ComponentConfigFile): Promise<void> => {
     await mkdir(path.dirname(filePath));
@@ -30,7 +31,7 @@ const executeConfigurators = async (
             return null;
         })
     );
-    return pluginConfigs.filter(Boolean) as Array<{}>;
+    return pluginConfigs.filter(isDefined);
 };
 
 const getPluginConfigs = (

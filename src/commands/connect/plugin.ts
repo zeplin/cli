@@ -6,15 +6,17 @@ import urljoin from "url-join";
 import {
     ComponentConfigFile, ConnectPluginInstance, Plugin, GitConfig, BitbucketConfig
 } from "./interfaces/config";
-import { ConnectedComponent, ConnectedBarrelComponents, Data } from "./interfaces/api";
+import { ConnectedComponentItem, ConnectedBarrelComponents } from "./interfaces/api";
 import {
-    ComponentData, ComponentConfig, CustomUrlConfig, Link, LinkType
+    ComponentConfig, CustomUrlConfig, Link, LinkType
 } from "./interfaces/plugin";
 import { CLIError } from "../../errors";
 import { defaults } from "../../config/defaults";
 import logger from "../../util/logger";
 import { isRunningFromGlobal } from "../../util/package";
 import { getInstallCommand } from "../../util/text";
+import { flat } from "../../util/array";
+import { isDefined } from "../../util/object";
 
 const ALLOWED_LINK_TYPES = [
     LinkType.styleguidist,
@@ -80,26 +82,6 @@ const initializePlugins = async (
 
     const pluginInstances = await Promise.all(imports);
     return pluginInstances;
-};
-
-const convertToData = (plugin: string, componentData: ComponentData): Data => {
-    const copyComponentData = { ...componentData };
-
-    if (typeof copyComponentData.description === "undefined" || copyComponentData.description.trim() === "") {
-        delete copyComponentData.description;
-    }
-
-    if (typeof copyComponentData.snippet === "undefined" || copyComponentData.snippet.trim() === "") {
-        delete copyComponentData.snippet;
-        delete copyComponentData.lang;
-    }
-
-    delete copyComponentData.links;
-
-    return {
-        plugin,
-        ...copyComponentData
-    };
 };
 
 const processLink = (link: Link): Link => {
@@ -191,67 +173,144 @@ const createRepoLinks = (componentPath: string, componentConfigFile: ComponentCo
     return repoLinks;
 };
 
-const connectComponentConfig = async (
+interface CodeAndDescription {
+    code?: {
+        snippet: string;
+        lang?: string;
+    };
+    description?: string;
+}
+
+type ComponentConfigToConnectedComponentItemProps = {
+    component: ComponentConfig;
+    links: Link[];
+} & CodeAndDescription;
+
+const componentConfigToConnectedComponentItems = ({
+    component,
+    links,
+    description,
+    code
+}: ComponentConfigToConnectedComponentItemProps): ConnectedComponentItem[] => [
+    ...(component.zeplinNames || []).map(pattern => ({
+        pattern,
+        name: component.name,
+        description,
+        filePath: component.path,
+        code,
+        links
+    })),
+    ...(component.zeplinIds || []).map(componentId => ({
+        componentId,
+        name: component.name,
+        description,
+        filePath: component.path,
+        code,
+        links
+    }))
+];
+
+const createLinksFromConfigFile = (
     component: ComponentConfig,
-    componentConfigFile: ComponentConfigFile,
-    plugins: ConnectPluginInstance[]
-): Promise<ConnectedComponent> => {
-    const data: Data[] = [];
-    const urlPaths: Link[] = [];
+    componentConfigFile: ComponentConfigFile
+): Link[] => (componentConfigFile.links || []).map(({ name, type, url }): Link | undefined => {
+    // TODO: remove styleguidist specific configuration from CLI core
+    if (type === "styleguidist" && component.styleguidist) {
+        const encodedKind = encodeURIComponent(component.styleguidist.name);
+        return { name, type: LinkType.styleguidist, url: urljoin(url, `#${encodedKind}`) };
+    }
+    if (component[type]) {
+        const customUrlPath = (component[type] as CustomUrlConfig).urlPath;
+        if (customUrlPath) {
+            return { name, type: LinkType.custom, url: urljoin(url, customUrlPath) };
+        }
+    }
+    return undefined;
+}).filter(isDefined);
 
-    // Execute all plugins
-    const pluginPromises = plugins.map(async plugin => {
-        try {
-            if (plugin.supports(component)) {
-                logger.debug(`${plugin.name} supports ${component.path}. Processing…`);
-                const componentData = await plugin.process(component);
+type ProcessResponse = {
+    links: Link[];
+} | {
+    code?: {
+        lang?: string;
+        snippet: string;
+    };
+    description?: string;
+    links?: Link[];
+}
 
-                data.push(convertToData(plugin.name, componentData));
+const processPlugin = async (
+    plugin: ConnectPluginInstance,
+    component: ComponentConfig
+): Promise<ProcessResponse | undefined> => {
+    try {
+        if (!plugin.supports(component)) {
+            logger.debug(`${plugin.name} does not support ${component.path}.`);
+            return {};
+        }
+        logger.debug(`${plugin.name} supports ${component.path}. Processing…`);
+        const componentData = await plugin.process(component);
+        logger.debug(`${plugin.name} processed ${component.path}: ${componentData}`);
 
-                componentData.links?.forEach(link =>
-                    urlPaths.push(processLink(link))
-                );
-
-                logger.debug(`${plugin.name} processed ${component.path}: ${componentData}`);
-            } else {
-                logger.debug(`${plugin.name} does not support ${component.path}.`);
-            }
-        } catch (err) {
-            throw new CLIError(dedent`
+        return {
+            code: (
+                componentData.snippet
+                    ? {
+                        snippet: componentData.snippet,
+                        lang: componentData.lang
+                    }
+                    : undefined
+            ),
+            description: componentData.description,
+            links: (componentData.links || []).map(processLink)
+        };
+    } catch (err) {
+        throw new CLIError(dedent`
                 Error occurred while processing ${chalk.bold(component.path)} with ${chalk.bold(plugin.name)}:
 
                 ${err.message}
             `, err.stack);
-        }
-    });
+    }
+};
 
-    await Promise.all(pluginPromises);
+const connectComponentConfig = async (
+    component: ComponentConfig,
+    componentConfigFile: ComponentConfigFile,
+    plugins: ConnectPluginInstance[]
+): Promise<ConnectedComponentItem[]> => {
+    // Execute all plugins
+    const pluginResponses = (await Promise.all(plugins.map(plugin => processPlugin(plugin, component))))
+        .filter(isDefined);
 
-    componentConfigFile.links?.forEach(link => {
-        const { name, type, url } = link;
-
-        // TODO: remove styleguidist specific configuration from CLI core
-        if (type === "styleguidist" && component.styleguidist) {
-            const encodedKind = encodeURIComponent(component.styleguidist.name);
-            urlPaths.push({ name, type: LinkType.styleguidist, url: urljoin(url, `#${encodedKind}`) });
-        } else if (component[type]) {
-            const customUrlPath = (component[type] as CustomUrlConfig).urlPath;
-            if (customUrlPath) {
-                urlPaths.push({ name, type: LinkType.custom, url: urljoin(url, customUrlPath) });
+    const links: Link[] = [
+        ...createLinksFromConfigFile(component, componentConfigFile),
+        ...createRepoLinks(component.path, componentConfigFile),
+        ...pluginResponses.reduce((acc, response) => {
+            if (response.links) {
+                return [...acc, ...response.links];
             }
+            return acc;
+        }, [] as Link[])
+    ];
+
+    const codeAndDescriptions: CodeAndDescription[] = pluginResponses.reduce((acc, response) => {
+        if ("code" in response) {
+            return [...acc, { code: response.code, description: response.description }];
         }
-    });
+        return acc;
+    }, [] as CodeAndDescription[]);
 
-    urlPaths.push(...createRepoLinks(component.path, componentConfigFile));
+    if (codeAndDescriptions.length === 0) {
+        codeAndDescriptions.push({});
+    }
 
-    return {
-        path: component.path,
-        name: component.name,
-        zeplinNames: component.zeplinNames,
-        zeplinIds: component.zeplinIds,
-        urlPaths,
-        data
-    };
+    return flat(
+        codeAndDescriptions.map(codeAndDescription => componentConfigToConnectedComponentItems({
+            component,
+            links,
+            ...codeAndDescription
+        }))
+    );
 };
 
 const connectComponentConfigFile = async (
@@ -261,7 +320,7 @@ const connectComponentConfigFile = async (
 
     const plugins = await initializePlugins(componentConfigFile.plugins || [], components);
 
-    const connectedComponents = await Promise.all(
+    const items = flat(await Promise.all(
         components.map(component =>
             connectComponentConfig(
                 component,
@@ -269,12 +328,12 @@ const connectComponentConfigFile = async (
                 plugins
             )
         )
-    );
+    ));
 
     return {
         projects: componentConfigFile.projects || [],
         styleguides: componentConfigFile.styleguides || [],
-        connectedComponents
+        items
     };
 };
 

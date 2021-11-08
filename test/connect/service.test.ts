@@ -28,7 +28,7 @@ describe("ConnectedComponentsService", () => {
                     method: AUTH_METHOD.ENVIRONMENT_VARIABLE
                 });
 
-                await service.uploadConnectedBarrels([sample]);
+                await service.uploadConnectedBarrels([sample], { force: false });
 
                 expect(service.authService.promptForLogin).toHaveBeenCalledTimes(1);
 
@@ -37,7 +37,8 @@ describe("ConnectedComponentsService", () => {
                         .toHaveBeenCalledWith(
                             samples.validJwt,
                             { barrelId, barrelType },
-                            { connectedComponents: sample.connectedComponents }
+                            { items: sample.items },
+                            { forceOverwrite: false }
                         );
                 };
 
@@ -64,7 +65,7 @@ describe("ConnectedComponentsService", () => {
                 });
                 mocked(service.zeplinApi.uploadConnectedComponents).mockRejectedValueOnce(authError);
 
-                await service.uploadConnectedBarrels([sample]);
+                await service.uploadConnectedBarrels([sample], { force: false });
 
                 expect(service.authService.promptForLogin).toHaveBeenCalledTimes(1);
 
@@ -73,7 +74,8 @@ describe("ConnectedComponentsService", () => {
                         .toHaveBeenCalledWith(
                             samples.validJwt,
                             { barrelId, barrelType },
-                            { connectedComponents: sample.connectedComponents }
+                            { items: sample.items },
+                            { forceOverwrite: false }
                         );
                 };
 
@@ -90,7 +92,7 @@ describe("ConnectedComponentsService", () => {
                 mocked(service.authService.authenticate).mockRejectedValueOnce(authError);
                 mocked(service.authService.promptForLogin).mockRejectedValueOnce(authError);
 
-                await expect(service.uploadConnectedBarrels([sample]))
+                await expect(service.uploadConnectedBarrels([sample], { force: false }))
                     .rejects
                     .toThrowError(authError);
 
@@ -106,7 +108,7 @@ describe("ConnectedComponentsService", () => {
 
                 mocked(service.authService.authenticate).mockRejectedValueOnce(error);
 
-                await expect(service.uploadConnectedBarrels([sample]))
+                await expect(service.uploadConnectedBarrels([sample], { force: false }))
                     .rejects
                     .toThrowError(error);
 
@@ -126,7 +128,7 @@ describe("ConnectedComponentsService", () => {
                 });
                 mocked(service.zeplinApi.uploadConnectedComponents).mockRejectedValueOnce(error);
 
-                await expect(service.uploadConnectedBarrels([sample]))
+                await expect(service.uploadConnectedBarrels([sample], { force: false }))
                     .rejects
                     .toThrowError(error);
 
@@ -143,7 +145,7 @@ describe("ConnectedComponentsService", () => {
                     method: AUTH_METHOD.ENVIRONMENT_VARIABLE
                 });
 
-                await service.uploadConnectedBarrels([sample]);
+                await service.uploadConnectedBarrels([sample], { force: false });
 
                 expect(service.authService.promptForLogin).not.toHaveBeenCalled();
 
@@ -152,7 +154,8 @@ describe("ConnectedComponentsService", () => {
                         .toHaveBeenCalledWith(
                             samples.validJwt,
                             { barrelId, barrelType },
-                            { connectedComponents: sample.connectedComponents }
+                            { items: sample.items },
+                            { forceOverwrite: false }
                         );
                 };
 
@@ -175,7 +178,7 @@ describe("ConnectedComponentsService", () => {
 
                     mocked(service.authService.authenticate).mockRejectedValueOnce(authError);
 
-                    await expect(service.uploadConnectedBarrels([sample]))
+                    await expect(service.uploadConnectedBarrels([sample], { force: false }))
                         .rejects
                         .toThrowError(authError);
 

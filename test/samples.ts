@@ -1,4 +1,4 @@
-import { ConnectedBarrelComponents, ConnectedComponent, ConnectedComponentList } from "../src/commands/connect/interfaces/api";
+import { ConnectedBarrelComponents, ConnectedComponentItem, ConnectedComponents } from "../src/commands/connect/interfaces/api";
 import { LinkType } from "../src/commands/connect/interfaces/plugin";
 import { defaults } from "../src/config/defaults";
 import { BarrelType } from "../src/api";
@@ -24,34 +24,32 @@ export const invalidJwt = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.invalid";
 export const validJwtWithoutAudience = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c";
 export const validJwtWithoutDeleteScope = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwiYXVkIjoidXNlcjoxMjMxMjMxMjMiLCJuYW1lIjoiSm9obiBEb2UiLCJpYXQiOjE1MTYyMzkwMjJ9.p5Sr4rXPvVuNl9useetyAtYc7ZO6U73XmAhNUsFtFJs";
 
-export const connectedComponent1: ConnectedComponent = {
-    path: "src/Sample1.jsx",
-    zeplinNames: ["screen1"],
+export const connectedComponent1: ConnectedComponentItem = {
+    filePath: "src/Sample1.jsx",
+    pattern: "screen1",
     name: "Sample1",
-    data: [{
-        plugin: "pluginName",
-        lang: "jsx",
-        description: "desc",
-        snippet: "snip"
-    }],
-    urlPaths: [{
+    description: "desc",
+    code: {
+        snippet: "snip",
+        lang: "jsx"
+    },
+    links: [{
         type: LinkType.custom,
         url: "https://example.com",
         name: "urlName"
     }]
 };
 
-export const connectedComponent2: ConnectedComponent = {
-    path: "src/Sample2.jsx",
-    zeplinNames: ["screen2"],
+export const connectedComponent2: ConnectedComponentItem = {
+    filePath: "src/Sample2.jsx",
+    pattern: "screen2",
     name: "Sample2",
-    data: [{
-        plugin: "pluginName",
+    description: "desc",
+    code: {
         lang: "jsx",
-        description: "desc",
         snippet: "snip"
-    }],
-    urlPaths: [{
+    },
+    links: [{
         type: LinkType.custom,
         url: "https://example.com",
         name: "urlName"
@@ -61,14 +59,14 @@ export const connectedComponent2: ConnectedComponent = {
 export const connectedComponents: ConnectedBarrelComponents = {
     projects: ["pid1", "pid2"],
     styleguides: ["sid1", "sid2"],
-    connectedComponents: [
+    items: [
         connectedComponent1,
         connectedComponent2
     ]
 };
 
-export const connectedComponentList: ConnectedComponentList = {
-    connectedComponents: [
+export const connectedComponentList: ConnectedComponents = {
+    items: [
         connectedComponent1,
         connectedComponent2
     ]

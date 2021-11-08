@@ -31,7 +31,13 @@ const maskUrl = (_url: string | undefined): string | undefined => {
 };
 
 const requestLogger = (request: AxiosRequestConfig): AxiosRequestConfig => {
-    const { url, method, data, headers } = request;
+    const {
+        url,
+        method,
+        data,
+        headers,
+        params
+    } = request;
     let httpLog = `HTTP Request: ${method} ${maskUrl(url)}`;
 
     if (headers) {
@@ -39,6 +45,9 @@ const requestLogger = (request: AxiosRequestConfig): AxiosRequestConfig => {
     }
     if (data) {
         httpLog = httpLog.concat(`, Body: ${JSON.stringify(mask(data))}`);
+    }
+    if (params) {
+        httpLog = httpLog.concat(`, Params: ${JSON.stringify(mask(params))}`);
     }
 
     logger.http(httpLog);
