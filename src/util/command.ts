@@ -12,7 +12,7 @@ export async function runCommand(
 
         logger.debug(`Command output: ${stdout}`);
         return stdout;
-    } catch (e) {
+    } catch (e: any) {
         logger.error("Command error:", e);
         if (!ignoreError) {
             throw e;

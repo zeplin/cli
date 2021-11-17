@@ -31,7 +31,7 @@ export class ConnectedComponentsService {
             const { token } = await this.authService.authenticate({ requiredScopes });
 
             await this.upload(token, connectedBarrelComponents, options);
-        } catch (error) {
+        } catch (error: any) {
             if (isAuthenticationError(error)) {
                 if (isCI()) {
                     error.message = dedent`
@@ -55,7 +55,7 @@ export class ConnectedComponentsService {
             const { token } = await this.authService.authenticate({ requiredScopes });
 
             await this.delete(token, connectedComponents);
-        } catch (error) {
+        } catch (error: any) {
             if (isAuthenticationError(error)) {
                 if (isCI()) {
                     error.message = dedent`

@@ -30,7 +30,7 @@ const importPlugin = async (pluginName: string): Promise<ConnectPluginConstructo
             return (pluginInCwd as { default: ConnectPluginConstructor }).default;
         }
         return (await import(pluginName)).default as ConnectPluginConstructor;
-    } catch (e) {
+    } catch (e: any) {
         const error = new CLIError(dedent`
             Could not find plugin ${chalk.bold(pluginName)} failed.
             Please make sure that it's ${isRunningFromGlobal() ? "globally " : ""}installed and try again.
@@ -248,7 +248,7 @@ const processPlugin = async (
             description: componentData.description,
             links: (componentData.links || []).map(processLink)
         };
-    } catch (err) {
+    } catch (err: any) {
         throw new CLIError(dedent`
                 Error occurred while processing ${chalk.bold(component.path)} with ${chalk.bold(plugin.name)}:
 

@@ -35,7 +35,7 @@ export async function connectDelete(options: ConnectDeleteOptions): Promise<void
         const barrels = await getConnectedBarrels({ configFiles: options.configFiles });
 
         await deleteConnectedBarrels(barrels);
-    } catch (error) {
+    } catch (error: any) {
         error.message = dedent`
             ${chalk.bold`Deleting Connected Components from Zeplin components failed.`}
 

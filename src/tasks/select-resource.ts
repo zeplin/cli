@@ -56,7 +56,7 @@ const retrieveResources: TaskStep<ResourceContext> = async (ctx): Promise<void> 
         });
 
         ctx.resources = resources;
-    } catch (e) {
+    } catch (e: any) {
         logger.debug(e);
         throw new CLIError("Could not get Zeplin resources.", e);
     }

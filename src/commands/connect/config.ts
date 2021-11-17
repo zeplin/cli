@@ -110,7 +110,7 @@ const getComponentConfigFile = async (filePath: string): Promise<ComponentConfig
 
     try {
         result = await configExplorer.load(filePath);
-    } catch (err) {
+    } catch (err: any) {
         throw new CLIError(`Cannot access ${relativeFilePath}: ${err.message}`);
     }
 
@@ -130,7 +130,7 @@ const discoverDefaultConfigFile = async (configRootDir: string): Promise<Compone
         const searchFrom = path.join(configRootDir, ".zeplin");
 
         discoveredConfigFile = await configExplorer.search(searchFrom);
-    } catch (err) {
+    } catch (err: any) {
         logger.debug(`Failed configuration file discovery: ${err.message}`);
     }
 
@@ -197,7 +197,7 @@ const getComponentConfigFiles = async (
             configFile.plugins = plugins;
             return configFile;
         });
-    } catch (error) {
+    } catch (error: any) {
         throw new CLIError(error.message);
     }
 };

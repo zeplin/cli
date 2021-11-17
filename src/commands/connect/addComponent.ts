@@ -82,7 +82,7 @@ export async function addComponent(options: AddComponentCommandOptions): Promise
         await workflow.run();
 
         logger.info(addSummary(context));
-    } catch (error) {
+    } catch (error: any) {
         error.message = dedent`
             ${chalk.bold`Adding connected component failed.`}
 

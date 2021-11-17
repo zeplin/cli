@@ -39,7 +39,7 @@ function commandRunner(fn: FunctionReturnsPromise): FunctionReturnsPromise {
         try {
             await fn(...args);
             await gracefulExit();
-        } catch (e) {
+        } catch (e: any) {
             await errorHandler(e);
         }
     };
