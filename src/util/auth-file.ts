@@ -26,7 +26,7 @@ export async function readAuthToken(): Promise<string | undefined> {
 
     try {
         ({ authToken } = await readJsonFile(tokenFilename) as AuthToken);
-    } catch (error) {
+    } catch (error: any) {
         logger.debug(`${error.stack}`);
     }
 

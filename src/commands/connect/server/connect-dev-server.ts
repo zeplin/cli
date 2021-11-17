@@ -59,7 +59,7 @@ export class ConnectDevServer {
 
                     logger.info(chalk.green(`Development server is started.`));
 
-                    resolve(this.server);
+                    resolve(this.server as Server);
                 })
                 .on("error", (err: NodeJS.ErrnoException) => {
                     if (err.code === "EADDRINUSE") {

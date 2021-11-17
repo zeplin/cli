@@ -13,7 +13,7 @@ export async function getPackageJson(): Promise<PackageJson | null> {
         const packageJson = await fileUtil.readJsonFile("./package.json");
 
         return packageJson as PackageJson;
-    } catch (e) {
+    } catch (e: any) {
         return null;
     }
 }
@@ -23,7 +23,7 @@ export async function getBowerJson(): Promise<PackageJson | null> {
         const bowerJson = await fileUtil.readJsonFile("./bower.json");
 
         return bowerJson as PackageJson;
-    } catch (e) {
+    } catch (e: any) {
         return null;
     }
 }

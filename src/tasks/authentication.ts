@@ -17,7 +17,7 @@ const authenticate: TaskStep<AuthenticationContext> = async (ctx): Promise<void>
     const requiredScopes = ["read", "write"];
     try {
         ctx.auth = await ctx.authService.authenticate({ requiredScopes });
-    } catch (error) {
+    } catch (error: any) {
         if (isAuthenticationError(error)) {
             if (isCI()) {
                 error.message = dedent`

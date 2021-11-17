@@ -37,7 +37,7 @@ export class ZeplinApi {
                 password: request.password
             });
             return response.data;
-        } catch (error) {
+        } catch (error: any) {
             if (error.isAxiosError) {
                 throw new APIError(error.response);
             }
@@ -63,7 +63,7 @@ export class ZeplinApi {
             const responseParams = new URLSearchParams(responseQueryParams);
 
             return responseParams.get("access_token") as string;
-        } catch (error) {
+        } catch (error: any) {
             if (error.isAxiosError) {
                 throw new APIError(error.response);
             }
@@ -76,7 +76,7 @@ export class ZeplinApi {
             await this.axios.post(REVOKE_URL, {}, {
                 headers: { "Zeplin-Access-Token": authToken }
             });
-        } catch (error) {
+        } catch (error: any) {
             if (error.isAxiosError) {
                 throw new APIError(error.response);
             }
@@ -99,7 +99,7 @@ export class ZeplinApi {
                     headers: { "Zeplin-Access-Token": authToken }
                 }
             );
-        } catch (error) {
+        } catch (error: any) {
             if (error.isAxiosError) {
                 throw new APIError(error.response);
             }
@@ -120,7 +120,7 @@ export class ZeplinApi {
                     headers: { "Zeplin-Access-Token": authToken }
                 }
             );
-        } catch (error) {
+        } catch (error: any) {
             if (error.isAxiosError) {
                 throw new APIError(error.response);
             }
@@ -137,7 +137,7 @@ export class ZeplinApi {
                 }
             );
             return response.data;
-        } catch (error) {
+        } catch (error: any) {
             if (error.isAxiosError) {
                 throw new APIError(error.response);
             }
@@ -154,7 +154,7 @@ export class ZeplinApi {
                 }
             );
             return response.data;
-        } catch (error) {
+        } catch (error: any) {
             if (error.isAxiosError) {
                 throw new APIError(error.response);
             }
@@ -171,7 +171,7 @@ export class ZeplinApi {
                 }
             );
             return response.data;
-        } catch (error) {
+        } catch (error: any) {
             if (error.isAxiosError) {
                 throw new APIError(error.response);
             }
@@ -201,7 +201,7 @@ export class ZeplinApi {
                 { headers }
             );
             return response.data;
-        } catch (error) {
+        } catch (error: any) {
             if (error.isAxiosError) {
                 throw new APIError(error.response);
             }

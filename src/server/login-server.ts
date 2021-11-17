@@ -67,7 +67,7 @@ export class LoginServer {
                 .on("listening", () => {
                     logger.debug(`Started auth server on port ${port}`);
 
-                    resolve(this.server);
+                    resolve(this.server as Server);
                 })
                 .on("error", (err: NodeJS.ErrnoException) => {
                     if (err.code === "EADDRINUSE") {

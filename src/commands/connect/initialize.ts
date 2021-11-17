@@ -68,7 +68,7 @@ export async function initialize(options: InitializeCommandOptions): Promise<voi
         await workflow.run();
 
         logger.info(initSummary(context));
-    } catch (error) {
+    } catch (error: any) {
         error.message = dedent`
             ${chalk.bold`Initializing Connected Components failed.`}
 

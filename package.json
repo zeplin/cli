@@ -61,7 +61,7 @@
     "husky": "^4.2.5",
     "jest": "^25.5.4",
     "ts-jest": "^25.5.1",
-    "typescript": "^3.9.2"
+    "typescript": "^4.4.4"
   },
   "dependencies": {
     "@hapi/joi": "^17.1.1",

@@ -122,7 +122,7 @@ export class AuthenticationService {
             logger.debug("Revoking existing auth token");
             try {
                 await this.zeplinApi.revokeToken(this.authentication.token);
-            } catch (err) {
+            } catch (err: any) {
                 if (!isAuthenticationError(err)) {
                     throw err;
                 }
@@ -157,7 +157,7 @@ export class AuthenticationService {
 
         try {
             await authFileUtil.saveAuthToken(this.authentication.token);
-        } catch (err) {
+        } catch (err: any) {
             logger.debug(`${err.stack}`);
             if (!ignoreSaveTokenErrors) {
                 throw err;

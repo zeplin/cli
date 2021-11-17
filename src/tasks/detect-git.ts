@@ -12,7 +12,7 @@ const detect: TaskStep<DetectGitContext> = async (ctx, task) => {
             ctx.git = git;
             return;
         }
-    } catch (e) {
+    } catch (e: any) {
         logger.debug("Error occurred while detecting git config", e);
     }
 

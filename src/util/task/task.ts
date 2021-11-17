@@ -252,7 +252,7 @@ export class Task<T = TaskContext> {
             }
 
             return ctx;
-        } catch (e) {
+        } catch (e: any) {
             if (TaskError.isTaskError<T>(e)) {
                 e.message = this.renderUIText(ctx, e.ui) || e.message;
             }
