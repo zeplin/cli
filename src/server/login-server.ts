@@ -39,7 +39,7 @@ export class LoginServer {
         });
 
         app.get(this.redirectPath, async (req, res) => {
-            this.accessToken = req.query.access_token;
+            this.accessToken = req.query.access_token as string;
 
             if (!this.accessToken) {
                 res.status(BAD_REQUEST).json({ error: "No access token" });
