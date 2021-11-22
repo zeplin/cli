@@ -278,7 +278,8 @@ const connectComponentConfig = async (
     ];
 
     const codeAndDescriptions: CodeAndDescription[] = pluginResponses.reduce((acc, response) => {
-        if ("code" in response) {
+        if (("code" in response && response.code) ||
+            ("description" in response && response.description)) {
             return [...acc, { code: response.code, description: response.description }];
         }
         return acc;

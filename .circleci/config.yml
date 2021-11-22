@@ -17,7 +17,7 @@ jobs:
         - ./node_modules
     - run:
         name: Install npm packages
-        command: npm install
+        command: npm ci
     - run:
         name: Run linter
         command: npm run lint
