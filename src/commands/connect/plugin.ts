@@ -77,8 +77,16 @@ const initializePlugins = async (
     return pluginInstances;
 };
 
+const linkTypes = [
+    LinkType.github,
+    LinkType.bitbucket,
+    LinkType.gitlab,
+    LinkType.storybook,
+    LinkType.custom
+];
+
 const processLink = (link: Link): Link => {
-    if (!Object.values(LinkType).includes(link.type)) {
+    if (!linkTypes.includes(link.type)) {
         link.type = LinkType.custom;
     }
 

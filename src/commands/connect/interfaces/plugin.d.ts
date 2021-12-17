@@ -46,7 +46,7 @@ export interface Link {
  * Use `LinkType.custom` if you are not sure what to do
  * @public
  */
-export enum LinkType {
+export const enum LinkType {
     storybook = "storybook",
     github = "github",
     gitlab = "gitlab",
