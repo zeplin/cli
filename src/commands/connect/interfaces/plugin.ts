@@ -38,6 +38,7 @@ export interface Link {
      * Required to show a pretty link for certain types of links on Zeplin.
      */
     type: LinkType;
+    metadata?: Record<string, unknown>;
 }
 
 /**
@@ -141,7 +142,7 @@ export interface ConnectPlugin {
     init?(pluginContext: PluginContext): Promise<void>;
 
     /**
-     * CLI invokes this method for each component in the configration file.
+     * CLI invokes this method for each component in the configuration file.
      *
      * @param componentConfig - {@link ComponentConfig}
      * @returns - {@link ComponentData}
@@ -156,6 +157,11 @@ export interface ConnectPlugin {
      * @returns true if the plugin supports the component, false otherwise
     */
     supports(componentConfig: ComponentConfig): boolean;
+
+    /**
+     * CLI gets this data to create a global metadata object
+     */
+    metadata?: Record<string, unknown>;
 }
 
 /**

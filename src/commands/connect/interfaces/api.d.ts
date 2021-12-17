@@ -25,6 +25,7 @@ export interface ConnectedBarrelComponents {
     projects: string[];
     styleguides: string[];
     items: ConnectedComponentItem[];
+    metadata?: Record<string, unknown>;
 }
 
 /** @internal */

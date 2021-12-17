@@ -298,6 +298,18 @@ const connectComponentConfig = async (
     );
 };
 
+const getMetadata = (plugins: ConnectPluginInstance[] = []): Record<string, unknown> => (
+    plugins.reduce<Record<string, unknown>>(
+        (acc, plugin) => {
+            if (!plugin.metadata) {
+                return acc;
+            }
+            return { ...acc, ...plugin.metadata };
+        },
+        {}
+    )
+);
+
 const connectComponentConfigFile = async (
     componentConfigFile: ComponentConfigFile
 ): Promise<ConnectedBarrelComponents> => {
@@ -318,7 +330,8 @@ const connectComponentConfigFile = async (
     return {
         projects: componentConfigFile.projects || [],
         styleguides: componentConfigFile.styleguides || [],
-        items
+        items,
+        metadata: getMetadata(plugins)
     };
 };
 
