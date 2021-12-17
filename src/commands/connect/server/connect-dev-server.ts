@@ -44,12 +44,12 @@ export class ConnectDevServer {
             next();
         });
 
-        app.get("/:type/:barrelId/connectedcomponents", (req, res) => {
+        app.get("/v2/:type/:barrelId/connectedcomponents", (req, res) => {
             const { barrelId } = req.params;
 
-            const connectedComponents = this.getConnectedComponents(barrelId);
+            const items = this.getConnectedComponents(barrelId);
 
-            return res.status(OK).json({ connectedComponents });
+            return res.status(OK).json({ items });
         });
 
         return new Promise<Server>((resolve, reject): void => {
