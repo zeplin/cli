@@ -1,7 +1,16 @@
-const mockResolvedWithValue = (mocked: jest.Mock, value: unknown, nth = 0): Promise<void> =>
-    expect(mocked.mock.results[nth].value).resolves.toEqual(value);
+import { MockedFunction } from "jest-mock";
 
-const mockRejectedWithValue = (mocked: jest.Mock, value: string | Error, nth = 0): Promise<void> =>
-    expect(mocked.mock.results[nth].value).rejects.toThrow(value);
+/* eslint-disable @typescript-eslint/no-explicit-any */
+const mockResolvedWithValue = <T extends (...args: any[]) => any>(
+    mocked: MockedFunction<T>,
+    value: unknown,
+    nth = 0
+): Promise<void> => expect(mocked.mock.results[nth].value).resolves.toEqual(value);
+
+const mockRejectedWithValue = <T extends (...args: any[]) => any>(
+    mocked: MockedFunction<T>,
+    value: string | Error,
+    nth = 0
+): Promise<void> => expect(mocked.mock.results[nth].value).rejects.toThrow(value);
 
 export { mockResolvedWithValue, mockRejectedWithValue };

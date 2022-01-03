@@ -1,6 +1,6 @@
 import Axios from "axios";
 import * as samples from "./samples";
-import { mocked } from "ts-jest/utils";
+import { mocked } from "jest-mock";
 import { ZeplinApi } from "../src/api";
 import { APIError, CLIError } from "../src/errors";
 

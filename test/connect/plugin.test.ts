@@ -1,4 +1,4 @@
-import { mocked } from "ts-jest/utils";
+import { mocked } from "jest-mock";
 import { connectComponentConfigFiles } from "../../src/commands/connect/plugin";
 import * as samples from "../samples";
 import * as packageUtils from "../../src/util/package";

@@ -1,4 +1,4 @@
-import { mocked } from "ts-jest/utils";
+import { mocked } from "jest-mock";
 import { ConnectedComponentsService } from "../../src/commands/connect/service";
 import * as samples from "../samples";
 import { AuthError } from "../../src/errors";

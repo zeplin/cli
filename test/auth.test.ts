@@ -1,6 +1,6 @@
 import { ChildProcess } from "child_process";
 import inquirer from "inquirer";
-import { mocked } from "ts-jest/utils";
+import { mocked } from "jest-mock";
 import open from "open";
 import { readAuthToken, saveAuthToken } from "../src/util/auth-file";
 import { AuthenticationService, AUTH_METHOD } from "../src/service/auth";
