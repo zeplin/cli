@@ -18,6 +18,7 @@ export type ConnectedComponentItem = (
 /** @internal */
 export interface ConnectedComponents {
     items: ConnectedComponentItem[];
+    metadata?: Record<string, unknown>;
 }
 
 /** @internal */
