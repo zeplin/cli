@@ -1,6 +1,5 @@
 import Axios from "axios";
 import * as samples from "./samples";
-import { mocked } from "ts-jest/utils";
 import { ZeplinApi } from "../src/api";
 import { APIError, CLIError } from "../src/errors";
 
@@ -10,14 +9,14 @@ describe("ZeplinApi", () => {
     beforeEach(() => {
         jest.resetAllMocks();
 
-        mocked(Axios.create).mockImplementation(() => Axios);
+        jest.mocked(Axios.create).mockImplementation(() => Axios);
     });
 
     describe("login()", () => {
         it("returns login response when HTTP request succeeds", async () => {
             const zeplinApi = new ZeplinApi();
 
-            mocked(Axios.post).mockResolvedValueOnce({ data: samples.loginResponse });
+            jest.mocked(Axios.post).mockResolvedValueOnce({ data: samples.loginResponse });
 
             await expect(zeplinApi.login(samples.loginRequest))
                 .resolves
@@ -29,7 +28,7 @@ describe("ZeplinApi", () => {
         it("throws APIError when HTTP request fails", async () => {
             const zeplinApi = new ZeplinApi();
 
-            mocked(Axios.post).mockRejectedValueOnce(samples.axiosError);
+            jest.mocked(Axios.post).mockRejectedValueOnce(samples.axiosError);
 
             await expect(zeplinApi.login(samples.loginRequest))
                 .rejects
@@ -42,7 +41,7 @@ describe("ZeplinApi", () => {
             const zeplinApi = new ZeplinApi();
 
             const errorMessage = "some other error";
-            mocked(Axios.post).mockRejectedValueOnce(new Error(errorMessage));
+            jest.mocked(Axios.post).mockRejectedValueOnce(new Error(errorMessage));
 
             await expect(zeplinApi.login(samples.loginRequest))
                 .rejects
@@ -56,7 +55,7 @@ describe("ZeplinApi", () => {
         it("returns token response when HTTP request succeeds", async () => {
             const zeplinApi = new ZeplinApi();
 
-            mocked(Axios.get).mockResolvedValueOnce({
+            jest.mocked(Axios.get).mockResolvedValueOnce({
                 headers: {
                     location: "url:port?access_token=wowmuchaccesstoken"
                 }
@@ -75,7 +74,7 @@ describe("ZeplinApi", () => {
         it("throws APIError when HTTP request fails", async () => {
             const zeplinApi = new ZeplinApi();
 
-            mocked(Axios.get).mockRejectedValueOnce(samples.axiosError);
+            jest.mocked(Axios.get).mockRejectedValueOnce(samples.axiosError);
 
             await expect(zeplinApi.generateToken(samples.loginResponse.token))
                 .rejects
@@ -91,7 +90,7 @@ describe("ZeplinApi", () => {
             const zeplinApi = new ZeplinApi();
 
             const errorMessage = "some other error";
-            mocked(Axios.get).mockRejectedValueOnce(new Error(errorMessage));
+            jest.mocked(Axios.get).mockRejectedValueOnce(new Error(errorMessage));
 
             await expect(zeplinApi.generateToken(samples.loginResponse.token))
                 .rejects
@@ -126,7 +125,7 @@ describe("ZeplinApi", () => {
         it("throws APIError when HTTP request fails", async () => {
             const zeplinApi = new ZeplinApi();
 
-            mocked(Axios.put).mockRejectedValueOnce(samples.axiosError);
+            jest.mocked(Axios.put).mockRejectedValueOnce(samples.axiosError);
 
             await expect(
                 zeplinApi.uploadConnectedComponents(
@@ -149,7 +148,7 @@ describe("ZeplinApi", () => {
             const zeplinApi = new ZeplinApi();
 
             const errorMessage = "some other error";
-            mocked(Axios.put).mockRejectedValueOnce(new Error(errorMessage));
+            jest.mocked(Axios.put).mockRejectedValueOnce(new Error(errorMessage));
 
             await expect(
                 zeplinApi.uploadConnectedComponents(
@@ -189,7 +188,7 @@ describe("ZeplinApi", () => {
         it("throws APIError when HTTP request fails", async () => {
             const zeplinApi = new ZeplinApi();
 
-            mocked(Axios.delete).mockRejectedValueOnce(samples.axiosError);
+            jest.mocked(Axios.delete).mockRejectedValueOnce(samples.axiosError);
 
             await expect(
                 zeplinApi.deleteConnectedComponents(
@@ -210,7 +209,7 @@ describe("ZeplinApi", () => {
             const zeplinApi = new ZeplinApi();
 
             const errorMessage = "some other error";
-            mocked(Axios.delete).mockRejectedValueOnce(new Error(errorMessage));
+            jest.mocked(Axios.delete).mockRejectedValueOnce(new Error(errorMessage));
 
             await expect(
                 zeplinApi.deleteConnectedComponents(
@@ -232,7 +231,7 @@ describe("ZeplinApi", () => {
         it("resolves when HTTP request succeeds", async () => {
             const zeplinApi = new ZeplinApi();
 
-            mocked(Axios.get).mockResolvedValueOnce({ data: samples.getProjectsResponse });
+            jest.mocked(Axios.get).mockResolvedValueOnce({ data: samples.getProjectsResponse });
 
             await expect(zeplinApi.getProjects(samples.validJwt))
                 .resolves
@@ -247,7 +246,7 @@ describe("ZeplinApi", () => {
         it("throws APIError when HTTP request fails", async () => {
             const zeplinApi = new ZeplinApi();
 
-            mocked(Axios.get).mockRejectedValueOnce(samples.axiosError);
+            jest.mocked(Axios.get).mockRejectedValueOnce(samples.axiosError);
 
             await expect(
                 zeplinApi.getProjects(samples.validJwt)
@@ -263,7 +262,7 @@ describe("ZeplinApi", () => {
             const zeplinApi = new ZeplinApi();
 
             const errorMessage = "some other error";
-            mocked(Axios.get).mockRejectedValueOnce(new Error(errorMessage));
+            jest.mocked(Axios.get).mockRejectedValueOnce(new Error(errorMessage));
 
             await expect(
                 zeplinApi.getProjects(samples.validJwt)
@@ -280,7 +279,7 @@ describe("ZeplinApi", () => {
         it("resolves when HTTP request succeeds", async () => {
             const zeplinApi = new ZeplinApi();
 
-            mocked(Axios.get).mockResolvedValueOnce({ data: samples.getProjectResponse });
+            jest.mocked(Axios.get).mockResolvedValueOnce({ data: samples.getProjectResponse });
 
             const projectId = samples.getProjectResponse._id;
 
@@ -297,7 +296,7 @@ describe("ZeplinApi", () => {
         it("throws APIError when HTTP request fails", async () => {
             const zeplinApi = new ZeplinApi();
 
-            mocked(Axios.get).mockRejectedValueOnce(samples.axiosError);
+            jest.mocked(Axios.get).mockRejectedValueOnce(samples.axiosError);
 
             const projectId = samples.getProjectResponse._id;
 
@@ -315,7 +314,7 @@ describe("ZeplinApi", () => {
             const zeplinApi = new ZeplinApi();
 
             const errorMessage = "some other error";
-            mocked(Axios.get).mockRejectedValueOnce(new Error(errorMessage));
+            jest.mocked(Axios.get).mockRejectedValueOnce(new Error(errorMessage));
 
             const projectId = samples.getProjectResponse._id;
 
@@ -334,7 +333,7 @@ describe("ZeplinApi", () => {
         it("resolves when HTTP request succeeds", async () => {
             const zeplinApi = new ZeplinApi();
 
-            mocked(Axios.get).mockResolvedValueOnce({ data: samples.getStyleguidesResponse });
+            jest.mocked(Axios.get).mockResolvedValueOnce({ data: samples.getStyleguidesResponse });
 
             await expect(zeplinApi.getStyleguides(samples.validJwt))
                 .resolves
@@ -349,7 +348,7 @@ describe("ZeplinApi", () => {
         it("throws APIError when HTTP request fails", async () => {
             const zeplinApi = new ZeplinApi();
 
-            mocked(Axios.get).mockRejectedValueOnce(samples.axiosError);
+            jest.mocked(Axios.get).mockRejectedValueOnce(samples.axiosError);
 
             await expect(
                 zeplinApi.getStyleguides(samples.validJwt)
@@ -365,7 +364,7 @@ describe("ZeplinApi", () => {
             const zeplinApi = new ZeplinApi();
 
             const errorMessage = "some other error";
-            mocked(Axios.get).mockRejectedValueOnce(new Error(errorMessage));
+            jest.mocked(Axios.get).mockRejectedValueOnce(new Error(errorMessage));
 
             await expect(
                 zeplinApi.getStyleguides(samples.validJwt)
@@ -382,7 +381,7 @@ describe("ZeplinApi", () => {
         it("resolves when HTTP request succeeds", async () => {
             const zeplinApi = new ZeplinApi();
 
-            mocked(Axios.get).mockResolvedValueOnce({ data: samples.getStyleguideResponse });
+            jest.mocked(Axios.get).mockResolvedValueOnce({ data: samples.getStyleguideResponse });
 
             const styleguideId = samples.getStyleguideResponse._id;
 
@@ -399,7 +398,7 @@ describe("ZeplinApi", () => {
         it("resolves when HTTP request with parent styleguide succeeds", async () => {
             const zeplinApi = new ZeplinApi();
 
-            mocked(Axios.get).mockResolvedValueOnce({ data: samples.getStyleguideResponse });
+            jest.mocked(Axios.get).mockResolvedValueOnce({ data: samples.getStyleguideResponse });
 
             const styleguideId = samples.getStyleguideResponse._id;
 
@@ -429,7 +428,7 @@ describe("ZeplinApi", () => {
         it("resolves when HTTP request with parent project succeeds", async () => {
             const zeplinApi = new ZeplinApi();
 
-            mocked(Axios.get).mockResolvedValueOnce({ data: samples.getStyleguideResponse });
+            jest.mocked(Axios.get).mockResolvedValueOnce({ data: samples.getStyleguideResponse });
 
             const styleguideId = samples.getStyleguideResponse._id;
 
@@ -459,7 +458,7 @@ describe("ZeplinApi", () => {
         it("throws APIError when HTTP request fails", async () => {
             const zeplinApi = new ZeplinApi();
 
-            mocked(Axios.get).mockRejectedValueOnce(samples.axiosError);
+            jest.mocked(Axios.get).mockRejectedValueOnce(samples.axiosError);
 
             const styleguideId = samples.getStyleguideResponse._id;
 
@@ -477,7 +476,7 @@ describe("ZeplinApi", () => {
             const zeplinApi = new ZeplinApi();
 
             const errorMessage = "some other error";
-            mocked(Axios.get).mockRejectedValueOnce(new Error(errorMessage));
+            jest.mocked(Axios.get).mockRejectedValueOnce(new Error(errorMessage));
 
             const styleguideId = samples.getProjectResponse._id;
 
