@@ -30,6 +30,9 @@
       },
       "ae-internal-missing-underscore": {
         "logLevel": "none"
+      },
+      "ae-wrong-input-file-type": {
+        "logLevel": "none"
       }
     },
     "tsdocMessageReporting": {

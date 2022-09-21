@@ -1,6 +1,5 @@
 import { ChildProcess } from "child_process";
 import inquirer from "inquirer";
-import { mocked } from "ts-jest/utils";
 import open from "open";
 import { readAuthToken, saveAuthToken } from "../src/util/auth-file";
 import { AuthenticationService, AUTH_METHOD } from "../src/service/auth";
@@ -29,11 +28,11 @@ describe("AuthenticationService", () => {
                 it("returns JWT when login flow is successful.", async () => {
                     const authenticationService = new AuthenticationService();
 
-                    mocked(envUtil.isCI).mockReturnValueOnce(false);
-                    mocked(readAuthToken).mockResolvedValueOnce("");
-                    mocked(inquirer.prompt).mockResolvedValueOnce(samples.loginRequest);
-                    mocked(authenticationService.zeplinApi.login).mockResolvedValueOnce(samples.loginResponse);
-                    mocked(authenticationService.zeplinApi.generateToken).mockResolvedValueOnce(samples.validJwt);
+                    jest.mocked(envUtil.isCI).mockReturnValueOnce(false);
+                    jest.mocked(readAuthToken).mockResolvedValueOnce("");
+                    jest.mocked(inquirer.prompt).mockResolvedValueOnce(samples.loginRequest);
+                    jest.mocked(authenticationService.zeplinApi.login).mockResolvedValueOnce(samples.loginResponse);
+                    jest.mocked(authenticationService.zeplinApi.generateToken).mockResolvedValueOnce(samples.validJwt);
 
                     await expect(authenticationService.authenticate({ noBrowser: true }))
                         .resolves
@@ -53,11 +52,11 @@ describe("AuthenticationService", () => {
                 it("validates JWT when login flow is successful.", async () => {
                     const authenticationService = new AuthenticationService();
 
-                    mocked(envUtil.isCI).mockReturnValueOnce(false);
-                    mocked(readAuthToken).mockResolvedValueOnce("");
-                    mocked(inquirer.prompt).mockResolvedValueOnce(samples.loginRequest);
-                    mocked(authenticationService.zeplinApi.login).mockResolvedValueOnce(samples.loginResponse);
-                    mocked(authenticationService.zeplinApi.generateToken).mockResolvedValueOnce(samples.validJwt);
+                    jest.mocked(envUtil.isCI).mockReturnValueOnce(false);
+                    jest.mocked(readAuthToken).mockResolvedValueOnce("");
+                    jest.mocked(inquirer.prompt).mockResolvedValueOnce(samples.loginRequest);
+                    jest.mocked(authenticationService.zeplinApi.login).mockResolvedValueOnce(samples.loginResponse);
+                    jest.mocked(authenticationService.zeplinApi.generateToken).mockResolvedValueOnce(samples.validJwt);
 
                     await authenticationService.authenticate({ noBrowser: true });
 
@@ -79,11 +78,11 @@ describe("AuthenticationService", () => {
 
                     const apiError = new Error("When beggars die there are no comets seen.");
 
-                    mocked(envUtil.isCI).mockReturnValueOnce(false);
-                    mocked(readAuthToken).mockResolvedValueOnce("");
-                    mocked(inquirer.prompt).mockResolvedValueOnce(samples.loginRequest);
-                    mocked(authenticationService.zeplinApi.login).mockRejectedValueOnce(apiError);
-                    mocked(authenticationService.zeplinApi.generateToken).mockResolvedValueOnce(samples.validJwt);
+                    jest.mocked(envUtil.isCI).mockReturnValueOnce(false);
+                    jest.mocked(readAuthToken).mockResolvedValueOnce("");
+                    jest.mocked(inquirer.prompt).mockResolvedValueOnce(samples.loginRequest);
+                    jest.mocked(authenticationService.zeplinApi.login).mockRejectedValueOnce(apiError);
+                    jest.mocked(authenticationService.zeplinApi.generateToken).mockResolvedValueOnce(samples.validJwt);
 
                     await expect(authenticationService.authenticate({ noBrowser: true }))
                         .rejects
@@ -100,11 +99,11 @@ describe("AuthenticationService", () => {
 
                     const apiError = new Error("The heavens themselves blaze forth the death of princes.");
 
-                    mocked(envUtil.isCI).mockReturnValueOnce(false);
-                    mocked(readAuthToken).mockResolvedValueOnce("");
-                    mocked(inquirer.prompt).mockResolvedValueOnce(samples.loginRequest);
-                    mocked(authenticationService.zeplinApi.login).mockResolvedValueOnce(samples.loginResponse);
-                    mocked(authenticationService.zeplinApi.generateToken).mockRejectedValueOnce(apiError);
+                    jest.mocked(envUtil.isCI).mockReturnValueOnce(false);
+                    jest.mocked(readAuthToken).mockResolvedValueOnce("");
+                    jest.mocked(inquirer.prompt).mockResolvedValueOnce(samples.loginRequest);
+                    jest.mocked(authenticationService.zeplinApi.login).mockResolvedValueOnce(samples.loginResponse);
+                    jest.mocked(authenticationService.zeplinApi.generateToken).mockRejectedValueOnce(apiError);
 
                     await expect(authenticationService.authenticate({ noBrowser: true }))
                         .rejects
@@ -121,12 +120,12 @@ describe("AuthenticationService", () => {
                 it("returns JWT when browser login flow is successful.", async () => {
                     const authenticationService = new AuthenticationService();
 
-                    mocked(envUtil.isCI).mockReturnValueOnce(false);
-                    mocked(readAuthToken).mockResolvedValueOnce("");
-                    mocked(open).mockResolvedValueOnce(jest.fn() as unknown as ChildProcess);
-                    mocked(inquirer.prompt)
+                    jest.mocked(envUtil.isCI).mockReturnValueOnce(false);
+                    jest.mocked(readAuthToken).mockResolvedValueOnce("");
+                    jest.mocked(open).mockResolvedValueOnce(jest.fn() as unknown as ChildProcess);
+                    jest.mocked(inquirer.prompt)
                         .mockReturnValueOnce(new Promise((): void => {}) as Promise<unknown> & { ui: PromptUI });
-                    mocked(authenticationService.loginServer.waitForToken).mockResolvedValueOnce(samples.validJwt);
+                    jest.mocked(authenticationService.loginServer.waitForToken).mockResolvedValueOnce(samples.validJwt);
 
                     await expect(authenticationService.authenticate())
                         .resolves
@@ -140,7 +139,7 @@ describe("AuthenticationService", () => {
                     expect(authenticationService.zeplinApi.login).not.toHaveBeenCalled();
                     expect(authenticationService.zeplinApi.generateToken).not.toHaveBeenCalled();
                     await mockResolvedWithValue(
-                        mocked(authenticationService.loginServer.waitForToken),
+                        jest.mocked(authenticationService.loginServer.waitForToken),
                         samples.validJwt
                     );
                     expect(saveAuthToken).toHaveBeenCalledWith(samples.validJwt);
@@ -149,12 +148,12 @@ describe("AuthenticationService", () => {
                 it("validates JWT when browser login flow is successful.", async () => {
                     const authenticationService = new AuthenticationService();
 
-                    mocked(envUtil.isCI).mockReturnValueOnce(false);
-                    mocked(readAuthToken).mockResolvedValueOnce("");
-                    mocked(open).mockResolvedValueOnce(jest.fn() as unknown as ChildProcess);
-                    mocked(inquirer.prompt)
+                    jest.mocked(envUtil.isCI).mockReturnValueOnce(false);
+                    jest.mocked(readAuthToken).mockResolvedValueOnce("");
+                    jest.mocked(open).mockResolvedValueOnce(jest.fn() as unknown as ChildProcess);
+                    jest.mocked(inquirer.prompt)
                         .mockReturnValueOnce(new Promise((): void => {}) as Promise<unknown> & { ui: PromptUI });
-                    mocked(authenticationService.loginServer.waitForToken).mockResolvedValueOnce(samples.validJwt);
+                    jest.mocked(authenticationService.loginServer.waitForToken).mockResolvedValueOnce(samples.validJwt);
 
                     await authenticationService.authenticate();
 
@@ -169,7 +168,7 @@ describe("AuthenticationService", () => {
                     expect(authenticationService.zeplinApi.login).not.toHaveBeenCalled();
                     expect(authenticationService.zeplinApi.generateToken).not.toHaveBeenCalled();
                     await mockResolvedWithValue(
-                        mocked(authenticationService.loginServer.waitForToken),
+                        jest.mocked(authenticationService.loginServer.waitForToken),
                         samples.validJwt
                     );
                     expect(saveAuthToken).toHaveBeenCalledTimes(1);
@@ -178,13 +177,13 @@ describe("AuthenticationService", () => {
                 it("returns JWT when browser login flow is unsuccessful but prompt login is successful.", async () => {
                     const authenticationService = new AuthenticationService();
 
-                    mocked(envUtil.isCI).mockReturnValueOnce(false);
-                    mocked(readAuthToken).mockResolvedValueOnce("");
-                    mocked(open).mockResolvedValueOnce(jest.fn() as unknown as ChildProcess);
-                    mocked(authenticationService.loginServer.waitForToken).mockResolvedValueOnce(undefined);
-                    mocked(inquirer.prompt).mockResolvedValueOnce(samples.loginRequest);
-                    mocked(authenticationService.zeplinApi.login).mockResolvedValueOnce(samples.loginResponse);
-                    mocked(authenticationService.zeplinApi.generateToken).mockResolvedValueOnce(samples.validJwt);
+                    jest.mocked(envUtil.isCI).mockReturnValueOnce(false);
+                    jest.mocked(readAuthToken).mockResolvedValueOnce("");
+                    jest.mocked(open).mockResolvedValueOnce(jest.fn() as unknown as ChildProcess);
+                    jest.mocked(authenticationService.loginServer.waitForToken).mockResolvedValueOnce(undefined);
+                    jest.mocked(inquirer.prompt).mockResolvedValueOnce(samples.loginRequest);
+                    jest.mocked(authenticationService.zeplinApi.login).mockResolvedValueOnce(samples.loginResponse);
+                    jest.mocked(authenticationService.zeplinApi.generateToken).mockResolvedValueOnce(samples.validJwt);
 
                     await expect(authenticationService.authenticate())
                         .resolves
@@ -196,11 +195,11 @@ describe("AuthenticationService", () => {
                     expect(readAuthToken).toHaveBeenCalled();
                     expect(open).toHaveBeenCalled();
                     await mockResolvedWithValue(
-                        mocked(authenticationService.zeplinApi.generateToken),
+                        jest.mocked(authenticationService.zeplinApi.generateToken),
                         samples.validJwt
                     );
                     await mockResolvedWithValue(
-                        mocked(authenticationService.loginServer.waitForToken),
+                        jest.mocked(authenticationService.loginServer.waitForToken),
                         undefined
                     );
                     expect(saveAuthToken).toHaveBeenCalledWith(samples.validJwt);
@@ -212,7 +211,7 @@ describe("AuthenticationService", () => {
             it("returns JWT when token is valid", async () => {
                 const authenticationService = new AuthenticationService();
 
-                mocked(envUtil.getAccessTokenFromEnv).mockReturnValueOnce(samples.validJwt);
+                jest.mocked(envUtil.getAccessTokenFromEnv).mockReturnValueOnce(samples.validJwt);
 
                 await expect(authenticationService.authenticate())
                     .resolves
@@ -231,7 +230,7 @@ describe("AuthenticationService", () => {
             it("returns JWT when token has the required scopes", async () => {
                 const authenticationService = new AuthenticationService();
 
-                mocked(envUtil.getAccessTokenFromEnv).mockReturnValueOnce(samples.validJwt);
+                jest.mocked(envUtil.getAccessTokenFromEnv).mockReturnValueOnce(samples.validJwt);
 
                 await expect(authenticationService.authenticate({ requiredScopes: ["write", "delete"] }))
                     .resolves
@@ -250,7 +249,7 @@ describe("AuthenticationService", () => {
             it("validates JWT when token has the required scopes", async () => {
                 const authenticationService = new AuthenticationService();
 
-                mocked(envUtil.getAccessTokenFromEnv).mockReturnValueOnce(samples.validJwt);
+                jest.mocked(envUtil.getAccessTokenFromEnv).mockReturnValueOnce(samples.validJwt);
 
                 await authenticationService.authenticate({ requiredScopes: ["write", "delete"] });
 
@@ -264,7 +263,7 @@ describe("AuthenticationService", () => {
             it("throws 'Invalid authentication token.' when token is invalid.", async () => {
                 const authenticationService = new AuthenticationService();
 
-                mocked(envUtil.getAccessTokenFromEnv).mockReturnValueOnce(samples.invalidJwt);
+                jest.mocked(envUtil.getAccessTokenFromEnv).mockReturnValueOnce(samples.invalidJwt);
 
                 await expect(authenticationService.authenticate())
                     .rejects
@@ -274,7 +273,7 @@ describe("AuthenticationService", () => {
             it("throws 'Audience is not set in authentication token.' when token has no audience.", async () => {
                 const authenticationService = new AuthenticationService();
 
-                mocked(envUtil.getAccessTokenFromEnv).mockReturnValueOnce(samples.validJwtWithoutAudience);
+                jest.mocked(envUtil.getAccessTokenFromEnv).mockReturnValueOnce(samples.validJwtWithoutAudience);
 
                 await expect(authenticationService.authenticate())
                     .rejects
@@ -285,7 +284,7 @@ describe("AuthenticationService", () => {
             when token does not have the required delete scope`, async () => {
                 const authenticationService = new AuthenticationService();
 
-                mocked(envUtil.getAccessTokenFromEnv).mockReturnValueOnce(samples.validJwtWithoutDeleteScope);
+                jest.mocked(envUtil.getAccessTokenFromEnv).mockReturnValueOnce(samples.validJwtWithoutDeleteScope);
 
                 await expect(authenticationService.authenticate({ requiredScopes: ["delete"] }))
                     .rejects
@@ -297,7 +296,7 @@ describe("AuthenticationService", () => {
             it("returns JWT when auth file has valid JWT.", async () => {
                 const authenticationService = new AuthenticationService();
 
-                mocked(readAuthToken).mockResolvedValueOnce(samples.validJwt);
+                jest.mocked(readAuthToken).mockResolvedValueOnce(samples.validJwt);
 
                 await expect(authenticationService.authenticate())
                     .resolves
@@ -316,7 +315,7 @@ describe("AuthenticationService", () => {
             it("throws 'Invalid authentication token.' when token is invalid.", async () => {
                 const authenticationService = new AuthenticationService();
 
-                mocked(readAuthToken).mockResolvedValueOnce(samples.invalidJwt);
+                jest.mocked(readAuthToken).mockResolvedValueOnce(samples.invalidJwt);
 
                 await expect(authenticationService.authenticate())
                     .rejects
@@ -326,7 +325,7 @@ describe("AuthenticationService", () => {
             it("throws 'Audience is not set in authentication token.' when token has no audience.", async () => {
                 const authenticationService = new AuthenticationService();
 
-                mocked(readAuthToken).mockResolvedValueOnce(samples.validJwtWithoutAudience);
+                jest.mocked(readAuthToken).mockResolvedValueOnce(samples.validJwtWithoutAudience);
 
                 await expect(authenticationService.authenticate())
                     .rejects
@@ -338,7 +337,7 @@ describe("AuthenticationService", () => {
             it("doesn't read auth file or prompt if no token is found on environment.", async () => {
                 const authenticationService = new AuthenticationService();
 
-                mocked(envUtil.isCI).mockReturnValueOnce(true);
+                jest.mocked(envUtil.isCI).mockReturnValueOnce(true);
 
                 await expect(authenticationService.authenticate())
                     .rejects
@@ -356,10 +355,10 @@ describe("AuthenticationService", () => {
 
             const error = new Error("We are arrant knaves, all. Believe none of us.");
 
-            mocked(saveAuthToken).mockRejectedValueOnce(error);
-            mocked(inquirer.prompt).mockResolvedValueOnce(samples.loginRequest);
-            mocked(authenticationService.zeplinApi.login).mockResolvedValueOnce(samples.loginResponse);
-            mocked(authenticationService.zeplinApi.generateToken).mockResolvedValueOnce(samples.validJwt);
+            jest.mocked(saveAuthToken).mockRejectedValueOnce(error);
+            jest.mocked(inquirer.prompt).mockResolvedValueOnce(samples.loginRequest);
+            jest.mocked(authenticationService.zeplinApi.login).mockResolvedValueOnce(samples.loginResponse);
+            jest.mocked(authenticationService.zeplinApi.generateToken).mockResolvedValueOnce(samples.validJwt);
 
             await expect(authenticationService.promptForLogin({ noBrowser: true }))
                 .resolves
@@ -374,10 +373,10 @@ describe("AuthenticationService", () => {
 
             const error = new Error("We are arrant knaves, all. Believe none of us.");
 
-            mocked(saveAuthToken).mockRejectedValueOnce(error);
-            mocked(inquirer.prompt).mockResolvedValueOnce(samples.loginRequest);
-            mocked(authenticationService.zeplinApi.login).mockResolvedValueOnce(samples.loginResponse);
-            mocked(authenticationService.zeplinApi.generateToken).mockResolvedValueOnce(samples.validJwt);
+            jest.mocked(saveAuthToken).mockRejectedValueOnce(error);
+            jest.mocked(inquirer.prompt).mockResolvedValueOnce(samples.loginRequest);
+            jest.mocked(authenticationService.zeplinApi.login).mockResolvedValueOnce(samples.loginResponse);
+            jest.mocked(authenticationService.zeplinApi.generateToken).mockResolvedValueOnce(samples.validJwt);
 
             await expect(authenticationService.promptForLogin({ ignoreSaveTokenErrors: false, noBrowser: true }))
                 .rejects
@@ -387,9 +386,9 @@ describe("AuthenticationService", () => {
         it("revokes existing token if forceRenewal is true when already authenticated", async () => {
             const authenticationService = new AuthenticationService();
 
-            mocked(inquirer.prompt).mockResolvedValue(samples.loginRequest);
-            mocked(authenticationService.zeplinApi.login).mockResolvedValue(samples.loginResponse);
-            mocked(authenticationService.zeplinApi.generateToken).mockResolvedValue(samples.validJwt);
+            jest.mocked(inquirer.prompt).mockResolvedValue(samples.loginRequest);
+            jest.mocked(authenticationService.zeplinApi.login).mockResolvedValue(samples.loginResponse);
+            jest.mocked(authenticationService.zeplinApi.generateToken).mockResolvedValue(samples.validJwt);
 
             await authenticationService.promptForLogin({ noBrowser: true });
 

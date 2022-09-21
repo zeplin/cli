@@ -1,4 +1,3 @@
-import { mocked } from "ts-jest/utils";
 import { ConnectedComponentsService } from "../../src/commands/connect/service";
 import * as samples from "../samples";
 import { AuthError } from "../../src/errors";
@@ -22,8 +21,8 @@ describe("ConnectedComponentsService", () => {
 
                 const authError = new AuthError("Rich gifts wax poor when the givers prove unkind.");
 
-                mocked(service.authService.authenticate).mockRejectedValueOnce(authError);
-                mocked(service.authService.promptForLogin).mockResolvedValueOnce({
+                jest.mocked(service.authService.authenticate).mockRejectedValueOnce(authError);
+                jest.mocked(service.authService.promptForLogin).mockResolvedValueOnce({
                     token: samples.validJwt,
                     method: AUTH_METHOD.ENVIRONMENT_VARIABLE
                 });
@@ -54,15 +53,15 @@ describe("ConnectedComponentsService", () => {
 
                 const authError = new AuthError("Rich gifts wax poor when the givers prove unkind.");
 
-                mocked(service.authService.authenticate).mockResolvedValueOnce({
+                jest.mocked(service.authService.authenticate).mockResolvedValueOnce({
                     token: samples.invalidJwt,
                     method: AUTH_METHOD.ENVIRONMENT_VARIABLE
                 });
-                mocked(service.authService.promptForLogin).mockResolvedValueOnce({
+                jest.mocked(service.authService.promptForLogin).mockResolvedValueOnce({
                     token: samples.validJwt,
                     method: AUTH_METHOD.ENVIRONMENT_VARIABLE
                 });
-                mocked(service.zeplinApi.uploadConnectedComponents).mockRejectedValueOnce(authError);
+                jest.mocked(service.zeplinApi.uploadConnectedComponents).mockRejectedValueOnce(authError);
 
                 await service.uploadConnectedBarrels([sample]);
 
@@ -87,8 +86,8 @@ describe("ConnectedComponentsService", () => {
 
                 const authError = new AuthError("");
 
-                mocked(service.authService.authenticate).mockRejectedValueOnce(authError);
-                mocked(service.authService.promptForLogin).mockRejectedValueOnce(authError);
+                jest.mocked(service.authService.authenticate).mockRejectedValueOnce(authError);
+                jest.mocked(service.authService.promptForLogin).mockRejectedValueOnce(authError);
 
                 await expect(service.uploadConnectedBarrels([sample]))
                     .rejects
@@ -104,7 +103,7 @@ describe("ConnectedComponentsService", () => {
 
                 const error = new Error("");
 
-                mocked(service.authService.authenticate).mockRejectedValueOnce(error);
+                jest.mocked(service.authService.authenticate).mockRejectedValueOnce(error);
 
                 await expect(service.uploadConnectedBarrels([sample]))
                     .rejects
@@ -120,11 +119,11 @@ describe("ConnectedComponentsService", () => {
 
                 const error = new Error("");
 
-                mocked(service.authService.authenticate).mockResolvedValueOnce({
+                jest.mocked(service.authService.authenticate).mockResolvedValueOnce({
                     token: samples.validJwt,
                     method: AUTH_METHOD.ENVIRONMENT_VARIABLE
                 });
-                mocked(service.zeplinApi.uploadConnectedComponents).mockRejectedValueOnce(error);
+                jest.mocked(service.zeplinApi.uploadConnectedComponents).mockRejectedValueOnce(error);
 
                 await expect(service.uploadConnectedBarrels([sample]))
                     .rejects
@@ -138,7 +137,7 @@ describe("ConnectedComponentsService", () => {
                 const sample = samples.connectedComponents;
                 const service = new ConnectedComponentsService();
 
-                mocked(service.authService.authenticate).mockResolvedValueOnce({
+                jest.mocked(service.authService.authenticate).mockResolvedValueOnce({
                     token: samples.validJwt,
                     method: AUTH_METHOD.ENVIRONMENT_VARIABLE
                 });
@@ -165,7 +164,7 @@ describe("ConnectedComponentsService", () => {
 
             describe("when in CI session", () => {
                 beforeEach(() => {
-                    mocked(isCI).mockReturnValue(true);
+                    jest.mocked(isCI).mockReturnValue(true);
                 });
                 it("does not prompt when authentication fails and throw error", async () => {
                     const sample = samples.connectedComponents;
@@ -173,7 +172,7 @@ describe("ConnectedComponentsService", () => {
 
                     const authError = new AuthError("Rich gifts wax poor when the givers prove unkind.");
 
-                    mocked(service.authService.authenticate).mockRejectedValueOnce(authError);
+                    jest.mocked(service.authService.authenticate).mockRejectedValueOnce(authError);
 
                     await expect(service.uploadConnectedBarrels([sample]))
                         .rejects
@@ -194,8 +193,8 @@ describe("ConnectedComponentsService", () => {
 
                 const authError = new AuthError("Rich gifts wax poor when the givers prove unkind.");
 
-                mocked(service.authService.authenticate).mockRejectedValueOnce(authError);
-                mocked(service.authService.promptForLogin).mockResolvedValueOnce({
+                jest.mocked(service.authService.authenticate).mockRejectedValueOnce(authError);
+                jest.mocked(service.authService.promptForLogin).mockResolvedValueOnce({
                     token: samples.validJwt,
                     method: AUTH_METHOD.ENVIRONMENT_VARIABLE
                 });
@@ -225,15 +224,15 @@ describe("ConnectedComponentsService", () => {
 
                 const authError = new AuthError("Rich gifts wax poor when the givers prove unkind.");
 
-                mocked(service.authService.authenticate).mockResolvedValueOnce({
+                jest.mocked(service.authService.authenticate).mockResolvedValueOnce({
                     token: samples.invalidJwt,
                     method: AUTH_METHOD.ENVIRONMENT_VARIABLE
                 });
-                mocked(service.authService.promptForLogin).mockResolvedValueOnce({
+                jest.mocked(service.authService.promptForLogin).mockResolvedValueOnce({
                     token: samples.validJwt,
                     method: AUTH_METHOD.ENVIRONMENT_VARIABLE
                 });
-                mocked(service.zeplinApi.deleteConnectedComponents).mockRejectedValueOnce(authError);
+                jest.mocked(service.zeplinApi.deleteConnectedComponents).mockRejectedValueOnce(authError);
 
                 await service.deleteConnectedBarrels([sample]);
 
@@ -257,8 +256,8 @@ describe("ConnectedComponentsService", () => {
 
                 const authError = new AuthError("");
 
-                mocked(service.authService.authenticate).mockRejectedValueOnce(authError);
-                mocked(service.authService.promptForLogin).mockRejectedValueOnce(authError);
+                jest.mocked(service.authService.authenticate).mockRejectedValueOnce(authError);
+                jest.mocked(service.authService.promptForLogin).mockRejectedValueOnce(authError);
 
                 await expect(service.deleteConnectedBarrels([sample]))
                     .rejects
@@ -274,7 +273,7 @@ describe("ConnectedComponentsService", () => {
 
                 const error = new Error("");
 
-                mocked(service.authService.authenticate).mockRejectedValueOnce(error);
+                jest.mocked(service.authService.authenticate).mockRejectedValueOnce(error);
 
                 await expect(service.deleteConnectedBarrels([sample]))
                     .rejects
@@ -290,11 +289,11 @@ describe("ConnectedComponentsService", () => {
 
                 const error = new Error("");
 
-                mocked(service.authService.authenticate).mockResolvedValueOnce({
+                jest.mocked(service.authService.authenticate).mockResolvedValueOnce({
                     token: samples.validJwt,
                     method: AUTH_METHOD.ENVIRONMENT_VARIABLE
                 });
-                mocked(service.zeplinApi.deleteConnectedComponents).mockRejectedValueOnce(error);
+                jest.mocked(service.zeplinApi.deleteConnectedComponents).mockRejectedValueOnce(error);
 
                 await expect(service.deleteConnectedBarrels([sample]))
                     .rejects
@@ -308,7 +307,7 @@ describe("ConnectedComponentsService", () => {
                 const sample = samples.connectedComponents;
                 const service = new ConnectedComponentsService();
 
-                mocked(service.authService.authenticate).mockResolvedValueOnce({
+                jest.mocked(service.authService.authenticate).mockResolvedValueOnce({
                     token: samples.validJwt,
                     method: AUTH_METHOD.ENVIRONMENT_VARIABLE
                 });
@@ -334,7 +333,7 @@ describe("ConnectedComponentsService", () => {
 
             describe("when in CI session", () => {
                 beforeEach(() => {
-                    mocked(isCI).mockReturnValue(true);
+                    jest.mocked(isCI).mockReturnValue(true);
                 });
                 it("does not prompt when authentication fails and throw error", async () => {
                     const sample = samples.connectedComponents;
@@ -342,7 +341,7 @@ describe("ConnectedComponentsService", () => {
 
                     const authError = new AuthError("Rich gifts wax poor when the givers prove unkind.");
 
-                    mocked(service.authService.authenticate).mockRejectedValueOnce(authError);
+                    jest.mocked(service.authService.authenticate).mockRejectedValueOnce(authError);
 
                     await expect(service.deleteConnectedBarrels([sample]))
                         .rejects

@@ -1,4 +1,3 @@
-import { mocked } from "ts-jest/utils";
 import { connectComponentConfigFiles } from "../../src/commands/connect/plugin";
 import * as samples from "../samples";
 import * as packageUtils from "../../src/util/package";
@@ -16,8 +15,8 @@ describe("PluginProcessor", () => {
 
         describe("and CLI is globally installed in using yarn", () => {
             it("fails and prints instructions", async () => {
-                mocked(packageUtils.isRunningFromYarnGlobal).mockReturnValue(true);
-                mocked(packageUtils.isRunningFromGlobal).mockReturnValue(true);
+                jest.mocked(packageUtils.isRunningFromYarnGlobal).mockReturnValue(true);
+                jest.mocked(packageUtils.isRunningFromGlobal).mockReturnValue(true);
 
                 await expect(connectComponentConfigFiles([sampleConfig]))
                     .rejects
@@ -27,7 +26,7 @@ describe("PluginProcessor", () => {
 
         describe("and CLI is globally installed in using npm", () => {
             it("fails and prints instructions", async () => {
-                mocked(packageUtils.isRunningFromGlobal).mockReturnValue(true);
+                jest.mocked(packageUtils.isRunningFromGlobal).mockReturnValue(true);
                 await expect(connectComponentConfigFiles([sampleConfig]))
                     .rejects
                     .toThrowErrorMatchingSnapshot();
@@ -36,7 +35,7 @@ describe("PluginProcessor", () => {
 
         describe("and CLI is locally installed using yarn", () => {
             it("fails and prints instructions", async () => {
-                mocked(packageUtils.projectHasYarn).mockReturnValue(true);
+                jest.mocked(packageUtils.projectHasYarn).mockReturnValue(true);
 
                 await expect(connectComponentConfigFiles([sampleConfig]))
                     .rejects
