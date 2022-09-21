@@ -66,9 +66,13 @@ export async function detectGit(
             owner,
             name: repository,
             source,
-            resource: host,
+            resource,
+            port,
             protocol
         } = parseGitUrl(remoteUrl);
+
+        const portSuffix = ["http", "https"].includes(protocol) && port ? `:${port}` : "";
+        const host = `${resource}${portSuffix}`;
 
         let config: GitConfig;
 
