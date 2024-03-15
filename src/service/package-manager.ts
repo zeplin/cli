@@ -1,4 +1,4 @@
-import hasYarn from "has-yarn";
+import { detect, getNpmVersion, PM } from "detect-package-manager";
 import latestVersion from "latest-version";
 import semver from "semver";
 import { CLIError } from "../errors/CLIError";
@@ -40,30 +40,49 @@ export async function getLatestVersions(packages: string[]): Promise<Record<stri
     return versions;
 }
 
-export async function installPackages(packages: Record<string, string>, { installGlobal = false } = {}): Promise<void> {
-    const yarn = hasYarn();
-    const args = [];
-    const npmClient = yarn ? "yarn" : "npm";
+export async function getPackageManagerVersion(pm: PM): Promise<number | undefined> {
+    const version = await getNpmVersion(pm);
+    const parsedVersion = parseInt(version, 10);
 
-    if (yarn) {
+    if (!isNaN(parsedVersion)) {
+        return parsedVersion;
+    }
+
+    return undefined;
+}
+
+export async function installPackages(packages: Record<string, string>, { installGlobal = false } = {}): Promise<void> {
+    const pm = await detect();
+    const version = await getPackageManagerVersion(pm);
+    const args = [];
+
+    if (pm === "yarn") {
         if (installGlobal) {
             args.push("global");
-        } else {
+        } else if (version && version === 1) {
             args.push("--ignore-workspace-root-check", "--dev");
+        } else {
+            args.push("--dev");
         }
         args.push("add");
-    } else {
+    } else if (pm === "npm") {
         args.push("install");
         if (installGlobal) {
             args.push("--global");
         } else {
             args.push("--save-dev");
         }
+    } else if (pm === "pnpm") {
+        throw new Error("Not implemented");
+    } else if (pm === "bun") {
+        throw new Error("Not implemented");
+    } else {
+        throw new Error("Not supported package manager");
     }
 
     const packagesWithVersions = Object.keys(packages).map(p => `${p}@${packages[p]}`);
 
-    const command = `${npmClient} ${args.join(" ")} ${packagesWithVersions.join(" ")}`;
+    const command = `${pm} ${args.join(" ")} ${packagesWithVersions.join(" ")}`;
 
     await runCommand(command);
 }
