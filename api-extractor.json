@@ -3,7 +3,8 @@
   "mainEntryPointFilePath": "<projectFolder>/src/types/index.d.ts",
   "bundledPackages": [],
   "compiler": {
-    "tsconfigFilePath": "<projectFolder>/tsconfig.json"
+    "tsconfigFilePath": "<projectFolder>/tsconfig.json",
+    "skipLibCheck": true
   },
   "apiReport": {
     "enabled": false
