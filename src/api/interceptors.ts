@@ -1,4 +1,4 @@
-import { AxiosRequestConfig, AxiosResponse } from "axios";
+import { AxiosResponse, InternalAxiosRequestConfig } from "axios";
 import maskJson from "mask-json";
 import logger from "../util/logger";
 import { URL } from "url";
@@ -30,7 +30,8 @@ const maskUrl = (_url: string | undefined): string | undefined => {
     return masked;
 };
 
-const requestLogger = (request: AxiosRequestConfig): AxiosRequestConfig => {
+// https://github.com/axios/axios/issues/5494#issuecomment-1402663237
+const requestLogger = (request: InternalAxiosRequestConfig): InternalAxiosRequestConfig => {
     const {
         url,
         method,
