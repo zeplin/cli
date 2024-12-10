@@ -41,7 +41,7 @@ const logger = winston.createLogger({
 // Workaround to ensure all logs are written into the file before process exit
 const fileLogWatcher = new EventEmitter();
 fileTransport.on("open", () => {
-    // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     // eslint-disable-next-line no-underscore-dangle
     fileTransport._dest.on("finish", () => {
