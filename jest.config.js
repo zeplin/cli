@@ -8,6 +8,6 @@ module.exports = {
     },
     setupFilesAfterEnv: ["<rootDir>/test/setup.ts"],
     moduleNameMapper: {
-        "^axios/": "axios/dist/node/axios.cjs"
+        axios: "axios/dist/node/axios.cjs"
     }
 };

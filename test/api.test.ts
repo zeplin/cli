@@ -1,4 +1,4 @@
-import Axios from "axios";
+import Axios, { AxiosResponse } from "axios";
 import * as samples from "./samples";
 import { mocked } from "jest-mock";
 import { ZeplinApi } from "../src/api";
@@ -34,7 +34,7 @@ describe("ZeplinApi", () => {
 
             await expect(zeplinApi.login(samples.loginRequest))
                 .rejects
-                .toThrowError(new APIError(samples.axiosError.response));
+                .toThrowError(new APIError(samples.axiosError.response as AxiosResponse));
 
             expect(Axios.post).toHaveBeenCalledWith("/users/login", samples.loginRequest);
         });
@@ -80,7 +80,7 @@ describe("ZeplinApi", () => {
 
             await expect(zeplinApi.generateToken(samples.loginResponse.token))
                 .rejects
-                .toThrowError(new APIError(samples.axiosError.response));
+                .toThrowError(new APIError(samples.axiosError.response as AxiosResponse));
 
             expect(Axios.get).toHaveBeenCalledWith(
                 "/oauth/authorize",
@@ -140,7 +140,7 @@ describe("ZeplinApi", () => {
                     samples.connectedComponentList,
                     { forceOverwrite: false }
                 )
-            ).rejects.toThrowError(new APIError(samples.axiosError.response));
+            ).rejects.toThrowError(new APIError(samples.axiosError.response as AxiosResponse));
 
             const { barrelType, barrelId } = samples.uploadParams;
 
@@ -209,7 +209,7 @@ describe("ZeplinApi", () => {
                     samples.validJwt,
                     samples.deleteParams
                 )
-            ).rejects.toThrowError(new APIError(samples.axiosError.response));
+            ).rejects.toThrowError(new APIError(samples.axiosError.response as AxiosResponse));
 
             const { barrelType, barrelId } = samples.uploadParams;
 
@@ -264,7 +264,7 @@ describe("ZeplinApi", () => {
 
             await expect(
                 zeplinApi.getProjects(samples.validJwt)
-            ).rejects.toThrowError(new APIError(samples.axiosError.response));
+            ).rejects.toThrowError(new APIError(samples.axiosError.response as AxiosResponse));
 
             expect(Axios.get).toHaveBeenCalledWith(
                 `/public/cli/projects`,
@@ -316,7 +316,7 @@ describe("ZeplinApi", () => {
 
             await expect(
                 zeplinApi.getProject(samples.validJwt, projectId)
-            ).rejects.toThrowError(new APIError(samples.axiosError.response));
+            ).rejects.toThrowError(new APIError(samples.axiosError.response as AxiosResponse));
 
             expect(Axios.get).toHaveBeenCalledWith(
                 `/public/cli/projects/${projectId}`,
@@ -366,7 +366,7 @@ describe("ZeplinApi", () => {
 
             await expect(
                 zeplinApi.getStyleguides(samples.validJwt)
-            ).rejects.toThrowError(new APIError(samples.axiosError.response));
+            ).rejects.toThrowError(new APIError(samples.axiosError.response as AxiosResponse));
 
             expect(Axios.get).toHaveBeenCalledWith(
                 `/public/cli/styleguides`,
@@ -478,7 +478,7 @@ describe("ZeplinApi", () => {
 
             await expect(
                 zeplinApi.getStyleguide(samples.validJwt, styleguideId)
-            ).rejects.toThrowError(new APIError(samples.axiosError.response));
+            ).rejects.toThrowError(new APIError(samples.axiosError.response as AxiosResponse));
 
             expect(Axios.get).toHaveBeenCalledWith(
                 `/public/cli/styleguides/${styleguideId}`,
