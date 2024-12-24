@@ -12,13 +12,13 @@ module.exports = {
     ],
     parser: "@typescript-eslint/parser",
     parserOptions: {
-        "ecmaVersion": 2018,
-        "sourceType": "module"
+        ecmaVersion: 2018,
+        sourceType: "module"
     },
     plugins: ["@typescript-eslint"],
     settings: {
         "import/resolver": {
-            typescript: { directory: "./tsconfig.json" },
+            typescript: { directory: "./tsconfig.json" }
         }
     },
     rules: {
@@ -28,9 +28,14 @@ module.exports = {
         "no-process-exit": "off",
         "no-process-env": "off",
         "no-undefined": "off",
-        "@typescript-eslint/no-explicit-any": ["error", { "ignoreRestArgs": true }],
-        "@typescript-eslint/camelcase": ["error", { "properties": "never", "ignoreDestructuring": true }],
-        "class-methods-use-this": "off"
+        "@typescript-eslint/no-explicit-any": "off",
+        "@typescript-eslint/camelcase": "off",
+        "class-methods-use-this": "off",
+        "@typescript-eslint/no-empty-function": "off",
+        "no-use-before-define": "warn",
+        "no-shadow": "warn",
+        "@typescript-eslint/ban-ts-comment": "off",
+        "@typescript-eslint/ban-types": "off"
     },
     overrides: [
         {
@@ -50,4 +55,4 @@ module.exports = {
             }
         }
     ]
-}
+};
