@@ -1,6 +1,6 @@
 import parseGitUrl from "git-url-parse";
-import parseGitConfig from "parse-git-config";
 import { stringify } from "../util/text";
+import { parseGitConfig } from "../util/git-config";
 import logger from "../util/logger";
 import { BitbucketConfig, GitConfig } from "../commands/connect/interfaces/config";
 
@@ -54,12 +54,12 @@ export async function detectGit(
     type: "bitbucket" | "github" | "gitlab";
     config: GitConfig;
 } | null> {
-    const gitConfig = await parseGitConfig({ expandKeys: true, path: params?.path });
+    const gitConfig = await parseGitConfig(params?.path);
     const remoteUrl = gitConfig?.remote?.origin?.url;
-    const branches = gitConfig?.branch || {};
+    const branches = gitConfig?.branchNames || [];
     logger.debug(`Git remoteUrl: ${remoteUrl}`);
     if (remoteUrl) {
-        const branch = Object.keys(branches).find(b => defaultBranches.includes(b));
+        const branch = branches.find(b => defaultBranches.includes(b));
         logger.debug(`Git default branch: ${branch}`);
 
         const {
